@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Support\ActivityLogger;
 use App\Support\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -55,10 +56,14 @@ class LoginController extends Controller
         ) {
             $request->session()->regenerate();
 
+            ActivityLogger::log('login', 'Connexion de '.Auth::user()->login);
+
             return redirect()
                 ->intended(route('dashboard'))
                 ->with('success', 'Connexion réussie. Bienvenue, '.Auth::user()->nom_complet);
         }
+
+        ActivityLogger::log('login_failed', 'Tentative de connexion échouée pour le login "'.$credentials['login'].'"');
 
         return back()
             ->withInput($request->only('login', 'remember'))
@@ -67,6 +72,8 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        ActivityLogger::log('logout', 'Déconnexion de '.Auth::user()->login);
+
         Auth::logout();
 
         $request->session()->invalidate();

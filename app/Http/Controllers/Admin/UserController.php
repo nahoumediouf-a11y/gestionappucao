@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Etudiant;
 use App\Models\User;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -53,6 +54,8 @@ class UserController extends Controller
             ]);
         }
 
+        ActivityLogger::log('user.create', 'Création de l\'utilisateur '.$user->login.' (rôle : '.$user->role->label().')');
+
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur créé avec succès.');
     }
 
@@ -97,6 +100,8 @@ class UserController extends Controller
             );
         }
 
+        ActivityLogger::log('user.update', 'Modification de l\'utilisateur '.$utilisateur->login);
+
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur modifié avec succès.');
     }
 
@@ -106,7 +111,10 @@ class UserController extends Controller
             return back()->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
+        $login = $utilisateur->login;
         $utilisateur->delete();
+
+        ActivityLogger::log('user.delete', 'Suppression de l\'utilisateur '.$login);
 
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur supprimé avec succès.');
     }

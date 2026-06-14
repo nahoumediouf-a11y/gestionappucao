@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Comptabilite;
 use App\Http\Controllers\Controller;
 use App\Models\Etudiant;
 use App\Models\Paiement;
+use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-RUN apt-get update && apt-get install -y --no-install-recursive \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip libpq-dev libzip-dev zip \
     && docker-php-ext-install pdo pdo_pgsql mbstring bcmath zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*

@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+mkdir -p database
+touch database/database.sqlite
+
 php artisan config:clear
 php artisan migrate --force
 

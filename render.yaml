@@ -1,9 +1,3 @@
-databases:
-  - name: gestionappucao-db
-    plan: free
-    databaseName: gestionappucao
-    user: gestionappucao
-
 services:
   - type: web
     name: gestionappucao
@@ -32,26 +26,8 @@ services:
       - key: QUEUE_CONNECTION
         value: database
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: gestionappucao-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: gestionappucao-db
-          property: port
+        value: sqlite
       - key: DB_DATABASE
-        fromDatabase:
-          name: gestionappucao-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: gestionappucao-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: gestionappucao-db
-          property: password
+        value: /app/database/database.sqlite
       - key: SEED_DB
         value: "true"

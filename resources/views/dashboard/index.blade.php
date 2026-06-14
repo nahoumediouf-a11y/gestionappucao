@@ -17,7 +17,12 @@
                                 <i class="bi {{ $module['icon'] }} fs-4"></i>
                             </div>
                             <div>
-                                <h3 class="h6 mb-1">{{ $module['label'] }}</h3>
+                                <h3 class="h6 mb-1">
+                                    {{ $module['label'] }}
+                                    @if (! empty($module['badge']))
+                                        <span class="badge bg-danger rounded-pill ms-1">{{ $module['badge'] }}</span>
+                                    @endif
+                                </h3>
                                 <p class="small text-muted mb-0">Module autorisé pour {{ $user->role->label() }}</p>
                             </div>
                         </div>

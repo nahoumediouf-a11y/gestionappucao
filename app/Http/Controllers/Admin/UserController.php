@@ -130,7 +130,7 @@ class UserController extends Controller
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email,'.$userId],
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
             'statut' => ['required', 'string', 'in:actif,inactif'],
-            'matricule' => ['required_if:role,etudiant', 'nullable', 'string', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
+            'matricule' => ['required_if:role,etudiant', 'nullable', 'string', 'regex:/^\d{7}$/', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
             'niveau' => ['required_if:role,etudiant', 'nullable', 'string', 'max:50'],
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],
             'solde' => ['nullable', 'numeric', 'min:0'],
@@ -140,6 +140,8 @@ class UserController extends Controller
             ? ['nullable', 'string', 'min:6']
             : ['required', 'string', 'min:6'];
 
-        return $request->validate($rules);
+        return $request->validate($rules, [
+            'matricule.regex' => 'Le matricule doit être composé de 7 chiffres (ex : 1067604).',
+        ]);
     }
 }

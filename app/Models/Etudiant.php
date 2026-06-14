@@ -11,6 +11,9 @@ class Etudiant extends Model
 {
     use HasFactory;
 
+    /** Nombre d'absences non justifiées à partir duquel l'étudiant est en situation rouge (accès examen bloqué). */
+    public const SEUIL_ABSENCES_SITUATION_ROUGE = 3;
+
     protected $fillable = [
         'user_id',
         'matricule',
@@ -63,5 +66,16 @@ class Etudiant extends Model
     public function moyenne(): float
     {
         return round((float) $this->notes()->avg('valeur'), 2);
+    }
+
+    public function absencesNonJustifieesCount(): int
+    {
+        return $this->absences()->where('justifiee', false)->count();
+    }
+
+    /** L'étudiant est en situation rouge (accès examen bloqué) au-delà du seuil d'absences non justifiées. */
+    public function enSituationRouge(): bool
+    {
+        return $this->absencesNonJustifieesCount() >= self::SEUIL_ABSENCES_SITUATION_ROUGE;
     }
 }

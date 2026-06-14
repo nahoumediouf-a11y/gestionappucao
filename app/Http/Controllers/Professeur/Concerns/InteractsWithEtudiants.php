@@ -30,4 +30,13 @@ trait InteractsWithEtudiants
             ->orderBy('matricule')
             ->get();
     }
+
+    /** Combinaisons filière/niveau/matière enseignées par le professeur connecté. */
+    protected function creneauxDuProfesseur(): Collection
+    {
+        return EmploiDuTemps::where('professeur_id', auth()->id())
+            ->get(['filiere', 'niveau', 'matiere'])
+            ->unique(fn ($c) => $c->filiere.'|'.$c->niveau.'|'.$c->matiere)
+            ->values();
+    }
 }

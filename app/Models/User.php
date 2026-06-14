@@ -19,6 +19,7 @@ class User extends Authenticatable
         'prenom',
         'login',
         'email',
+        'telephone',
         'password',
         'role',
         'statut',

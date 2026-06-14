@@ -42,6 +42,9 @@
                             @if ($user->etudiant)
                                 {{ $user->etudiant->matricule }} — {{ $user->etudiant->filiere }} {{ $user->etudiant->niveau }}
                                 — Solde: {{ number_format($user->etudiant->solde, 0, ',', ' ') }} FCFA
+                                @if ($user->etudiant->enSituationRouge())
+                                    <span class="badge bg-danger ms-1">Situation rouge</span>
+                                @endif
                             @endif
                         </td>
                         <td class="text-end">

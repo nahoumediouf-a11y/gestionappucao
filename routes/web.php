@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Etudiant\EmploiDuTempsController as EtudiantEmploiDuTem
 use App\Http\Controllers\Etudiant\NoteController as EtudiantNoteController;
 use App\Http\Controllers\Etudiant\PaiementController as EtudiantPaiementController;
 use App\Http\Controllers\Etudiant\ProfilController;
+use App\Http\Controllers\Etudiant\ProjetController as EtudiantProjetController;
 use App\Http\Controllers\Financier\PaiementController as FinancierPaiementController;
 use App\Http\Controllers\Financier\RapportController;
 use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceContro
 use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiDuTempsController;
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
+use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
 use App\Http\Controllers\Recouvrement\EngagementController;
 use App\Http\Controllers\Recouvrement\ImpayeController;
 use App\Http\Controllers\Recouvrement\RechercheController;
@@ -48,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('utilisateurs', UserController::class)->except('show');
         Route::get('statistiques', [StatistiqueController::class, 'index'])->name('statistiques');
+        Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('notifications/{notification}/lue', [NotificationController::class, 'read'])->name('notifications.read');
     });
 
     // ===== Agent comptable =====
@@ -88,6 +93,7 @@ Route::middleware('auth')->group(function () {
         Route::get('emploi-du-temps', [EtudiantEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
+        Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
     });
 
     // ===== Professeur =====
@@ -104,5 +110,11 @@ Route::middleware('auth')->group(function () {
         Route::post('absences', [ProfesseurAbsenceController::class, 'store'])->name('absences.store');
         Route::get('absences/{absence}/modifier', [ProfesseurAbsenceController::class, 'edit'])->name('absences.edit');
         Route::put('absences/{absence}', [ProfesseurAbsenceController::class, 'update'])->name('absences.update');
+        Route::get('projets', [ProfesseurProjetController::class, 'index'])->name('projets.index');
+        Route::get('projets/creer', [ProfesseurProjetController::class, 'create'])->name('projets.create');
+        Route::post('projets', [ProfesseurProjetController::class, 'store'])->name('projets.store');
+        Route::get('projets/{projet}/modifier', [ProfesseurProjetController::class, 'edit'])->name('projets.edit');
+        Route::put('projets/{projet}', [ProfesseurProjetController::class, 'update'])->name('projets.update');
+        Route::delete('projets/{projet}', [ProfesseurProjetController::class, 'destroy'])->name('projets.destroy');
     });
 });

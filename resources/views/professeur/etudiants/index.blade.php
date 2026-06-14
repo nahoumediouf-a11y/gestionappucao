@@ -15,6 +15,7 @@
                     <th>Nom complet</th>
                     <th>Filière</th>
                     <th>Niveau</th>
+                    <th>Situation</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,9 +25,16 @@
                         <td>{{ $etudiant->user->nom_complet }}</td>
                         <td>{{ $etudiant->filiere }}</td>
                         <td>{{ $etudiant->niveau }}</td>
+                        <td>
+                            @if ($etudiant->enSituationRouge())
+                                <span class="badge bg-danger">Situation rouge ({{ $etudiant->absencesNonJustifieesCount() }} abs.)</span>
+                            @else
+                                <span class="badge bg-success">OK</span>
+                            @endif
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="text-center text-muted py-4">Aucun étudiant trouvé pour vos cours.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted py-4">Aucun étudiant trouvé pour vos cours.</td></tr>
                 @endforelse
             </tbody>
         </table>

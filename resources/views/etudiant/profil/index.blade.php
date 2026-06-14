@@ -14,6 +14,7 @@
                     <tr><th class="text-muted">Nom complet</th><td>{{ auth()->user()->nom_complet }}</td></tr>
                     <tr><th class="text-muted">Matricule</th><td><code>{{ $etudiant->matricule }}</code></td></tr>
                     <tr><th class="text-muted">Email</th><td>{{ auth()->user()->email ?? '—' }}</td></tr>
+                    <tr><th class="text-muted">Téléphone</th><td>{{ auth()->user()->telephone ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Filière</th><td>{{ $etudiant->filiere }}</td></tr>
                     <tr><th class="text-muted">Niveau</th><td>{{ $etudiant->niveau }}</td></tr>
                 </table>
@@ -36,7 +37,19 @@
                             {{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA
                         </td>
                     </tr>
+                    <tr>
+                        <th class="text-muted">Absences non justifiées</th>
+                        <td class="fw-bold">{{ $etudiant->absencesNonJustifieesCount() }}</td>
+                    </tr>
                 </table>
+
+                @if ($etudiant->enSituationRouge())
+                    <div class="alert alert-danger mt-3 mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        <strong>Situation rouge :</strong> vous avez atteint {{ $etudiant->absencesNonJustifieesCount() }} absences non justifiées.
+                        L'accès aux examens est bloqué tant que votre situation n'est pas régularisée.
+                    </div>
+                @endif
             </div>
         </div>
     </div>

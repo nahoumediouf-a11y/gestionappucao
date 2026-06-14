@@ -15,6 +15,7 @@ class DashboardController extends Controller
             Role::Administrateur => [
                 ['label' => 'Gérer les utilisateurs', 'icon' => 'bi-people-fill', 'color' => 'success', 'route' => 'admin.utilisateurs.index'],
                 ['label' => 'Statistiques', 'icon' => 'bi-graph-up-arrow', 'color' => 'dark', 'route' => 'admin.statistiques'],
+                ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'admin.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
             ],
             Role::AgentComptable => [
                 ['label' => 'Paiements', 'icon' => 'bi-cash-coin', 'color' => 'primary', 'route' => 'comptabilite.paiements.index'],
@@ -39,6 +40,7 @@ class DashboardController extends Controller
                 ['label' => 'Mon bulletin', 'icon' => 'bi-file-earmark-text', 'color' => 'secondary', 'route' => 'etudiant.bulletin.index'],
                 ['label' => 'Mes absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'etudiant.absences.index'],
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'etudiant.edt.index'],
+                ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'etudiant.projets.index'],
                 ['label' => 'Suivi de paiement', 'icon' => 'bi-cash-coin', 'color' => 'dark', 'route' => 'etudiant.paiements.index'],
             ],
             Role::Professeur => [
@@ -46,6 +48,7 @@ class DashboardController extends Controller
                 ['label' => 'Liste des étudiants', 'icon' => 'bi-people', 'color' => 'primary', 'route' => 'professeur.etudiants.index'],
                 ['label' => 'Notes', 'icon' => 'bi-journal-check', 'color' => 'success', 'route' => 'professeur.notes.index'],
                 ['label' => 'Absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'professeur.absences.index'],
+                ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'professeur.projets.index'],
             ],
         };
 

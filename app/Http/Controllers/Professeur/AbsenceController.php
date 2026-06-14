@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Professeur;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Professeur\Concerns\InteractsWithEtudiants;
 use App\Models\Absence;
+use App\Models\Etudiant;
+use App\Models\User;
+use App\Notifications\SituationRougeNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -45,13 +49,35 @@ class AbsenceController extends Controller
             'justifiee' => ['sometimes', 'boolean'],
         ]);
 
-        Absence::create([
+        $absence = Absence::create([
             ...$validated,
             'justifiee' => $request->boolean('justifiee'),
             'professeur_id' => auth()->id(),
         ]);
 
+        $this->notifierSiSituationRouge($absence);
+
         return redirect()->route('professeur.absences.index')->with('success', 'Absence enregistrée avec succès.');
+    }
+
+    /** Notifie les administrateurs lorsque l'étudiant atteint le seuil de situation rouge. */
+    private function notifierSiSituationRouge(Absence $absence): void
+    {
+        if ($absence->justifiee) {
+            return;
+        }
+
+        $etudiant = Etudiant::find($absence->etudiant_id);
+
+        if (! $etudiant || ! $etudiant->enSituationRouge()) {
+            return;
+        }
+
+        $admins = User::where('role', Role::Administrateur)->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new SituationRougeNotification($etudiant, $absence));
+        }
     }
 
     public function edit(Absence $absence): View

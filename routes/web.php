@@ -1,0 +1,108 @@
+<?php
+
+use App\Http\Controllers\Admin\StatistiqueController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Comptabilite\DebiteurController;
+use App\Http\Controllers\Comptabilite\PaiementController as ComptabilitePaiementController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Etudiant\AbsenceController as EtudiantAbsenceController;
+use App\Http\Controllers\Etudiant\BulletinController;
+use App\Http\Controllers\Etudiant\EmploiDuTempsController as EtudiantEmploiDuTempsController;
+use App\Http\Controllers\Etudiant\NoteController as EtudiantNoteController;
+use App\Http\Controllers\Etudiant\PaiementController as EtudiantPaiementController;
+use App\Http\Controllers\Etudiant\ProfilController;
+use App\Http\Controllers\Financier\PaiementController as FinancierPaiementController;
+use App\Http\Controllers\Financier\RapportController;
+use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceController;
+use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiDuTempsController;
+use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
+use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
+use App\Http\Controllers\Recouvrement\EngagementController;
+use App\Http\Controllers\Recouvrement\ImpayeController;
+use App\Http\Controllers\Recouvrement\RechercheController;
+use App\Http\Controllers\Recouvrement\RelanceController;
+use App\Http\Controllers\Recouvrement\StatistiqueController as RecouvrementStatistiqueController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('guest')->group(function () {
+    Route::get('/', [LoginController::class, 'showWelcome'])->name('welcome');
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
+
+    Route::get('/inscription', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/inscription', [RegisterController::class, 'register'])->middleware('throttle:5,1');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/mot-de-passe', [ProfileController::class, 'edit'])->name('profile.password.edit');
+    Route::put('/mot-de-passe', [ProfileController::class, 'update'])->name('profile.password.update');
+
+    // ===== Administrateur =====
+    Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('utilisateurs', UserController::class)->except('show');
+        Route::get('statistiques', [StatistiqueController::class, 'index'])->name('statistiques');
+    });
+
+    // ===== Agent comptable =====
+    Route::middleware('role:agent_comptable')->prefix('comptabilite')->name('comptabilite.')->group(function () {
+        Route::get('paiements', [ComptabilitePaiementController::class, 'index'])->name('paiements.index');
+        Route::get('paiements/creer', [ComptabilitePaiementController::class, 'create'])->name('paiements.create');
+        Route::post('paiements', [ComptabilitePaiementController::class, 'store'])->name('paiements.store');
+        Route::get('paiements/{paiement}/modifier', [ComptabilitePaiementController::class, 'edit'])->name('paiements.edit');
+        Route::put('paiements/{paiement}', [ComptabilitePaiementController::class, 'update'])->name('paiements.update');
+        Route::get('paiements/{paiement}/recu', [ComptabilitePaiementController::class, 'recu'])->name('paiements.recu');
+        Route::get('debiteurs', [DebiteurController::class, 'index'])->name('debiteurs.index');
+    });
+
+    // ===== Agent de recouvrement =====
+    Route::middleware('role:agent_recouvrement')->prefix('recouvrement')->name('recouvrement.')->group(function () {
+        Route::get('impayes', [ImpayeController::class, 'index'])->name('impayes.index');
+        Route::get('recherche', [RechercheController::class, 'index'])->name('recherche.index');
+        Route::resource('engagements', EngagementController::class)->except(['show', 'destroy']);
+        Route::get('relances', [RelanceController::class, 'index'])->name('relances.index');
+        Route::post('relances/{engagement}', [RelanceController::class, 'relancer'])->name('relances.relancer');
+        Route::get('statistiques', [RecouvrementStatistiqueController::class, 'index'])->name('statistiques');
+    });
+
+    // ===== Responsable financier =====
+    Route::middleware('role:responsable_financier')->prefix('financier')->name('financier.')->group(function () {
+        Route::get('paiements', [FinancierPaiementController::class, 'index'])->name('paiements.index');
+        Route::patch('paiements/{paiement}/valider', [FinancierPaiementController::class, 'valider'])->name('paiements.valider');
+        Route::get('rapports', [RapportController::class, 'index'])->name('rapports.index');
+        Route::get('statistiques', [FinancierStatistiqueController::class, 'index'])->name('statistiques');
+    });
+
+    // ===== Étudiant =====
+    Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
+        Route::get('profil', [ProfilController::class, 'index'])->name('profil.index');
+        Route::get('notes', [EtudiantNoteController::class, 'index'])->name('notes.index');
+        Route::get('bulletin', [BulletinController::class, 'index'])->name('bulletin.index');
+        Route::get('absences', [EtudiantAbsenceController::class, 'index'])->name('absences.index');
+        Route::get('emploi-du-temps', [EtudiantEmploiDuTempsController::class, 'index'])->name('edt.index');
+        Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
+        Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
+    });
+
+    // ===== Professeur =====
+    Route::middleware('role:professeur')->prefix('professeur')->name('professeur.')->group(function () {
+        Route::get('emploi-du-temps', [ProfesseurEmploiDuTempsController::class, 'index'])->name('edt.index');
+        Route::get('etudiants', [ProfesseurEtudiantController::class, 'index'])->name('etudiants.index');
+        Route::get('notes', [ProfesseurNoteController::class, 'index'])->name('notes.index');
+        Route::get('notes/creer', [ProfesseurNoteController::class, 'create'])->name('notes.create');
+        Route::post('notes', [ProfesseurNoteController::class, 'store'])->name('notes.store');
+        Route::get('notes/{note}/modifier', [ProfesseurNoteController::class, 'edit'])->name('notes.edit');
+        Route::put('notes/{note}', [ProfesseurNoteController::class, 'update'])->name('notes.update');
+        Route::get('absences', [ProfesseurAbsenceController::class, 'index'])->name('absences.index');
+        Route::get('absences/creer', [ProfesseurAbsenceController::class, 'create'])->name('absences.create');
+        Route::post('absences', [ProfesseurAbsenceController::class, 'store'])->name('absences.store');
+        Route::get('absences/{absence}/modifier', [ProfesseurAbsenceController::class, 'edit'])->name('absences.edit');
+        Route::put('absences/{absence}', [ProfesseurAbsenceController::class, 'update'])->name('absences.update');
+    });
+});

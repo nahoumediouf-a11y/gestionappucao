@@ -7,6 +7,22 @@
     ? "Posez vos questions sur votre situation académique, financière, vos absences, ou demandez des conseils et explications de cours."
     : "Posez vos questions sur votre situation académique, financière ou vos absences.")
 
+@push('styles')
+<style>
+#ucao-chat-messages { overflow-x: hidden; }
+.ucao-chat-bubble { min-width: 0; }
+.ucao-chat-markdown { display: block; min-width: 0; max-width: 100%; }
+.ucao-chat-markdown > *:last-child { margin-bottom: 0; }
+.ucao-chat-markdown table { width: 100%; margin-top: .5rem; margin-bottom: .5rem; }
+.ucao-chat-markdown th, .ucao-chat-markdown td { padding: .35rem .5rem; }
+.ucao-chat-markdown .table-responsive { max-width: 100%; }
+.ucao-chat-markdown pre { background: rgba(0, 0, 0, .05); padding: .5rem; border-radius: .375rem; overflow-x: auto; }
+.ucao-chat-markdown code { background: rgba(0, 0, 0, .05); padding: .1rem .3rem; border-radius: .25rem; }
+[data-theme="dark"] .ucao-chat-markdown pre,
+[data-theme="dark"] .ucao-chat-markdown code { background: rgba(255, 255, 255, .1); }
+</style>
+@endpush
+
 @section('page-content')
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
@@ -43,6 +59,8 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/marked@13.0.3/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script>
 (function () {
     const form = document.getElementById('ucao-chat-form');
@@ -63,13 +81,37 @@
         wrapper.className = 'd-flex mb-2' + (fromUser ? ' justify-content-end' : '');
 
         const bubble = document.createElement('div');
-        bubble.className = (fromUser ? 'bg-primary text-white' : 'bg-light') + ' rounded-3 p-3';
+        bubble.className = (fromUser ? 'bg-primary text-white' : 'bg-light') + ' rounded-3 p-3 ucao-chat-bubble';
         bubble.style.maxWidth = '80%';
-        bubble.style.whiteSpace = 'pre-wrap';
-        if (!fromUser) {
-            bubble.innerHTML = '<i class="bi bi-robot me-1"></i>';
+
+        if (fromUser) {
+            bubble.style.whiteSpace = 'pre-wrap';
+            bubble.append(document.createTextNode(content));
+        } else {
+            bubble.classList.add('d-flex');
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-robot me-1 flex-shrink-0';
+            const body = document.createElement('div');
+            body.className = 'ucao-chat-markdown';
+
+            if (window.marked && window.DOMPurify) {
+                const html = marked.parse(content, { breaks: true });
+                body.innerHTML = DOMPurify.sanitize(html);
+                body.querySelectorAll('table').forEach(function (table) {
+                    table.classList.add('table', 'table-bordered', 'table-sm');
+                    const responsive = document.createElement('div');
+                    responsive.className = 'table-responsive';
+                    table.parentNode.insertBefore(responsive, table);
+                    responsive.appendChild(table);
+                });
+            } else {
+                body.style.whiteSpace = 'pre-wrap';
+                body.append(document.createTextNode(content));
+            }
+
+            bubble.appendChild(icon);
+            bubble.appendChild(body);
         }
-        bubble.append(document.createTextNode(content));
 
         wrapper.appendChild(bubble);
         messages.appendChild(wrapper);

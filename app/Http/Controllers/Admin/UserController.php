@@ -51,6 +51,8 @@ class UserController extends Controller
                 'niveau' => $validated['niveau'],
                 'filiere' => $validated['filiere'],
                 'solde' => $validated['solde'] ?? 0,
+                'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
+                'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
             ]);
         }
 
@@ -96,6 +98,8 @@ class UserController extends Controller
                     'niveau' => $validated['niveau'],
                     'filiere' => $validated['filiere'],
                     'solde' => $validated['solde'] ?? 0,
+                    'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
+                    'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
                 ]
             );
         }
@@ -134,6 +138,8 @@ class UserController extends Controller
             'niveau' => ['required_if:role,etudiant', 'nullable', 'string', 'max:50'],
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],
             'solde' => ['nullable', 'numeric', 'min:0'],
+            'contact_urgence_nom' => ['nullable', 'string', 'max:255'],
+            'contact_urgence_telephone' => ['nullable', 'string', 'max:30'],
         ];
 
         $rules['password'] = $user

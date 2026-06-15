@@ -76,4 +76,15 @@
         <input type="number" step="0.01" min="0" class="form-control @error('solde') is-invalid @enderror" id="solde" name="solde" value="{{ old('solde', $user?->etudiant?->solde) }}">
         @error('solde') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
+
+    <div class="col-md-6">
+        <label for="contact_urgence_nom" class="form-label">Contact d'urgence — Nom (parent/tuteur)</label>
+        <input type="text" class="form-control @error('contact_urgence_nom') is-invalid @enderror" id="contact_urgence_nom" name="contact_urgence_nom" value="{{ old('contact_urgence_nom', $user?->etudiant?->contact_urgence_nom) }}">
+        @error('contact_urgence_nom') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+    <div class="col-md-6">
+        <label for="contact_urgence_telephone" class="form-label">Contact d'urgence — Téléphone</label>
+        <input type="text" class="form-control @error('contact_urgence_telephone') is-invalid @enderror" id="contact_urgence_telephone" name="contact_urgence_telephone" value="{{ old('contact_urgence_telephone', $user?->etudiant?->contact_urgence_telephone) }}">
+        @error('contact_urgence_telephone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
 </div>

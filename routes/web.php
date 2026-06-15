@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     // ===== Étudiant =====
     Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
         Route::get('profil', [ProfilController::class, 'index'])->name('profil.index');
+        Route::put('profil/contact-urgence', [ProfilController::class, 'updateContactUrgence'])->name('profil.contact-urgence.update');
         Route::get('notes', [EtudiantNoteController::class, 'index'])->name('notes.index');
         Route::get('bulletin', [BulletinController::class, 'index'])->name('bulletin.index');
         Route::get('absences', [EtudiantAbsenceController::class, 'index'])->name('absences.index');

@@ -32,10 +32,18 @@ class SituationRougeNotification extends Notification
     {
         $this->etudiant->loadMissing('user');
 
+        $contact = $this->etudiant->contact_urgence_telephone
+            ? sprintf(
+                ' Contact parent/tuteur à prévenir : %s (%s).',
+                $this->etudiant->contact_urgence_nom ?: 'non renseigné',
+                $this->etudiant->contact_urgence_telephone,
+            )
+            : ' Aucun contact parent/tuteur renseigné pour cet étudiant.';
+
         return [
             'titre' => 'Situation rouge — absences',
             'message' => sprintf(
-                '%s (%s, %s %s) a atteint %d absences non justifiées (dernière en %s le %s). Accès aux examens bloqué.',
+                '%s (%s, %s %s) a atteint %d absences non justifiées (dernière en %s le %s). Accès aux examens bloqué.%s',
                 $this->etudiant->user->nom_complet,
                 $this->etudiant->matricule,
                 $this->etudiant->filiere,
@@ -43,6 +51,7 @@ class SituationRougeNotification extends Notification
                 $this->etudiant->absencesNonJustifieesCount(),
                 $this->absence->matiere,
                 $this->absence->date->format('d/m/Y'),
+                $contact,
             ),
             'etudiant_id' => $this->etudiant->id,
         ];

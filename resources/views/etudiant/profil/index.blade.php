@@ -53,5 +53,31 @@
             </div>
         </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h3 class="h6 text-muted mb-3">Contact d'urgence (parent / tuteur)</h3>
+                <p class="text-muted small">Cette personne sera contactée par l'administration en cas de situation rouge (absences répétées) ou d'accident.</p>
+                <form method="POST" action="{{ route('etudiant.profil.contact-urgence.update') }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-2">
+                        <label for="contact_urgence_nom" class="form-label">Nom du parent / tuteur</label>
+                        <input type="text" class="form-control @error('contact_urgence_nom') is-invalid @enderror" id="contact_urgence_nom" name="contact_urgence_nom" value="{{ old('contact_urgence_nom', $etudiant->contact_urgence_nom) }}" required>
+                        @error('contact_urgence_nom') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact_urgence_telephone" class="form-label">Téléphone du parent / tuteur</label>
+                        <input type="text" class="form-control @error('contact_urgence_telephone') is-invalid @enderror" id="contact_urgence_telephone" name="contact_urgence_telephone" value="{{ old('contact_urgence_telephone', $etudiant->contact_urgence_telephone) }}" required>
+                        @error('contact_urgence_telephone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <button type="submit" class="btn btn-ucao btn-sm">
+                        <i class="bi bi-save me-1"></i>Enregistrer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

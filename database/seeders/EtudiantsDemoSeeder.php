@@ -76,9 +76,20 @@ class EtudiantsDemoSeeder extends Seeder
                 2, 3 => $fraisTotal,
             };
 
+            $parentPrenom = $prenoms[($idx + 5) % count($prenoms)];
+            $parentNom = $noms[($idx * 11 + 3) % count($noms)];
+            $parentTelephone = sprintf('+221 7%d %03d %02d %02d', [6, 7, 8][($idx + 1) % 3], 200 + $idx, ($idx * 4) % 100, ($idx * 7) % 100);
+
             $etudiant = Etudiant::updateOrCreate(
                 ['user_id' => $user->id],
-                ['matricule' => $matricule, 'niveau' => $niveau, 'filiere' => $filiere, 'solde' => $solde]
+                [
+                    'matricule' => $matricule,
+                    'niveau' => $niveau,
+                    'filiere' => $filiere,
+                    'solde' => $solde,
+                    'contact_urgence_nom' => $parentPrenom.' '.$parentNom,
+                    'contact_urgence_telephone' => $parentTelephone,
+                ]
             );
 
             $reference = 'REC-2024-'.str_pad((string) (1010 + $idx), 4, '0', STR_PAD_LEFT);

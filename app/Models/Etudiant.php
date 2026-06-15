@@ -20,6 +20,8 @@ class Etudiant extends Model
         'niveau',
         'filiere',
         'solde',
+        'contact_urgence_nom',
+        'contact_urgence_telephone',
     ];
 
     protected function casts(): array

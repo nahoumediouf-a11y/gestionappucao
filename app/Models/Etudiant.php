@@ -22,6 +22,7 @@ class Etudiant extends Model
         'solde',
         'contact_urgence_nom',
         'contact_urgence_telephone',
+        'email_parent',
         'adresse',
         'date_naissance',
         'lieu_naissance',

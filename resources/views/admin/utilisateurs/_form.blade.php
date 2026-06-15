@@ -110,4 +110,11 @@
         <input type="text" class="form-control @error('contact_urgence_telephone') is-invalid @enderror" id="contact_urgence_telephone" name="contact_urgence_telephone" value="{{ old('contact_urgence_telephone', $user?->etudiant?->contact_urgence_telephone) }}">
         @error('contact_urgence_telephone') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
+
+    <div class="col-md-6">
+        <label for="email_parent" class="form-label">Email du parent / tuteur</label>
+        <input type="email" class="form-control @error('email_parent') is-invalid @enderror" id="email_parent" name="email_parent" value="{{ old('email_parent', $user?->etudiant?->email_parent) }}">
+        <div class="form-text">En cas d'absences répétées ou de baisse de note, un email d'information sera envoyé à cette adresse.</div>
+        @error('email_parent') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
 </div>

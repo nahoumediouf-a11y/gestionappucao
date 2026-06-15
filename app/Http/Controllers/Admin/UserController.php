@@ -71,6 +71,7 @@ class UserController extends Controller
                 'lieu_naissance' => $validated['lieu_naissance'] ?? null,
                 'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
                 'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
+                'email_parent' => $validated['email_parent'] ?? null,
             ]);
         }
 
@@ -120,6 +121,7 @@ class UserController extends Controller
                     'adresse' => $validated['adresse'] ?? null,
                     'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
                     'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
+                    'email_parent' => $validated['email_parent'] ?? null,
                 ]
             );
         }
@@ -164,6 +166,7 @@ class UserController extends Controller
             'lieu_naissance' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['nullable', 'string', 'max:255'],
             'contact_urgence_telephone' => ['nullable', 'string', 'max:30'],
+            'email_parent' => ['nullable', 'email', 'max:255'],
         ];
 
         $rules['password'] = $user

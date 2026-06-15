@@ -28,6 +28,7 @@ class ProfilController extends Controller
             'lieu_naissance' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['required', 'string', 'max:255'],
             'contact_urgence_telephone' => ['required', 'string', 'max:30'],
+            'email_parent' => ['nullable', 'email', 'max:255'],
         ]);
 
         auth()->user()->update(['telephone' => $validated['telephone'] ?? null]);
@@ -38,6 +39,7 @@ class ProfilController extends Controller
             'lieu_naissance' => $validated['lieu_naissance'] ?? null,
             'contact_urgence_nom' => $validated['contact_urgence_nom'],
             'contact_urgence_telephone' => $validated['contact_urgence_telephone'],
+            'email_parent' => $validated['email_parent'] ?? null,
         ]);
 
         return back()->with('success', 'Coordonnées et contact d\'urgence mis à jour.');

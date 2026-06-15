@@ -9,6 +9,7 @@ use App\Models\Absence;
 use App\Models\Etudiant;
 use App\Models\User;
 use App\Notifications\SituationRougeNotification;
+use App\Support\ParentNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -78,6 +79,8 @@ class AbsenceController extends Controller
         foreach ($admins as $admin) {
             $admin->notify(new SituationRougeNotification($etudiant, $absence));
         }
+
+        ParentNotifier::absencesRepetees($etudiant);
     }
 
     public function edit(Absence $absence): View

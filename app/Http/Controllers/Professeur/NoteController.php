@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Professeur;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Professeur\Concerns\InteractsWithEtudiants;
 use App\Models\Note;
+use App\Support\ParentNotifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -45,10 +46,19 @@ class NoteController extends Controller
             'valeur' => ['required', 'numeric', 'min:0', 'max:20'],
         ]);
 
-        Note::create([
+        $ancienneNote = Note::where('etudiant_id', $validated['etudiant_id'])
+            ->where('matiere', $validated['matiere'])
+            ->orderByDesc('id')
+            ->first();
+
+        $note = Note::create([
             ...$validated,
             'professeur_id' => auth()->id(),
         ]);
+
+        if ($ancienneNote && (float) $validated['valeur'] < (float) $ancienneNote->valeur) {
+            ParentNotifier::baisseNote($note->etudiant, $note, (float) $ancienneNote->valeur);
+        }
 
         return redirect()->route('professeur.notes.index')->with('success', 'Note enregistrée avec succès.');
     }
@@ -74,7 +84,13 @@ class NoteController extends Controller
             'valeur' => ['required', 'numeric', 'min:0', 'max:20'],
         ]);
 
+        $ancienneValeur = (float) $note->valeur;
+
         $note->update($validated);
+
+        if ((float) $validated['valeur'] < $ancienneValeur) {
+            ParentNotifier::baisseNote($note->etudiant, $note, $ancienneValeur);
+        }
 
         return redirect()->route('professeur.notes.index')->with('success', 'Note modifiée avec succès.');
     }

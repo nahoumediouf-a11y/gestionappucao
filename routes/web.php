@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\EmploiDuTempsController as AdminEmploiDuTempsController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\NotificationController as UserNotificationController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -66,6 +68,13 @@ Route::middleware('auth')->group(function () {
         Route::get('statistiques', [StatistiqueController::class, 'index'])->name('statistiques');
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/lue', [NotificationController::class, 'read'])->name('notifications.read');
+
+        Route::get('emploi-du-temps', [AdminEmploiDuTempsController::class, 'index'])->name('emploi-du-temps.index');
+        Route::get('emploi-du-temps/creer', [AdminEmploiDuTempsController::class, 'create'])->name('emploi-du-temps.create');
+        Route::post('emploi-du-temps', [AdminEmploiDuTempsController::class, 'store'])->name('emploi-du-temps.store');
+        Route::get('emploi-du-temps/{creneau}/modifier', [AdminEmploiDuTempsController::class, 'edit'])->name('emploi-du-temps.edit');
+        Route::put('emploi-du-temps/{creneau}', [AdminEmploiDuTempsController::class, 'update'])->name('emploi-du-temps.update');
+        Route::delete('emploi-du-temps/{creneau}', [AdminEmploiDuTempsController::class, 'destroy'])->name('emploi-du-temps.destroy');
     });
 
     // ===== Agent comptable =====
@@ -99,6 +108,8 @@ Route::middleware('auth')->group(function () {
 
     // ===== Étudiant =====
     Route::middleware('role:etudiant')->prefix('etudiant')->name('etudiant.')->group(function () {
+        Route::get('notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('notifications/{notification}/lue', [UserNotificationController::class, 'read'])->name('notifications.read');
         Route::get('profil', [ProfilController::class, 'index'])->name('profil.index');
         Route::put('profil/contact-urgence', [ProfilController::class, 'updateContactUrgence'])->name('profil.contact-urgence.update');
         Route::get('notes', [EtudiantNoteController::class, 'index'])->name('notes.index');
@@ -115,6 +126,8 @@ Route::middleware('auth')->group(function () {
 
     // ===== Professeur =====
     Route::middleware('role:professeur')->prefix('professeur')->name('professeur.')->group(function () {
+        Route::get('notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('notifications/{notification}/lue', [UserNotificationController::class, 'read'])->name('notifications.read');
         Route::get('emploi-du-temps', [ProfesseurEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('etudiants', [ProfesseurEtudiantController::class, 'index'])->name('etudiants.index');
         Route::get('notes', [ProfesseurNoteController::class, 'index'])->name('notes.index');

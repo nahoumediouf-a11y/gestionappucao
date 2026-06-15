@@ -24,6 +24,8 @@ class ProfilController extends Controller
         $validated = $request->validate([
             'telephone' => ['nullable', 'string', 'max:30'],
             'adresse' => ['nullable', 'string', 'max:255'],
+            'date_naissance' => ['nullable', 'date'],
+            'lieu_naissance' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['required', 'string', 'max:255'],
             'contact_urgence_telephone' => ['required', 'string', 'max:30'],
         ]);
@@ -32,6 +34,8 @@ class ProfilController extends Controller
 
         auth()->user()->etudiant->update([
             'adresse' => $validated['adresse'] ?? null,
+            'date_naissance' => $validated['date_naissance'] ?? null,
+            'lieu_naissance' => $validated['lieu_naissance'] ?? null,
             'contact_urgence_nom' => $validated['contact_urgence_nom'],
             'contact_urgence_telephone' => $validated['contact_urgence_telephone'],
         ]);

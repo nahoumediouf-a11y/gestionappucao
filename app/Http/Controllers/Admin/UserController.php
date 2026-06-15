@@ -53,6 +53,8 @@ class UserController extends Controller
                 'filiere' => $validated['filiere'],
                 'solde' => $validated['solde'] ?? 0,
                 'adresse' => $validated['adresse'] ?? null,
+                'date_naissance' => $validated['date_naissance'] ?? null,
+                'lieu_naissance' => $validated['lieu_naissance'] ?? null,
                 'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
                 'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
             ]);
@@ -144,6 +146,8 @@ class UserController extends Controller
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],
             'solde' => ['nullable', 'numeric', 'min:0'],
             'adresse' => ['nullable', 'string', 'max:255'],
+            'date_naissance' => ['nullable', 'date'],
+            'lieu_naissance' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['nullable', 'string', 'max:255'],
             'contact_urgence_telephone' => ['nullable', 'string', 'max:30'],
         ];

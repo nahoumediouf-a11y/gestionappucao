@@ -16,6 +16,8 @@
                     <tr><th class="text-muted">Email</th><td>{{ auth()->user()->email ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Téléphone</th><td>{{ auth()->user()->telephone ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Adresse</th><td>{{ $etudiant->adresse ?? '—' }}</td></tr>
+                    <tr><th class="text-muted">Date de naissance</th><td>{{ optional($etudiant->date_naissance)->format('d/m/Y') ?? '—' }}</td></tr>
+                    <tr><th class="text-muted">Lieu de naissance</th><td>{{ $etudiant->lieu_naissance ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Filière</th><td>{{ $etudiant->filiere }}</td></tr>
                     <tr><th class="text-muted">Niveau</th><td>{{ $etudiant->niveau }}</td></tr>
                 </table>
@@ -72,6 +74,18 @@
                         <label for="adresse" class="form-label">Mon adresse</label>
                         <input type="text" class="form-control @error('adresse') is-invalid @enderror" id="adresse" name="adresse" value="{{ old('adresse', $etudiant->adresse) }}">
                         @error('adresse') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label for="date_naissance" class="form-label">Date de naissance</label>
+                            <input type="date" class="form-control @error('date_naissance') is-invalid @enderror" id="date_naissance" name="date_naissance" value="{{ old('date_naissance', optional($etudiant->date_naissance)->format('Y-m-d')) }}">
+                            @error('date_naissance') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lieu_naissance" class="form-label">Lieu de naissance</label>
+                            <input type="text" class="form-control @error('lieu_naissance') is-invalid @enderror" id="lieu_naissance" name="lieu_naissance" value="{{ old('lieu_naissance', $etudiant->lieu_naissance) }}">
+                            @error('lieu_naissance') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                     </div>
                     <div class="mb-2">
                         <label for="contact_urgence_nom" class="form-label">Nom du parent / tuteur</label>

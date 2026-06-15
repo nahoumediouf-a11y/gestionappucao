@@ -116,6 +116,7 @@ class AssistantService
             Filière / Niveau : {$etudiant->filiere} {$etudiant->niveau}
             Téléphone : {$user->telephone}
             Adresse : {$etudiant->adresse}
+            Date et lieu de naissance : {$etudiant->date_naissance?->format('d/m/Y')} à {$etudiant->lieu_naissance}
             Contact d'urgence : {$etudiant->contact_urgence_nom} ({$etudiant->contact_urgence_telephone})
             Solde restant à payer : {$etudiant->solde} FCFA
             Moyenne générale : {$etudiant->moyenne()}/20

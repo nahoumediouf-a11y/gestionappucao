@@ -49,6 +49,9 @@
                                 <i class="bi bi-telephone"></i> {{ $user->telephone ?? '—' }}
                                 · <i class="bi bi-geo-alt"></i> {{ $user->etudiant->adresse ?? '—' }}
                                 <br>
+                                <i class="bi bi-cake2"></i> Né(e) le {{ optional($user->etudiant->date_naissance)->format('d/m/Y') ?? '—' }}
+                                à {{ $user->etudiant->lieu_naissance ?? '—' }}
+                                <br>
                                 <i class="bi bi-person-heart"></i> Urgence : {{ $user->etudiant->contact_urgence_nom ?? '—' }}
                                 ({{ $user->etudiant->contact_urgence_telephone ?? '—' }})
                             @endif

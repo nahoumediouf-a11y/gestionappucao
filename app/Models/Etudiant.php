@@ -23,12 +23,15 @@ class Etudiant extends Model
         'contact_urgence_nom',
         'contact_urgence_telephone',
         'adresse',
+        'date_naissance',
+        'lieu_naissance',
     ];
 
     protected function casts(): array
     {
         return [
             'solde' => 'decimal:2',
+            'date_naissance' => 'date',
         ];
     }
 

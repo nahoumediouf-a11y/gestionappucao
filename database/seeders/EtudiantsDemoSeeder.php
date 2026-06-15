@@ -40,6 +40,8 @@ class EtudiantsDemoSeeder extends Seeder
 
         $quartiers = ['Médina', 'Plateau', 'Sicap', 'Yoff', 'Parcelles Assainies', 'Liberté', 'Grand Yoff', 'Ouakam'];
 
+        $villesNaissance = ['Dakar', 'Thiès', 'Saint-Louis', 'Kaolack', 'Ziguinchor', 'Mbour', 'Touba', 'Rufisque', 'Diourbel', 'Louga'];
+
         $profs = User::whereIn('login', ['prof', 'prof2', 'prof3'])->get()->values();
         $comptable = User::where('login', 'comptable')->first();
         $admin = User::where('login', 'admin')->first();
@@ -82,6 +84,9 @@ class EtudiantsDemoSeeder extends Seeder
             $parentNom = $noms[($idx * 11 + 3) % count($noms)];
             $parentTelephone = sprintf('+221 7%d %03d %02d %02d', [6, 7, 8][($idx + 1) % 3], 200 + $idx, ($idx * 4) % 100, ($idx * 7) % 100);
             $adresse = sprintf('Cité %s, Villa %d, Dakar', $quartiers[$idx % count($quartiers)], 10 + $idx);
+            $age = 19 + ($idx % 6);
+            $dateNaissance = now()->subYears($age)->subDays(($idx * 17) % 365)->format('Y-m-d');
+            $lieuNaissance = $villesNaissance[$idx % count($villesNaissance)];
 
             $etudiant = Etudiant::updateOrCreate(
                 ['user_id' => $user->id],
@@ -91,6 +96,8 @@ class EtudiantsDemoSeeder extends Seeder
                     'filiere' => $filiere,
                     'solde' => $solde,
                     'adresse' => $adresse,
+                    'date_naissance' => $dateNaissance,
+                    'lieu_naissance' => $lieuNaissance,
                     'contact_urgence_nom' => $parentPrenom.' '.$parentNom,
                     'contact_urgence_telephone' => $parentTelephone,
                 ]

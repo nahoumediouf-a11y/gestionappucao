@@ -38,6 +38,8 @@ class EtudiantsDemoSeeder extends Seeder
 
         $modesPaiement = ['especes', 'virement', 'mobile_money'];
 
+        $quartiers = ['Médina', 'Plateau', 'Sicap', 'Yoff', 'Parcelles Assainies', 'Liberté', 'Grand Yoff', 'Ouakam'];
+
         $profs = User::whereIn('login', ['prof', 'prof2', 'prof3'])->get()->values();
         $comptable = User::where('login', 'comptable')->first();
         $admin = User::where('login', 'admin')->first();
@@ -79,6 +81,7 @@ class EtudiantsDemoSeeder extends Seeder
             $parentPrenom = $prenoms[($idx + 5) % count($prenoms)];
             $parentNom = $noms[($idx * 11 + 3) % count($noms)];
             $parentTelephone = sprintf('+221 7%d %03d %02d %02d', [6, 7, 8][($idx + 1) % 3], 200 + $idx, ($idx * 4) % 100, ($idx * 7) % 100);
+            $adresse = sprintf('Cité %s, Villa %d, Dakar', $quartiers[$idx % count($quartiers)], 10 + $idx);
 
             $etudiant = Etudiant::updateOrCreate(
                 ['user_id' => $user->id],
@@ -87,6 +90,7 @@ class EtudiantsDemoSeeder extends Seeder
                     'niveau' => $niveau,
                     'filiere' => $filiere,
                     'solde' => $solde,
+                    'adresse' => $adresse,
                     'contact_urgence_nom' => $parentPrenom.' '.$parentNom,
                     'contact_urgence_telephone' => $parentTelephone,
                 ]

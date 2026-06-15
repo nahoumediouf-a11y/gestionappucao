@@ -45,6 +45,12 @@
                                 @if ($user->etudiant->enSituationRouge())
                                     <span class="badge bg-danger ms-1">Situation rouge</span>
                                 @endif
+                                <br>
+                                <i class="bi bi-telephone"></i> {{ $user->telephone ?? '—' }}
+                                · <i class="bi bi-geo-alt"></i> {{ $user->etudiant->adresse ?? '—' }}
+                                <br>
+                                <i class="bi bi-person-heart"></i> Urgence : {{ $user->etudiant->contact_urgence_nom ?? '—' }}
+                                ({{ $user->etudiant->contact_urgence_telephone ?? '—' }})
                             @endif
                         </td>
                         <td class="text-end">

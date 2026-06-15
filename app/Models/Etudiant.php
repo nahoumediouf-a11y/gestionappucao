@@ -22,6 +22,7 @@ class Etudiant extends Model
         'solde',
         'contact_urgence_nom',
         'contact_urgence_telephone',
+        'adresse',
     ];
 
     protected function casts(): array

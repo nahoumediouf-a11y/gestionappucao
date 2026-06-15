@@ -26,6 +26,12 @@
     </div>
 
     <div class="col-md-6">
+        <label for="telephone" class="form-label">Téléphone</label>
+        <input type="text" class="form-control @error('telephone') is-invalid @enderror" id="telephone" name="telephone" value="{{ old('telephone', $user?->telephone) }}">
+        @error('telephone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+
+    <div class="col-md-6">
         <label for="password" class="form-label">Mot de passe {{ $user ? '(laisser vide pour ne pas changer)' : '' }}</label>
         <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" {{ $user ? '' : 'required' }}>
         @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -75,6 +81,12 @@
         <label for="solde" class="form-label">Solde restant (FCFA)</label>
         <input type="number" step="0.01" min="0" class="form-control @error('solde') is-invalid @enderror" id="solde" name="solde" value="{{ old('solde', $user?->etudiant?->solde) }}">
         @error('solde') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+
+    <div class="col-md-6">
+        <label for="adresse" class="form-label">Adresse</label>
+        <input type="text" class="form-control @error('adresse') is-invalid @enderror" id="adresse" name="adresse" value="{{ old('adresse', $user?->etudiant?->adresse) }}">
+        @error('adresse') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
     <div class="col-md-6">

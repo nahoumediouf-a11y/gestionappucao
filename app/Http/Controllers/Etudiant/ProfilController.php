@@ -22,12 +22,20 @@ class ProfilController extends Controller
     public function updateContactUrgence(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'telephone' => ['nullable', 'string', 'max:30'],
+            'adresse' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['required', 'string', 'max:255'],
             'contact_urgence_telephone' => ['required', 'string', 'max:30'],
         ]);
 
-        auth()->user()->etudiant->update($validated);
+        auth()->user()->update(['telephone' => $validated['telephone'] ?? null]);
 
-        return back()->with('success', 'Contact d\'urgence (parent/tuteur) mis à jour.');
+        auth()->user()->etudiant->update([
+            'adresse' => $validated['adresse'] ?? null,
+            'contact_urgence_nom' => $validated['contact_urgence_nom'],
+            'contact_urgence_telephone' => $validated['contact_urgence_telephone'],
+        ]);
+
+        return back()->with('success', 'Coordonnées et contact d\'urgence mis à jour.');
     }
 }

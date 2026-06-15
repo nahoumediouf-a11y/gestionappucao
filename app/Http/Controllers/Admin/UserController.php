@@ -39,6 +39,7 @@ class UserController extends Controller
             'prenom' => $validated['prenom'],
             'login' => $validated['login'],
             'email' => $validated['email'],
+            'telephone' => $validated['telephone'] ?? null,
             'password' => $validated['password'],
             'role' => $validated['role'],
             'statut' => $validated['statut'],
@@ -51,6 +52,7 @@ class UserController extends Controller
                 'niveau' => $validated['niveau'],
                 'filiere' => $validated['filiere'],
                 'solde' => $validated['solde'] ?? 0,
+                'adresse' => $validated['adresse'] ?? null,
                 'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
                 'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
             ]);
@@ -80,6 +82,7 @@ class UserController extends Controller
             'prenom' => $validated['prenom'],
             'login' => $validated['login'],
             'email' => $validated['email'],
+            'telephone' => $validated['telephone'] ?? null,
             'role' => $validated['role'],
             'statut' => $validated['statut'],
         ];
@@ -98,6 +101,7 @@ class UserController extends Controller
                     'niveau' => $validated['niveau'],
                     'filiere' => $validated['filiere'],
                     'solde' => $validated['solde'] ?? 0,
+                    'adresse' => $validated['adresse'] ?? null,
                     'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
                     'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
                 ]
@@ -132,12 +136,14 @@ class UserController extends Controller
             'prenom' => ['required', 'string', 'max:255'],
             'login' => ['required', 'string', 'max:255', 'unique:users,login,'.$userId],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email,'.$userId],
+            'telephone' => ['nullable', 'string', 'max:30'],
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
             'statut' => ['required', 'string', 'in:actif,inactif'],
             'matricule' => ['required_if:role,etudiant', 'nullable', 'string', 'regex:/^\d{7}$/', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
             'niveau' => ['required_if:role,etudiant', 'nullable', 'string', 'max:50'],
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],
             'solde' => ['nullable', 'numeric', 'min:0'],
+            'adresse' => ['nullable', 'string', 'max:255'],
             'contact_urgence_nom' => ['nullable', 'string', 'max:255'],
             'contact_urgence_telephone' => ['nullable', 'string', 'max:30'],
         ];

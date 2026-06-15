@@ -15,6 +15,7 @@
                     <tr><th class="text-muted">Matricule</th><td><code>{{ $etudiant->matricule }}</code></td></tr>
                     <tr><th class="text-muted">Email</th><td>{{ auth()->user()->email ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Téléphone</th><td>{{ auth()->user()->telephone ?? '—' }}</td></tr>
+                    <tr><th class="text-muted">Adresse</th><td>{{ $etudiant->adresse ?? '—' }}</td></tr>
                     <tr><th class="text-muted">Filière</th><td>{{ $etudiant->filiere }}</td></tr>
                     <tr><th class="text-muted">Niveau</th><td>{{ $etudiant->niveau }}</td></tr>
                 </table>
@@ -57,11 +58,21 @@
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body p-4">
-                <h3 class="h6 text-muted mb-3">Contact d'urgence (parent / tuteur)</h3>
-                <p class="text-muted small">Cette personne sera contactée par l'administration en cas de situation rouge (absences répétées) ou d'accident.</p>
+                <h3 class="h6 text-muted mb-3">Coordonnées et contact d'urgence</h3>
+                <p class="text-muted small">Le contact d'urgence sera prévenu par l'administration en cas de situation rouge (absences répétées) ou d'accident.</p>
                 <form method="POST" action="{{ route('etudiant.profil.contact-urgence.update') }}">
                     @csrf
                     @method('PUT')
+                    <div class="mb-2">
+                        <label for="telephone" class="form-label">Mon téléphone</label>
+                        <input type="text" class="form-control @error('telephone') is-invalid @enderror" id="telephone" name="telephone" value="{{ old('telephone', auth()->user()->telephone) }}">
+                        @error('telephone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-2">
+                        <label for="adresse" class="form-label">Mon adresse</label>
+                        <input type="text" class="form-control @error('adresse') is-invalid @enderror" id="adresse" name="adresse" value="{{ old('adresse', $etudiant->adresse) }}">
+                        @error('adresse') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
                     <div class="mb-2">
                         <label for="contact_urgence_nom" class="form-label">Nom du parent / tuteur</label>
                         <input type="text" class="form-control @error('contact_urgence_nom') is-invalid @enderror" id="contact_urgence_nom" name="contact_urgence_nom" value="{{ old('contact_urgence_nom', $etudiant->contact_urgence_nom) }}" required>

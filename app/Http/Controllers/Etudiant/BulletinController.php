@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Etudiant;
 
 use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 
@@ -14,9 +15,15 @@ class BulletinController extends Controller
         return view('etudiant.bulletin.index', $this->donnees());
     }
 
-    public function telecharger(): Response
+    public function telecharger(): Response|RedirectResponse
     {
         $donnees = $this->donnees();
+
+        if (! $donnees['etudiant']->estEnRegleAvecRecouvrement()) {
+            return redirect()
+                ->route('etudiant.bulletin.index')
+                ->with('error', 'Le téléchargement du bulletin est bloqué : vous avez un solde impayé. Veuillez régulariser votre situation auprès du service de recouvrement.');
+        }
 
         $pdf = Pdf::loadView('etudiant.bulletin.pdf', $donnees);
 

@@ -60,4 +60,29 @@ class BulletinPdfTest extends TestCase
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/pdf');
     }
+
+    public function test_student_with_outstanding_balance_cannot_download_bulletin_pdf(): void
+    {
+        $user = User::create([
+            'nom' => 'Diallo',
+            'prenom' => 'Awa',
+            'login' => 'testetudiant',
+            'password' => 'password',
+            'role' => Role::Etudiant,
+            'statut' => 'actif',
+        ]);
+
+        Etudiant::create([
+            'user_id' => $user->id,
+            'matricule' => '1000999',
+            'niveau' => 'L1',
+            'filiere' => 'Informatique',
+            'solde' => 50000,
+        ]);
+
+        $response = $this->actingAs($user)->get('/etudiant/bulletin/pdf');
+
+        $response->assertRedirect(route('etudiant.bulletin.index'));
+        $response->assertSessionHas('error');
+    }
 }

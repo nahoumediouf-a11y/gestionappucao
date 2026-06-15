@@ -6,6 +6,18 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-9">
+            @if (session('error'))
+                <div class="alert alert-danger d-print-none">{{ session('error') }}</div>
+            @endif
+
+            @unless ($etudiant->estEnRegleAvecRecouvrement())
+                <div class="alert alert-warning d-print-none">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Vous avez un solde impayé de <strong>{{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA</strong>.
+                    Le téléchargement du bulletin est bloqué tant que votre situation n'est pas régularisée auprès du service de recouvrement.
+                </div>
+            @endunless
+
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-5">
                     <div class="d-flex justify-content-between align-items-start mb-4">
@@ -62,9 +74,15 @@
             </div>
 
             <div class="text-center mt-3 d-print-none">
-                <a href="{{ route('etudiant.bulletin.pdf') }}" class="btn btn-ucao">
-                    <i class="bi bi-file-earmark-pdf me-1"></i>Télécharger en PDF
-                </a>
+                @if ($etudiant->estEnRegleAvecRecouvrement())
+                    <a href="{{ route('etudiant.bulletin.pdf') }}" class="btn btn-ucao">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Télécharger en PDF
+                    </a>
+                @else
+                    <button type="button" class="btn btn-ucao" disabled title="Solde impayé : régularisez votre situation pour débloquer le téléchargement">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Télécharger en PDF
+                    </button>
+                @endif
                 <button onclick="window.print()" class="btn btn-outline-primary">
                     <i class="bi bi-printer me-1"></i>Imprimer
                 </button>

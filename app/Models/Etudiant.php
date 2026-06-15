@@ -84,4 +84,10 @@ class Etudiant extends Model
     {
         return $this->absencesNonJustifieesCount() >= self::SEUIL_ABSENCES_SITUATION_ROUGE;
     }
+
+    /** L'étudiant est en règle avec le service de recouvrement (aucun solde restant à payer). */
+    public function estEnRegleAvecRecouvrement(): bool
+    {
+        return (float) $this->solde <= 0;
+    }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Reçu '.$paiement->reference.' — Recouvrement UCAO')
+@section('title', 'Reçu '.$paiement->reference.' — SIGE UCAO')
 
 @section('content')
 <div class="container py-5">

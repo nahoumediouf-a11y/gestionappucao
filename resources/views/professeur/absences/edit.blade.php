@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier une absence — Recouvrement UCAO')
+@section('title', 'Modifier une absence — SIGE UCAO')
 
 @section('page-title', 'Modifier une absence')
 @section('page-subtitle', $absence->etudiant->user->nom_complet.' ('.$absence->etudiant->matricule.')')

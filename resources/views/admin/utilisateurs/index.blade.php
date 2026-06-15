@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestion des utilisateurs — Recouvrement UCAO')
+@section('title', 'Gestion des utilisateurs — SIGE UCAO')
 
 @section('page-title', 'Gestion des utilisateurs')
 @section('page-subtitle', 'Ajouter, modifier ou supprimer un utilisateur et gérer les rôles.')

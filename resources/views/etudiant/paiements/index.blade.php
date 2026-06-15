@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Suivi de paiement — Recouvrement UCAO')
+@section('title', 'Suivi de paiement — SIGE UCAO')
 
 @section('page-title', 'Suivi de paiement')
 

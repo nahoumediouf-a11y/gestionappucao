@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bienvenue — Recouvrement UCAO')
+@section('title', 'Bienvenue — SIGE UCAO')
 
 @section('content')
 <div class="auth-wrapper position-relative">

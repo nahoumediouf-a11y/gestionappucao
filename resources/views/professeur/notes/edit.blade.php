@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier une note — Recouvrement UCAO')
+@section('title', 'Modifier une note — SIGE UCAO')
 
 @section('page-title', 'Modifier une note')
 @section('page-subtitle', $note->etudiant->user->nom_complet.' ('.$note->etudiant->matricule.')')

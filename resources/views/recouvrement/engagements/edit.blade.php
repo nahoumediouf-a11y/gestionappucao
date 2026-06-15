@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier un engagement — Recouvrement UCAO')
+@section('title', 'Modifier un engagement — SIGE UCAO')
 
 @section('page-title', 'Modifier l\'engagement')
 @section('page-subtitle', 'Étudiant : '.$engagement->etudiant->user->nom_complet.' ('.$engagement->etudiant->matricule.')')

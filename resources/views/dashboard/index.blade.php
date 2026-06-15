@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Tableau de bord — Recouvrement UCAO')
+@section('title', 'Tableau de bord — SIGE UCAO')
 
 @section('page-title', 'Tableau de bord')
 @section('page-subtitle', "Modules accessibles selon votre rôle dans le diagramme de cas d'utilisation.")

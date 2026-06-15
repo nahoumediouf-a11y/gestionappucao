@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Statistiques — Recouvrement UCAO')
+@section('title', 'Statistiques — SIGE UCAO')
 
 @section('page-title', 'Statistiques globales')
 

@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Créer un engagement — Recouvrement UCAO')
+@section('title', 'Créer un engagement — SIGE UCAO')
 
 @section('page-title', 'Créer un engagement de paiement')
 

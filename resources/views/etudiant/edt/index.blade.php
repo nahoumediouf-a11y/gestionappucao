@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Emploi du temps — Recouvrement UCAO')
+@section('title', 'Emploi du temps — SIGE UCAO')
 
 @section('page-title', 'Emploi du temps')
 @section('page-subtitle', $etudiant->filiere.' — '.$etudiant->niveau)

@@ -4,7 +4,7 @@
 <nav class="navbar navbar-dark navbar-ucao navbar-expand-lg mb-4">
     <div class="container">
         <a href="{{ route('dashboard') }}" class="navbar-brand mb-0 h1 text-decoration-none">
-            <i class="bi bi-bank2 me-2"></i>Recouvrement UCAO
+            <i class="bi bi-bank2 me-2"></i>SIGE UCAO
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ucaoNavbar" aria-controls="ucaoNavbar" aria-expanded="false" aria-label="Afficher le menu">
             <span class="navbar-toggler-icon"></span>

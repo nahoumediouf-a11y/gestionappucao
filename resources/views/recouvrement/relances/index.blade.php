@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Relances — Recouvrement UCAO')
+@section('title', 'Relances — SIGE UCAO')
 
 @section('page-title', 'Relances des débiteurs')
 @section('page-subtitle', 'Engagements en attente ou déjà relancés.')

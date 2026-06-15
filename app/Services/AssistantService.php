@@ -55,7 +55,7 @@ class AssistantService
     private function systemPrompt(User $user): string
     {
         $base = <<<PROMPT
-            Tu es l'assistant virtuel de l'application "Recouvrement UCAO", une plateforme de gestion académique et financière universitaire.
+            Tu es l'assistant virtuel de l'application "SIGE UCAO", une plateforme de gestion académique et financière universitaire.
             Réponds toujours en français, de manière concise, claire et bienveillante.
             Tu ne réponds qu'aux questions liées à l'application : profil, notes, absences, paiements, emploi du temps, projets de classe, documents de cours et situation administrative.
             Si une question sort de ce cadre, indique poliment que tu ne peux aider que sur ces sujets.

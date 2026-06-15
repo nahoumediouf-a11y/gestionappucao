@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Notifications — Recouvrement UCAO')
+@section('title', 'Notifications — SIGE UCAO')
 
 @section('page-title', 'Notifications')
 @section('page-subtitle', "Alertes transmises par les professeurs (situation rouge des étudiants).")

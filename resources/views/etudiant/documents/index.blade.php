@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Documents de cours — Recouvrement UCAO')
+@section('title', 'Documents de cours — SIGE UCAO')
 
 @section('page-title', 'Documents de cours')
 @section('page-subtitle', 'Supports de cours mis en ligne par vos professeurs.')

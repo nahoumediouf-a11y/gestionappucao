@@ -124,7 +124,7 @@
     @endforelse
 
     <div class="footer">
-        Document généré le {{ now()->format('d/m/Y à H:i') }} — Recouvrement UCAO
+        Document généré le {{ now()->format('d/m/Y à H:i') }} — SIGE UCAO
     </div>
 </body>
 </html>

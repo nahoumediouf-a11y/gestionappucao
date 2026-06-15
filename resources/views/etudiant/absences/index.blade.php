@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mes absences — Recouvrement UCAO')
+@section('title', 'Mes absences — SIGE UCAO')
 
 @section('page-title', 'Mes absences')
 

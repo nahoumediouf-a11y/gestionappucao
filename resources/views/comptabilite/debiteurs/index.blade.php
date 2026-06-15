@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Étudiants débiteurs — Recouvrement UCAO')
+@section('title', 'Étudiants débiteurs — SIGE UCAO')
 
 @section('page-title', 'Étudiants débiteurs')
 @section('page-subtitle', 'Étudiants ayant un solde restant à payer.')

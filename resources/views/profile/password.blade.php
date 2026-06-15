@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier le mot de passe — Recouvrement UCAO')
+@section('title', 'Modifier le mot de passe — SIGE UCAO')
 
 @section('page-title', 'Modifier mon mot de passe')
 

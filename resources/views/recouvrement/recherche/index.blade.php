@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Rechercher un étudiant — Recouvrement UCAO')
+@section('title', 'Rechercher un étudiant — SIGE UCAO')
 
 @section('page-title', 'Rechercher un étudiant')
 

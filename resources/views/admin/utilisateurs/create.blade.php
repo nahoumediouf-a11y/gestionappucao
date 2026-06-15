@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Ajouter un utilisateur — Recouvrement UCAO')
+@section('title', 'Ajouter un utilisateur — SIGE UCAO')
 
 @section('page-title', 'Ajouter un utilisateur')
 

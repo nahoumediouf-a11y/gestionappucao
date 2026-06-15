@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier un paiement — Recouvrement UCAO')
+@section('title', 'Modifier un paiement — SIGE UCAO')
 
 @section('page-title', 'Modifier le paiement '.$paiement->reference)
 @section('page-subtitle', 'Étudiant : '.$paiement->etudiant->user->nom_complet.' ('.$paiement->etudiant->matricule.')')

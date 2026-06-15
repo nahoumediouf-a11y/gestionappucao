@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier un utilisateur — Recouvrement UCAO')
+@section('title', 'Modifier un utilisateur — SIGE UCAO')
 
 @section('page-title', 'Modifier l\'utilisateur : '.$user->nom_complet)
 

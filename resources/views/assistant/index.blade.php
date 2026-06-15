@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Assistant IA — Recouvrement UCAO')
+@section('title', 'Assistant IA — SIGE UCAO')
 
 @section('page-title', 'Assistant IA')
 @section('page-subtitle', "Posez vos questions sur votre situation académique, financière ou vos absences.")
@@ -12,7 +12,7 @@
             <div class="d-flex mb-2">
                 <div class="bg-light rounded-3 p-3">
                     <i class="bi bi-robot me-1"></i>
-                    Bonjour {{ auth()->user()->prenom }} ! Je suis l'assistant de Recouvrement UCAO. Posez-moi une question sur votre profil, vos notes, vos absences, votre solde, votre emploi du temps ou vos projets de classe.
+                    Bonjour {{ auth()->user()->prenom }} ! Je suis l'assistant de SIGE UCAO. Posez-moi une question sur votre profil, vos notes, vos absences, votre solde, votre emploi du temps ou vos projets de classe.
                 </div>
             </div>
         </div>

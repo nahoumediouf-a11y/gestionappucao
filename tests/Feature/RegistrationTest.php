@@ -21,8 +21,8 @@ class RegistrationTest extends TestCase
             'email' => 'nouvel.etudiant@example.com',
             'password' => 'password1',
             'password_confirmation' => 'password1',
-            'niveau' => 'L1',
-            'filiere' => 'Informatique',
+            'niveau' => 'L1-1',
+            'filiere' => 'LIG',
             'captcha' => '7',
         ]);
 

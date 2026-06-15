@@ -14,6 +14,19 @@ class Etudiant extends Model
     /** Nombre d'absences non justifiées à partir duquel l'étudiant est en situation rouge (accès examen bloqué). */
     public const SEUIL_ABSENCES_SITUATION_ROUGE = 3;
 
+    /** Filières (licences) proposées par l'établissement. */
+    public const FILIERES = [
+        'LIG' => 'Licence Informatique de Gestion',
+        'LSG' => 'Licence Sciences de Gestion',
+    ];
+
+    /** Classes (niveau + groupe) disponibles pour chaque filière. */
+    public const NIVEAUX = [
+        'L1-1', 'L1-2',
+        'L2-1', 'L2-2',
+        'L3-1', 'L3-2',
+    ];
+
     protected $fillable = [
         'user_id',
         'matricule',

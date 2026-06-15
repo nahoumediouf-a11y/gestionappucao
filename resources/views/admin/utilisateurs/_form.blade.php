@@ -69,14 +69,32 @@
         @error('matricule') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-3">
-        <label for="niveau" class="form-label">Niveau</label>
-        <input type="text" class="form-control @error('niveau') is-invalid @enderror" id="niveau" name="niveau" value="{{ old('niveau', $user?->etudiant?->niveau) }}" placeholder="Ex: L3">
-        @error('niveau') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        <label for="filiere" class="form-label">Filière</label>
+        @php $filiereActuelle = old('filiere', $user?->etudiant?->filiere); @endphp
+        <select class="form-select @error('filiere') is-invalid @enderror" id="filiere" name="filiere">
+            <option value="" disabled {{ $filiereActuelle ? '' : 'selected' }}>Choisir...</option>
+            @if ($filiereActuelle && ! array_key_exists($filiereActuelle, \App\Models\Etudiant::FILIERES))
+                <option value="{{ $filiereActuelle }}" selected>{{ $filiereActuelle }}</option>
+            @endif
+            @foreach (\App\Models\Etudiant::FILIERES as $sigle => $libelle)
+                <option value="{{ $sigle }}" {{ $filiereActuelle === $sigle ? 'selected' : '' }}>{{ $sigle }} — {{ $libelle }}</option>
+            @endforeach
+        </select>
+        @error('filiere') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-3">
-        <label for="filiere" class="form-label">Filière</label>
-        <input type="text" class="form-control @error('filiere') is-invalid @enderror" id="filiere" name="filiere" value="{{ old('filiere', $user?->etudiant?->filiere) }}">
-        @error('filiere') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        <label for="niveau" class="form-label">Classe</label>
+        @php $niveauActuel = old('niveau', $user?->etudiant?->niveau); @endphp
+        <select class="form-select @error('niveau') is-invalid @enderror" id="niveau" name="niveau">
+            <option value="" disabled {{ $niveauActuel ? '' : 'selected' }}>Choisir...</option>
+            @if ($niveauActuel && ! in_array($niveauActuel, \App\Models\Etudiant::NIVEAUX, true))
+                <option value="{{ $niveauActuel }}" selected>{{ $niveauActuel }}</option>
+            @endif
+            @foreach (\App\Models\Etudiant::NIVEAUX as $niveau)
+                <option value="{{ $niveau }}" {{ $niveauActuel === $niveau ? 'selected' : '' }}>{{ $niveau }}</option>
+            @endforeach
+        </select>
+        @error('niveau') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-3">
         <label for="solde" class="form-label">Solde restant (FCFA)</label>

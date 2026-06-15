@@ -28,8 +28,8 @@ class RegisterController extends Controller
             'login' => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9._-]+$/', 'unique:users,login'],
             'email' => ['nullable', 'email', 'max:150', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[A-Za-z])(?=.*\d).+$/', 'confirmed'],
-            'niveau' => ['required', 'string', 'in:L1,L2,L3,M1,M2'],
-            'filiere' => ['required', 'string', 'max:100'],
+            'niveau' => ['required', 'string', 'in:'.implode(',', \App\Models\Etudiant::NIVEAUX)],
+            'filiere' => ['required', 'string', 'in:'.implode(',', array_keys(\App\Models\Etudiant::FILIERES))],
             'captcha' => ['required'],
         ], [
             'login.unique' => 'Ce login est déjà utilisé.',

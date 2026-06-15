@@ -108,25 +108,22 @@
 
                                 <div class="row">
                                     <div class="col-sm-6 mb-3">
-                                        <label for="niveau" class="form-label">Niveau</label>
-                                        <select class="form-select @error('niveau') is-invalid @enderror" id="niveau" name="niveau" required>
-                                            <option value="" disabled {{ old('niveau') ? '' : 'selected' }}>Choisir...</option>
-                                            @foreach (['L1', 'L2', 'L3', 'M1', 'M2'] as $niveau)
-                                                <option value="{{ $niveau }}" {{ old('niveau') === $niveau ? 'selected' : '' }}>{{ $niveau }}</option>
+                                        <label for="filiere" class="form-label">Filière</label>
+                                        <select class="form-select @error('filiere') is-invalid @enderror" id="filiere" name="filiere" required>
+                                            <option value="" disabled {{ old('filiere') ? '' : 'selected' }}>Choisir...</option>
+                                            @foreach (\App\Models\Etudiant::FILIERES as $sigle => $libelle)
+                                                <option value="{{ $sigle }}" {{ old('filiere') === $sigle ? 'selected' : '' }}>{{ $sigle }} — {{ $libelle }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-sm-6 mb-3">
-                                        <label for="filiere" class="form-label">Filière</label>
-                                        <input
-                                            type="text"
-                                            class="form-control @error('filiere') is-invalid @enderror"
-                                            id="filiere"
-                                            name="filiere"
-                                            value="{{ old('filiere') }}"
-                                            placeholder="Ex : Informatique"
-                                            required
-                                        >
+                                        <label for="niveau" class="form-label">Classe</label>
+                                        <select class="form-select @error('niveau') is-invalid @enderror" id="niveau" name="niveau" required>
+                                            <option value="" disabled {{ old('niveau') ? '' : 'selected' }}>Choisir...</option>
+                                            @foreach (\App\Models\Etudiant::NIVEAUX as $niveau)
+                                                <option value="{{ $niveau }}" {{ old('niveau') === $niveau ? 'selected' : '' }}>{{ $niveau }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

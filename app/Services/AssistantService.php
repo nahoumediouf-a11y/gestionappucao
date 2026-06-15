@@ -97,6 +97,18 @@ class AssistantService
             ->map(fn ($p) => "{$p->titre} ({$p->matiere}) — échéance {$p->date_limite->format('d/m/Y')} — {$p->statut()}")
             ->implode("\n- ");
 
+        $emploiDuTemps = $etudiant->emploiDuTemps()
+            ->map(fn ($c) => sprintf(
+                '%s : %s-%s %s (salle %s)%s',
+                $c->jour,
+                substr($c->heure_debut, 0, 5),
+                substr($c->heure_fin, 0, 5),
+                $c->matiere,
+                $c->salle ?: '—',
+                $c->professeur ? ' — Prof. '.$c->professeur->nom_complet : ''
+            ))
+            ->implode("\n- ");
+
         return <<<CTX
             Nom : {$user->nom_complet}
             Rôle : Étudiant
@@ -113,6 +125,8 @@ class AssistantService
             Situation rouge (blocage examens) : {$situationRouge}
             Projets de classe en cours :
             - {$projets}
+            Emploi du temps (jour : horaire matière, salle, professeur) :
+            - {$emploiDuTemps}
             CTX;
     }
 
@@ -124,9 +138,26 @@ class AssistantService
             ->map(fn ($p) => "{$p->titre} ({$p->filiere} {$p->niveau}, {$p->matiere}) — échéance {$p->date_limite->format('d/m/Y')} — {$p->statut()}")
             ->implode("\n- ");
 
+        $emploiDuTemps = $user->creneaux()
+            ->orderBy('jour')->orderBy('heure_debut')
+            ->get()
+            ->map(fn ($c) => sprintf(
+                '%s : %s-%s %s (%s %s, salle %s)',
+                $c->jour,
+                substr($c->heure_debut, 0, 5),
+                substr($c->heure_fin, 0, 5),
+                $c->matiere,
+                $c->filiere,
+                $c->niveau,
+                $c->salle ?: '—'
+            ))
+            ->implode("\n- ");
+
         return <<<CTX
             Nom : {$user->nom_complet}
             Rôle : Professeur
+            Emploi du temps (jour : horaire matière, filière niveau, salle) :
+            - {$emploiDuTemps}
             Projets de classe assignés :
             - {$projets}
             CTX;

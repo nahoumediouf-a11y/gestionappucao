@@ -42,7 +42,7 @@ class EtudiantsDemoSeeder extends Seeder
 
         $villesNaissance = ['Dakar', 'Thiès', 'Saint-Louis', 'Kaolack', 'Ziguinchor', 'Mbour', 'Touba', 'Rufisque', 'Diourbel', 'Louga'];
 
-        $profs = User::whereIn('login', ['prof', 'prof2', 'prof3'])->get()->values();
+        $profs = User::whereIn('login', ['prof', 'prof2', 'prof3', 'prof4', 'prof5'])->get()->values();
         $comptable = User::where('login', 'comptable')->first();
         $admin = User::where('login', 'admin')->first();
 

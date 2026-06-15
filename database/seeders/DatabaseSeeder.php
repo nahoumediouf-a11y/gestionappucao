@@ -75,6 +75,22 @@ class DatabaseSeeder extends Seeder
                 'role' => Role::Professeur,
             ],
             [
+                'nom' => 'Sow',
+                'prenom' => 'Khadija',
+                'login' => 'prof4',
+                'email' => 'prof4@ucao.sn',
+                'password' => 'password',
+                'role' => Role::Professeur,
+            ],
+            [
+                'nom' => 'Diallo',
+                'prenom' => 'Modou',
+                'login' => 'prof5',
+                'email' => 'prof5@ucao.sn',
+                'password' => 'password',
+                'role' => Role::Professeur,
+            ],
+            [
                 'nom' => 'Faye',
                 'prenom' => 'Aminata',
                 'login' => 'etudiant1',
@@ -112,6 +128,8 @@ class DatabaseSeeder extends Seeder
         $prof = User::where('login', 'prof')->first();
         $prof2 = User::where('login', 'prof2')->first();
         $prof3 = User::where('login', 'prof3')->first();
+        $prof4 = User::where('login', 'prof4')->first();
+        $prof5 = User::where('login', 'prof5')->first();
 
         $etu1 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant1')->first()->id],
@@ -249,6 +267,38 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // Emploi du temps (Droit L3)
+        $creneauxDroit = [
+            ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Droit Civil', 'salle' => '3-1', 'professeur_id' => $prof4->id],
+            ['jour' => 'Mardi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Droit Constitutionnel', 'salle' => '3-2', 'professeur_id' => $prof4->id],
+            ['jour' => 'Mercredi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Droit des Affaires', 'salle' => '3-1', 'professeur_id' => $prof4->id],
+            ['jour' => 'Jeudi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Procédure Civile', 'salle' => '3-2', 'professeur_id' => $prof4->id],
+            ['jour' => 'Vendredi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Histoire du Droit', 'salle' => '3-1', 'professeur_id' => $prof4->id],
+        ];
+
+        foreach ($creneauxDroit as $creneau) {
+            EmploiDuTemps::updateOrCreate(
+                ['filiere' => 'Droit', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
+                $creneau
+            );
+        }
+
+        // Emploi du temps (Communication L3)
+        $creneauxCommunication = [
+            ['jour' => 'Lundi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => "Communication d'entreprise", 'salle' => '4-1', 'professeur_id' => $prof5->id],
+            ['jour' => 'Mardi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Théories de la Communication', 'salle' => '4-2', 'professeur_id' => $prof5->id],
+            ['jour' => 'Mercredi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Relations Publiques', 'salle' => '4-1', 'professeur_id' => $prof5->id],
+            ['jour' => 'Jeudi', 'heure_debut' => '14:00', 'heure_fin' => '16:00', 'matiere' => 'Marketing Digital', 'salle' => '4-2', 'professeur_id' => $prof5->id],
+            ['jour' => 'Vendredi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Stratégie de Communication', 'salle' => '4-1', 'professeur_id' => $prof5->id],
+        ];
+
+        foreach ($creneauxCommunication as $creneau) {
+            EmploiDuTemps::updateOrCreate(
+                ['filiere' => 'Communication', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
+                $creneau
+            );
+        }
+
         // Projets de classe
         $projets = [
             ['professeur_id' => $prof->id, 'titre' => 'Mini-projet : Tri et recherche', 'description' => 'Implémenter et comparer plusieurs algorithmes de tri (bulle, rapide, fusion) en pseudo-code et dans un langage au choix.', 'filiere' => 'Informatique', 'niveau' => 'L3', 'matiere' => 'Algorithmique', 'date_limite' => now()->addWeeks(2)->toDateString()],
@@ -258,6 +308,10 @@ class DatabaseSeeder extends Seeder
             ['professeur_id' => $prof3->id, 'titre' => 'Spécification d\'un projet logiciel', 'description' => 'Rédiger le cahier des charges et les diagrammes UML d\'une application de gestion de notes.', 'filiere' => 'Informatique', 'niveau' => 'L3', 'matiere' => 'Génie Logiciel', 'date_limite' => now()->addWeeks(5)->toDateString()],
             ['professeur_id' => $prof2->id, 'titre' => 'Étude de cas : tenue comptable', 'description' => 'Réaliser la comptabilisation des opérations courantes d\'une PME sur un exercice et établir le bilan.', 'filiere' => 'Gestion', 'niveau' => 'L3', 'matiere' => 'Comptabilité Générale', 'date_limite' => now()->addWeeks(2)->toDateString()],
             ['professeur_id' => $prof2->id, 'titre' => 'Plan marketing d\'un nouveau produit', 'description' => 'Élaborer un plan marketing complet (étude de marché, mix marketing, plan d\'action) pour un produit fictif.', 'filiere' => 'Gestion', 'niveau' => 'L3', 'matiere' => 'Marketing', 'date_limite' => now()->addWeeks(3)->toDateString()],
+            ['professeur_id' => $prof4->id, 'titre' => 'Étude de jurisprudence', 'description' => 'Analyser et commenter une décision de justice récente en droit civil.', 'filiere' => 'Droit', 'niveau' => 'L3', 'matiere' => 'Droit Civil', 'date_limite' => now()->addWeeks(2)->toDateString()],
+            ['professeur_id' => $prof4->id, 'titre' => 'Rédaction d\'un contrat commercial', 'description' => 'Rédiger un contrat de vente commerciale en respectant les clauses essentielles du droit des affaires.', 'filiere' => 'Droit', 'niveau' => 'L3', 'matiere' => 'Droit des Affaires', 'date_limite' => now()->addWeeks(4)->toDateString()],
+            ['professeur_id' => $prof5->id, 'titre' => 'Plan de communication d\'entreprise', 'description' => 'Élaborer un plan de communication interne et externe pour une entreprise fictive.', 'filiere' => 'Communication', 'niveau' => 'L3', 'matiere' => "Communication d'entreprise", 'date_limite' => now()->addWeeks(2)->toDateString()],
+            ['professeur_id' => $prof5->id, 'titre' => 'Campagne de marketing digital', 'description' => 'Concevoir une campagne de communication digitale (réseaux sociaux, contenus, calendrier) pour le lancement d\'un produit.', 'filiere' => 'Communication', 'niveau' => 'L3', 'matiere' => 'Marketing Digital', 'date_limite' => now()->addWeeks(3)->toDateString()],
         ];
 
         foreach ($projets as $projet) {

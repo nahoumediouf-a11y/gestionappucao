@@ -3,7 +3,9 @@
 @section('title', 'Assistant IA — SIGE UCAO')
 
 @section('page-title', 'Assistant IA')
-@section('page-subtitle', "Posez vos questions sur votre situation académique, financière ou vos absences.")
+@section('page-subtitle', auth()->user()->role === \App\Enums\Role::Etudiant
+    ? "Posez vos questions sur votre situation académique, financière, vos absences, ou demandez des conseils et explications de cours."
+    : "Posez vos questions sur votre situation académique, financière ou vos absences.")
 
 @section('page-content')
 <div class="card border-0 shadow-sm">
@@ -12,10 +14,23 @@
             <div class="d-flex mb-2">
                 <div class="bg-light rounded-3 p-3">
                     <i class="bi bi-robot me-1"></i>
-                    Bonjour {{ auth()->user()->prenom }} ! Je suis l'assistant de SIGE UCAO. Posez-moi une question sur votre profil, vos notes, vos absences, votre solde, votre emploi du temps ou vos projets de classe.
+                    @if (auth()->user()->role === \App\Enums\Role::Etudiant)
+                        Bonjour {{ auth()->user()->prenom }} ! Je suis l'assistant de SIGE UCAO. Je peux vous renseigner sur votre profil, vos notes, vos absences, votre solde, votre emploi du temps et vos projets de classe, mais aussi vous aider à mieux réussir : expliquer une notion de cours, donner des conseils pour réussir votre semestre ou analyser vos résultats.
+                    @else
+                        Bonjour {{ auth()->user()->prenom }} ! Je suis l'assistant de SIGE UCAO. Posez-moi une question sur votre profil, vos notes, vos absences, votre solde, votre emploi du temps ou vos projets de classe.
+                    @endif
                 </div>
             </div>
         </div>
+
+        @if (auth()->user()->role === \App\Enums\Role::Etudiant)
+            <div class="d-flex flex-wrap gap-2 mb-3 ucao-suggestions">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Comment réussir mon semestre ?</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Explique-moi un cours de ma filière</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Analyse mes notes et donne-moi des conseils</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Aide-moi à planifier mes révisions</button>
+            </div>
+        @endif
 
         <form id="ucao-chat-form" class="d-flex gap-2">
             @csrf
@@ -35,6 +50,13 @@
     const messages = document.getElementById('ucao-chat-messages');
     const csrfToken = form.querySelector('input[name="_token"]').value;
     let historique = [];
+
+    document.querySelectorAll('.ucao-suggestions button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            input.value = btn.textContent.trim();
+            form.requestSubmit();
+        });
+    });
 
     function addMessage(content, fromUser) {
         const wrapper = document.createElement('div');

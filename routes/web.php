@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -43,6 +44,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/assistant', [AssistantController::class, 'index'])->name('assistant.index');
+    Route::post('/assistant', [AssistantController::class, 'ask'])->name('assistant.ask');
 
     Route::get('/mot-de-passe', [ProfileController::class, 'edit'])->name('profile.password.edit');
     Route::put('/mot-de-passe', [ProfileController::class, 'update'])->name('profile.password.update');

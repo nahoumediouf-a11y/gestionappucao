@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     // ===== Administrateur =====
     Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('utilisateurs', UserController::class)->except('show');
+        Route::patch('utilisateurs/{utilisateur}/activer', [UserController::class, 'activer'])->name('utilisateurs.activer');
         Route::get('statistiques', [StatistiqueController::class, 'index'])->name('statistiques');
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/lue', [NotificationController::class, 'read'])->name('notifications.read');

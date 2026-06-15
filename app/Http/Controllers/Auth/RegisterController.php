@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Support\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -47,7 +46,7 @@ class RegisterController extends Controller
                 ->withErrors(['captcha' => 'Réponse incorrecte à la question de sécurité.']);
         }
 
-        $user = DB::transaction(function () use ($data) {
+        DB::transaction(function () use ($data) {
             $user = User::create([
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
@@ -55,7 +54,7 @@ class RegisterController extends Controller
                 'email' => $data['email'] ?? null,
                 'password' => Hash::make($data['password']),
                 'role' => Role::Etudiant,
-                'statut' => 'actif',
+                'statut' => 'en_attente',
             ]);
 
             Etudiant::create([
@@ -69,11 +68,8 @@ class RegisterController extends Controller
             return $user;
         });
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
         return redirect()
-            ->route('dashboard')
-            ->with('success', 'Bienvenue, '.$user->nom_complet.' ! Votre compte étudiant a été créé.');
+            ->route('login')
+            ->with('success', "Votre demande d'inscription a été enregistrée. Votre compte est actuellement en attente de validation par l'administration. Veuillez finaliser votre inscription pédagogique auprès de l'établissement.");
     }
 }

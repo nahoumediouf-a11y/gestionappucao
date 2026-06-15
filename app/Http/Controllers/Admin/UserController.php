@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Etudiant;
 use App\Models\User;
+use App\Notifications\CompteActiveNotification;
 use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ class UserController extends Controller
                         ->orWhereHas('etudiant', fn ($e) => $e->where('matricule', 'like', "%{$term}%"));
                 });
             })
+            ->when($request->filled('statut'), fn ($query) => $query->where('statut', $request->string('statut')))
             ->orderBy('nom')
             ->paginate(15)
             ->withQueryString();
@@ -34,6 +36,8 @@ class UserController extends Controller
             'users' => $users,
             'roles' => Role::cases(),
             'q' => $request->string('q'),
+            'statut' => $request->string('statut'),
+            'enAttenteCount' => User::where('statut', 'en_attente')->count(),
         ]);
     }
 
@@ -131,6 +135,17 @@ class UserController extends Controller
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur modifié avec succès.');
     }
 
+    public function activer(User $utilisateur): RedirectResponse
+    {
+        $utilisateur->update(['statut' => 'actif']);
+
+        $utilisateur->notify(new CompteActiveNotification());
+
+        ActivityLogger::log('user.activate', "Activation du compte de {$utilisateur->login} après vérification de l'inscription.");
+
+        return back()->with('success', "Le compte de {$utilisateur->nom_complet} a été activé. Une notification lui a été envoyée.");
+    }
+
     public function destroy(User $utilisateur): RedirectResponse
     {
         if ($utilisateur->id === auth()->id()) {
@@ -156,7 +171,7 @@ class UserController extends Controller
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email,'.$userId],
             'telephone' => ['nullable', 'string', 'max:30'],
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
-            'statut' => ['required', 'string', 'in:actif,inactif'],
+            'statut' => ['required', 'string', 'in:actif,inactif,en_attente'],
             'matricule' => ['required_if:role,etudiant', 'nullable', 'digits:7', 'integer', 'between:1000678,1080987', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
             'niveau' => ['required_if:role,etudiant', 'nullable', 'string', 'max:50'],
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],

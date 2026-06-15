@@ -53,6 +53,7 @@
         <label for="statut" class="form-label">Statut</label>
         <select class="form-select @error('statut') is-invalid @enderror" id="statut" name="statut" required>
             <option value="actif" {{ old('statut', $user?->statut ?? 'actif') === 'actif' ? 'selected' : '' }}>Actif</option>
+            <option value="en_attente" {{ old('statut', $user?->statut) === 'en_attente' ? 'selected' : '' }}>En attente de validation</option>
             <option value="inactif" {{ old('statut', $user?->statut) === 'inactif' ? 'selected' : '' }}>Inactif</option>
         </select>
         @error('statut') <div class="invalid-feedback">{{ $message }}</div> @enderror

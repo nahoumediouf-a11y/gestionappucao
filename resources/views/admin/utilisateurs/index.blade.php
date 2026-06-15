@@ -12,11 +12,31 @@
 @endsection
 
 @section('page-content')
+@if ($enAttenteCount > 0)
+    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+        <div>
+            <i class="bi bi-hourglass-split me-1"></i>
+            <strong>{{ $enAttenteCount }}</strong> compte(s) en attente de validation.
+        </div>
+        <a href="{{ route('admin.utilisateurs.index', ['statut' => 'en_attente']) }}" class="btn btn-sm btn-warning">
+            Voir les demandes
+        </a>
+    </div>
+@endif
+
 <div class="card border-0 shadow-sm mb-3">
     <div class="card-body">
         <form method="GET" class="row g-2">
             <div class="col-md-6">
                 <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, login, email ou matricule..." value="{{ $q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="statut" class="form-select">
+                    <option value="">Tous les statuts</option>
+                    <option value="en_attente" {{ $statut === 'en_attente' ? 'selected' : '' }}>En attente de validation</option>
+                    <option value="actif" {{ $statut === 'actif' ? 'selected' : '' }}>Actif</option>
+                    <option value="inactif" {{ $statut === 'inactif' ? 'selected' : '' }}>Inactif</option>
+                </select>
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Rechercher</button>
@@ -47,8 +67,12 @@
                         <td>{{ $user->email ?? '—' }}</td>
                         <td><span class="badge bg-primary-subtle text-primary">{{ $user->role->label() }}</span></td>
                         <td>
-                            <span class="badge bg-{{ $user->statut === 'actif' ? 'success' : 'secondary' }}">
-                                {{ ucfirst($user->statut) }}
+                            @php
+                                $statutLabels = ['actif' => 'Actif', 'inactif' => 'Inactif', 'en_attente' => 'En attente'];
+                                $statutColors = ['actif' => 'success', 'inactif' => 'secondary', 'en_attente' => 'warning'];
+                            @endphp
+                            <span class="badge bg-{{ $statutColors[$user->statut] ?? 'secondary' }}">
+                                {{ $statutLabels[$user->statut] ?? ucfirst($user->statut) }}
                             </span>
                         </td>
                         <td class="small text-muted">
@@ -70,6 +94,15 @@
                             @endif
                         </td>
                         <td class="text-end">
+                            @if ($user->statut === 'en_attente')
+                                <form method="POST" action="{{ route('admin.utilisateurs.activer', $user) }}" class="d-inline" onsubmit="return confirm('Activer ce compte ? Une notification sera envoyée à l\'utilisateur.');">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check-circle"></i> Activer
+                                    </button>
+                                </form>
+                            @endif
                             <a href="{{ route('admin.utilisateurs.edit', $user) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>

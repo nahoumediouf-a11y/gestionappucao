@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\Captcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -64,6 +66,18 @@ class LoginController extends Controller
         }
 
         ActivityLogger::log('login_failed', 'Tentative de connexion échouée pour le login "'.$credentials['login'].'"');
+
+        $utilisateur = User::where('login', $credentials['login'])->first();
+
+        if (
+            $utilisateur
+            && $utilisateur->statut === 'en_attente'
+            && Hash::check($credentials['password'], $utilisateur->password)
+        ) {
+            return back()
+                ->withInput($request->only('login', 'remember'))
+                ->withErrors(['login' => "Votre compte est en attente de validation par l'administration. Vous recevrez un e-mail dès qu'il sera activé."]);
+        }
 
         return back()
             ->withInput($request->only('login', 'remember'))

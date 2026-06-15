@@ -95,6 +95,7 @@ class DatabaseSeeder extends Seeder
                 'prenom' => 'Aminata',
                 'login' => 'etudiant1',
                 'email' => 'etudiant1@ucao.sn',
+                'telephone' => '+221 77 123 45 01',
                 'password' => 'password',
                 'role' => Role::Etudiant,
             ],
@@ -103,6 +104,7 @@ class DatabaseSeeder extends Seeder
                 'prenom' => 'Ibrahima',
                 'login' => 'etudiant2',
                 'email' => 'etudiant2@ucao.sn',
+                'telephone' => '+221 76 234 56 02',
                 'password' => 'password',
                 'role' => Role::Etudiant,
             ],
@@ -111,6 +113,7 @@ class DatabaseSeeder extends Seeder
                 'prenom' => 'Fatoumata',
                 'login' => 'etudiant3',
                 'email' => 'etudiant3@ucao.sn',
+                'telephone' => '+221 78 345 67 03',
                 'password' => 'password',
                 'role' => Role::Etudiant,
             ],
@@ -133,17 +136,38 @@ class DatabaseSeeder extends Seeder
 
         $etu1 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant1')->first()->id],
-            ['matricule' => '1000678', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 150000]
+            [
+                'matricule' => '1000678', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 150000,
+                'adresse' => 'Cité Sicap, Villa 12, Dakar',
+                'date_naissance' => '2003-03-15',
+                'lieu_naissance' => 'Dakar',
+                'contact_urgence_nom' => 'Moussa Faye',
+                'contact_urgence_telephone' => '+221 78 234 56 01',
+            ]
         );
 
         $etu2 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant2')->first()->id],
-            ['matricule' => '1000679', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 0]
+            [
+                'matricule' => '1000679', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 0,
+                'adresse' => 'Cité Yoff, Villa 8, Dakar',
+                'date_naissance' => '2002-07-22',
+                'lieu_naissance' => 'Thiès',
+                'contact_urgence_nom' => 'Mariama Camara',
+                'contact_urgence_telephone' => '+221 77 345 67 02',
+            ]
         );
 
         $etu3 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant3')->first()->id],
-            ['matricule' => '1000680', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 75000]
+            [
+                'matricule' => '1000680', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 75000,
+                'adresse' => 'Cité Médina, Villa 21, Dakar',
+                'date_naissance' => '2003-11-05',
+                'lieu_naissance' => 'Saint-Louis',
+                'contact_urgence_nom' => 'Cheikh Sidibe',
+                'contact_urgence_telephone' => '+221 76 456 78 03',
+            ]
         );
 
         // Paiements

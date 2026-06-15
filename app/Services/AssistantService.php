@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\Role;
+use App\Models\Document;
 use App\Models\Projet;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -56,7 +57,7 @@ class AssistantService
         $base = <<<PROMPT
             Tu es l'assistant virtuel de l'application "Recouvrement UCAO", une plateforme de gestion académique et financière universitaire.
             Réponds toujours en français, de manière concise, claire et bienveillante.
-            Tu ne réponds qu'aux questions liées à l'application : profil, notes, absences, paiements, emploi du temps, projets de classe et situation administrative.
+            Tu ne réponds qu'aux questions liées à l'application : profil, notes, absences, paiements, emploi du temps, projets de classe, documents de cours et situation administrative.
             Si une question sort de ce cadre, indique poliment que tu ne peux aider que sur ces sujets.
             Voici les informations actuelles de l'utilisateur connecté, à utiliser pour personnaliser tes réponses :
 
@@ -97,6 +98,13 @@ class AssistantService
             ->map(fn ($p) => "{$p->titre} ({$p->matiere}) — échéance {$p->date_limite->format('d/m/Y')} — {$p->statut()}")
             ->implode("\n- ");
 
+        $documents = Document::where('filiere', $etudiant->filiere)
+            ->where('niveau', $etudiant->niveau)
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($d) => "{$d->titre} ({$d->matiere}) — {$d->nom_original}")
+            ->implode("\n- ");
+
         $emploiDuTemps = $etudiant->emploiDuTemps()
             ->map(fn ($c) => sprintf(
                 '%s : %s-%s %s (salle %s)%s',
@@ -126,6 +134,8 @@ class AssistantService
             Situation rouge (blocage examens) : {$situationRouge}
             Projets de classe en cours :
             - {$projets}
+            Documents de cours disponibles :
+            - {$documents}
             Emploi du temps (jour : horaire matière, salle, professeur) :
             - {$emploiDuTemps}
             CTX;

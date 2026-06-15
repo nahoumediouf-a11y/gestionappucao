@@ -45,6 +45,7 @@ class DashboardController extends Controller
                 ['label' => 'Mes absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'etudiant.absences.index'],
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'etudiant.edt.index'],
                 ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'etudiant.projets.index'],
+                ['label' => 'Documents de cours', 'icon' => 'bi-file-earmark-arrow-down', 'color' => 'secondary', 'route' => 'etudiant.documents.index'],
                 ['label' => 'Suivi de paiement', 'icon' => 'bi-cash-coin', 'color' => 'dark', 'route' => 'etudiant.paiements.index'],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
             ],
@@ -54,6 +55,7 @@ class DashboardController extends Controller
                 ['label' => 'Notes', 'icon' => 'bi-journal-check', 'color' => 'success', 'route' => 'professeur.notes.index'],
                 ['label' => 'Absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'professeur.absences.index'],
                 ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'professeur.projets.index'],
+                ['label' => 'Documents de cours', 'icon' => 'bi-cloud-upload', 'color' => 'secondary', 'route' => 'professeur.documents.index'],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
             ],
         };

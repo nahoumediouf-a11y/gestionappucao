@@ -11,6 +11,7 @@ use App\Http\Controllers\Comptabilite\PaiementController as ComptabilitePaiement
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Etudiant\AbsenceController as EtudiantAbsenceController;
 use App\Http\Controllers\Etudiant\BulletinController;
+use App\Http\Controllers\Etudiant\DocumentController as EtudiantDocumentController;
 use App\Http\Controllers\Etudiant\EmploiDuTempsController as EtudiantEmploiDuTempsController;
 use App\Http\Controllers\Etudiant\NoteController as EtudiantNoteController;
 use App\Http\Controllers\Etudiant\PaiementController as EtudiantPaiementController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Financier\RapportController;
 use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceController;
+use App\Http\Controllers\Professeur\DocumentController as ProfesseurDocumentController;
 use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiDuTempsController;
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
@@ -100,6 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
+        Route::get('documents', [EtudiantDocumentController::class, 'index'])->name('documents.index');
+        Route::get('documents/{document}/telecharger', [EtudiantDocumentController::class, 'download'])->name('documents.download');
     });
 
     // ===== Professeur =====
@@ -122,5 +126,10 @@ Route::middleware('auth')->group(function () {
         Route::get('projets/{projet}/modifier', [ProfesseurProjetController::class, 'edit'])->name('projets.edit');
         Route::put('projets/{projet}', [ProfesseurProjetController::class, 'update'])->name('projets.update');
         Route::delete('projets/{projet}', [ProfesseurProjetController::class, 'destroy'])->name('projets.destroy');
+        Route::get('documents', [ProfesseurDocumentController::class, 'index'])->name('documents.index');
+        Route::get('documents/ajouter', [ProfesseurDocumentController::class, 'create'])->name('documents.create');
+        Route::post('documents', [ProfesseurDocumentController::class, 'store'])->name('documents.store');
+        Route::get('documents/{document}/telecharger', [ProfesseurDocumentController::class, 'download'])->name('documents.download');
+        Route::delete('documents/{document}', [ProfesseurDocumentController::class, 'destroy'])->name('documents.destroy');
     });
 });

@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\PreventBackHistoryCache;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -15,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckRole::class,
         ]);
+
+        $middleware->prependToGroup('web', PreventBackHistoryCache::class);
 
         $middleware->trustProxies(at: '*');
     })

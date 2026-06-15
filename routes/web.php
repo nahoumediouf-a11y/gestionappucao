@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
         Route::put('profil/contact-urgence', [ProfilController::class, 'updateContactUrgence'])->name('profil.contact-urgence.update');
         Route::get('notes', [EtudiantNoteController::class, 'index'])->name('notes.index');
         Route::get('bulletin', [BulletinController::class, 'index'])->name('bulletin.index');
+        Route::get('bulletin/pdf', [BulletinController::class, 'telecharger'])->name('bulletin.pdf');
         Route::get('absences', [EtudiantAbsenceController::class, 'index'])->name('absences.index');
         Route::get('emploi-du-temps', [EtudiantEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');

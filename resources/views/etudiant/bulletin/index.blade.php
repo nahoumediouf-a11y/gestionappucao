@@ -62,8 +62,11 @@
             </div>
 
             <div class="text-center mt-3 d-print-none">
-                <button onclick="window.print()" class="btn btn-ucao">
-                    <i class="bi bi-printer me-1"></i>Imprimer / Télécharger en PDF
+                <a href="{{ route('etudiant.bulletin.pdf') }}" class="btn btn-ucao">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>Télécharger en PDF
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-primary">
+                    <i class="bi bi-printer me-1"></i>Imprimer
                 </button>
                 <a href="{{ route('etudiant.notes.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-1"></i>Retour

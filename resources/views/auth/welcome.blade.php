@@ -15,8 +15,8 @@
                         <i class="bi bi-mortarboard-fill fs-1"></i>
                         <span class="fs-3 fw-semibold">UCAO Saint Michel</span>
                     </div>
-                    <h1 class="h2 fw-bold mb-2">Système de contrôle de recouvrement</h1>
-                    <p class="opacity-75 mb-0">Choisissez votre espace pour continuer</p>
+                    <h1 class="h2 fw-bold mb-2 text-uppercase">SIGE UCAO</h1>
+                    <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants — Choisissez votre espace pour continuer</p>
                 </div>
 
                 <div class="row g-4 justify-content-center">

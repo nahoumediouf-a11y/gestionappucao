@@ -14,37 +14,41 @@ class AssistantService
      */
     public function repondre(User $user, string $message, array $historique = []): string
     {
-        $apiKey = config('services.anthropic.key');
+        $apiKey = config('services.gemini.key');
 
         if (! $apiKey) {
             return "L'assistant IA n'est pas encore configuré sur ce serveur (clé API manquante). "
-                ."Demandez à l'administrateur de définir ANTHROPIC_API_KEY dans le fichier .env.";
+                ."Demandez à l'administrateur de définir GEMINI_API_KEY dans le fichier .env.";
         }
 
-        $messages = [
+        $contents = [
             ...array_map(
-                fn (array $m) => ['role' => $m['role'], 'content' => $m['content']],
+                fn (array $m) => [
+                    'role' => $m['role'] === 'assistant' ? 'model' : 'user',
+                    'parts' => [['text' => $m['content']]],
+                ],
                 $historique
             ),
-            ['role' => 'user', 'content' => $message],
+            ['role' => 'user', 'parts' => [['text' => $message]]],
         ];
 
-        $response = Http::withHeaders([
-            'x-api-key' => $apiKey,
-            'anthropic-version' => '2023-06-01',
-            'content-type' => 'application/json',
-        ])->post('https://api.anthropic.com/v1/messages', [
-            'model' => config('services.anthropic.model'),
-            'max_tokens' => 1024,
-            'system' => $this->systemPrompt($user),
-            'messages' => $messages,
-        ]);
+        $model = config('services.gemini.model');
+
+        $response = Http::post(
+            "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}",
+            [
+                'contents' => $contents,
+                'systemInstruction' => [
+                    'parts' => [['text' => $this->systemPrompt($user)]],
+                ],
+            ]
+        );
 
         if ($response->failed()) {
             return "Désolé, l'assistant IA est momentanément indisponible. Réessayez plus tard.";
         }
 
-        return $response->json('content.0.text') ?? "Désolé, je n'ai pas pu générer de réponse.";
+        return $response->json('candidates.0.content.parts.0.text') ?? "Désolé, je n'ai pas pu générer de réponse.";
     }
 
     private function systemPrompt(User $user): string

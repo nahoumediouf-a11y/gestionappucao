@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Modifier un projet — SIGE UCAO')
+@section('title', 'Modifier — SIGE UCAO')
 
-@section('page-title', 'Modifier le projet')
+@section('page-title', 'Modifier')
 
 @section('page-content')
 <div class="card border-0 shadow-sm">
@@ -12,8 +12,20 @@
             @method('PUT')
 
             <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Type</label>
+                    <select name="type" id="type" class="form-select @error('type') is-invalid @enderror">
+                        @foreach (\App\Models\Projet::TYPES as $value => $label)
+                            <option value="{{ $value }}" @selected(old('type', $projet->type) === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('type')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="col-md-6">
-                    <label for="titre" class="form-label">Titre du projet</label>
+                    <label for="titre" class="form-label">Titre</label>
                     <input type="text" name="titre" id="titre" value="{{ old('titre', $projet->titre) }}"
                         class="form-control @error('titre') is-invalid @enderror">
                     @error('titre')
@@ -49,7 +61,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="date_limite" class="form-label">Date limite de rendu</label>
+                    <label for="date_limite" class="form-label">Date limite / date de l'examen</label>
                     <input type="date" name="date_limite" id="date_limite" value="{{ old('date_limite', $projet->date_limite->format('Y-m-d')) }}"
                         class="form-control @error('date_limite') is-invalid @enderror">
                     @error('date_limite')

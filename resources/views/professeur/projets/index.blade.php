@@ -1,12 +1,12 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Projets de classe — SIGE UCAO')
+@section('title', 'Projets, devoirs & examens — SIGE UCAO')
 
-@section('page-title', 'Projets de classe')
+@section('page-title', 'Projets, devoirs & examens')
 
 @section('page-actions')
     <a href="{{ route('professeur.projets.create') }}" class="btn btn-ucao">
-        <i class="bi bi-plus-circle me-1"></i>Assigner un projet
+        <i class="bi bi-plus-circle me-1"></i>Assigner
     </a>
 @endsection
 
@@ -16,6 +16,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
+                    <th>Type</th>
                     <th>Titre</th>
                     <th>Matière</th>
                     <th>Filière / Niveau</th>
@@ -27,6 +28,11 @@
             <tbody>
                 @forelse ($projets as $projet)
                     <tr>
+                        <td>
+                            <span class="badge bg-{{ ['projet' => 'info', 'devoir' => 'warning', 'examen' => 'danger'][$projet->type] ?? 'info' }}">
+                                {{ $projet->typeLabel() }}
+                            </span>
+                        </td>
                         <td>{{ $projet->titre }}</td>
                         <td>{{ $projet->matiere }}</td>
                         <td>{{ $projet->filiere }} {{ $projet->niveau }}</td>
@@ -50,7 +56,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-muted py-4">Aucun projet assigné.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">Aucun projet, devoir ou examen assigné.</td></tr>
                 @endforelse
             </tbody>
         </table>

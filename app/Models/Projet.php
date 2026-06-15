@@ -10,20 +10,29 @@ class Projet extends Model
 {
     use HasFactory;
 
+    public const TYPES = [
+        'projet' => 'Projet',
+        'devoir' => 'Devoir',
+        'examen' => 'Examen',
+    ];
+
     protected $fillable = [
         'professeur_id',
+        'type',
         'titre',
         'description',
         'filiere',
         'niveau',
         'matiere',
         'date_limite',
+        'rappel_envoye',
     ];
 
     protected function casts(): array
     {
         return [
             'date_limite' => 'date',
+            'rappel_envoye' => 'boolean',
         ];
     }
 
@@ -35,5 +44,10 @@ class Projet extends Model
     public function statut(): string
     {
         return $this->date_limite->isPast() ? 'Terminé' : 'En cours';
+    }
+
+    public function typeLabel(): string
+    {
+        return self::TYPES[$this->type] ?? 'Projet';
     }
 }

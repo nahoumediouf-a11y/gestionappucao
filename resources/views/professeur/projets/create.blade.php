@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Assigner un projet — SIGE UCAO')
+@section('title', 'Assigner un projet, devoir ou examen — SIGE UCAO')
 
-@section('page-title', 'Assigner un projet de classe')
+@section('page-title', 'Assigner un projet, devoir ou examen')
 
 @section('page-content')
 <div class="card border-0 shadow-sm">
@@ -26,8 +26,20 @@
             @endif
 
             <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Type</label>
+                    <select name="type" id="type" class="form-select @error('type') is-invalid @enderror">
+                        @foreach (\App\Models\Projet::TYPES as $value => $label)
+                            <option value="{{ $value }}" @selected(old('type', 'projet') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('type')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="col-md-6">
-                    <label for="titre" class="form-label">Titre du projet</label>
+                    <label for="titre" class="form-label">Titre</label>
                     <input type="text" name="titre" id="titre" value="{{ old('titre') }}"
                         class="form-control @error('titre') is-invalid @enderror">
                     @error('titre')
@@ -63,7 +75,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="date_limite" class="form-label">Date limite de rendu</label>
+                    <label for="date_limite" class="form-label">Date limite / date de l'examen</label>
                     <input type="date" name="date_limite" id="date_limite" value="{{ old('date_limite') }}"
                         class="form-control @error('date_limite') is-invalid @enderror">
                     @error('date_limite')
@@ -83,7 +95,7 @@
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-ucao">
-                    <i class="bi bi-check-circle me-1"></i>Assigner le projet
+                    <i class="bi bi-check-circle me-1"></i>Assigner
                 </button>
                 <a href="{{ route('professeur.projets.index') }}" class="btn btn-outline-secondary">Annuler</a>
             </div>

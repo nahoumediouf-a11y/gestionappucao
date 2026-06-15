@@ -35,6 +35,7 @@ class ProjetController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'type' => ['required', 'string', 'in:'.implode(',', array_keys(Projet::TYPES))],
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'filiere' => ['required', 'string', 'max:255'],
@@ -48,7 +49,7 @@ class ProjetController extends Controller
             'professeur_id' => auth()->id(),
         ]);
 
-        return redirect()->route('professeur.projets.index')->with('success', 'Projet assigné avec succès.');
+        return redirect()->route('professeur.projets.index')->with('success', 'Échéance assignée avec succès. Les étudiants concernés recevront un rappel 3 jours avant.');
     }
 
     public function edit(Projet $projet): View
@@ -66,6 +67,7 @@ class ProjetController extends Controller
         abort_unless($projet->professeur_id === auth()->id(), Response::HTTP_FORBIDDEN);
 
         $validated = $request->validate([
+            'type' => ['required', 'string', 'in:'.implode(',', array_keys(Projet::TYPES))],
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'filiere' => ['required', 'string', 'max:255'],
@@ -73,6 +75,10 @@ class ProjetController extends Controller
             'matiere' => ['required', 'string', 'max:255'],
             'date_limite' => ['required', 'date'],
         ]);
+
+        if ($validated['date_limite'] !== $projet->date_limite->toDateString()) {
+            $validated['rappel_envoye'] = false;
+        }
 
         $projet->update($validated);
 

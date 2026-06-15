@@ -28,9 +28,16 @@ class StatistiqueController extends Controller
             ->groupBy('role')
             ->pluck('total', 'role');
 
+        $parFiliere = Etudiant::query()
+            ->selectRaw('filiere, count(*) as total')
+            ->groupBy('filiere')
+            ->orderByDesc('total')
+            ->pluck('total', 'filiere');
+
         return view('admin.statistiques.index', [
             'stats' => $stats,
             'parRole' => $parRole,
+            'parFiliere' => $parFiliere,
         ]);
     }
 }

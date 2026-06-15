@@ -13,13 +13,27 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::with('etudiant')->orderBy('nom')->get();
+        $users = User::with('etudiant')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $term = $request->string('q');
+                $query->where(function ($q) use ($term) {
+                    $q->where('nom', 'like', "%{$term}%")
+                        ->orWhere('prenom', 'like', "%{$term}%")
+                        ->orWhere('login', 'like', "%{$term}%")
+                        ->orWhere('email', 'like', "%{$term}%")
+                        ->orWhereHas('etudiant', fn ($e) => $e->where('matricule', 'like', "%{$term}%"));
+                });
+            })
+            ->orderBy('nom')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('admin.utilisateurs.index', [
             'users' => $users,
             'roles' => Role::cases(),
+            'q' => $request->string('q'),
         ]);
     }
 

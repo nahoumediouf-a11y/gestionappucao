@@ -66,5 +66,10 @@
             </tbody>
         </table>
     </div>
+    @if ($paiements->hasPages())
+        <div class="card-footer bg-white">
+            {{ $paiements->links('pagination::bootstrap-5') }}
+        </div>
+    @endif
 </div>
 @endsection

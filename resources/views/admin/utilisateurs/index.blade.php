@@ -12,6 +12,19 @@
 @endsection
 
 @section('page-content')
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-2">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, login, email ou matricule..." value="{{ $q }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Rechercher</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -75,5 +88,10 @@
             </tbody>
         </table>
     </div>
+    @if ($users->hasPages())
+        <div class="card-footer bg-white">
+            {{ $users->links('pagination::bootstrap-5') }}
+        </div>
+    @endif
 </div>
 @endsection

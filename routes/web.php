@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Comptabilite\DebiteurController;
@@ -41,6 +42,11 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/inscription', [RegisterController::class, 'showRegisterForm'])->name('register');
     Route::post('/inscription', [RegisterController::class, 'register'])->middleware('throttle:5,1');
+
+    Route::get('/mot-de-passe-oublie', [ForgotPasswordController::class, 'show'])->name('password.request');
+    Route::post('/mot-de-passe-oublie', [ForgotPasswordController::class, 'send'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('/reinitialiser-mot-de-passe/{token}', [ForgotPasswordController::class, 'showReset'])->name('password.reset');
+    Route::post('/reinitialiser-mot-de-passe', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {

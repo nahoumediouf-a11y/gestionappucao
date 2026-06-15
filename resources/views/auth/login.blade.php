@@ -119,9 +119,12 @@
                                     </div>
                                 </div>
 
-                                <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                                    </div>
+                                    <a href="{{ route('password.request') }}" class="small">Mot de passe oublié ?</a>
                                 </div>
 
                                 <button type="submit" class="btn btn-ucao w-100 py-2">

@@ -23,7 +23,8 @@ class PaiementController extends Controller
                 });
             })
             ->orderByDesc('date_paiement')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         return view('comptabilite.paiements.index', [
             'paiements' => $paiements,

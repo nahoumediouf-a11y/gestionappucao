@@ -55,7 +55,7 @@ class EtudiantsDemoSeeder extends Seeder
             $filiere = $filieres[$idx % count($filieres)];
             $niveau = $niveaux[$idx % count($niveaux)];
             $login = 'etudiant'.$numero;
-            $matricule = '24'.str_pad((string) ($numero + 6), 5, '0', STR_PAD_LEFT); // 2400010 .. 2400059
+            $matricule = (string) (1000681 + $idx); // 1000681 .. 1000730
 
             $telephone = sprintf('+221 7%d %03d %02d %02d', [6, 7, 8][$idx % 3], 100 + $idx, ($idx * 3) % 100, ($idx * 5) % 100);
 

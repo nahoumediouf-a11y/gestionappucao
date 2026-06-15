@@ -141,7 +141,7 @@ class UserController extends Controller
             'telephone' => ['nullable', 'string', 'max:30'],
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
             'statut' => ['required', 'string', 'in:actif,inactif'],
-            'matricule' => ['required_if:role,etudiant', 'nullable', 'string', 'regex:/^\d{7}$/', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
+            'matricule' => ['required_if:role,etudiant', 'nullable', 'digits:7', 'integer', 'between:1000678,1080987', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
             'niveau' => ['required_if:role,etudiant', 'nullable', 'string', 'max:50'],
             'filiere' => ['required_if:role,etudiant', 'nullable', 'string', 'max:255'],
             'solde' => ['nullable', 'numeric', 'min:0'],
@@ -157,7 +157,9 @@ class UserController extends Controller
             : ['required', 'string', 'min:6'];
 
         return $request->validate($rules, [
-            'matricule.regex' => 'Le matricule doit être composé de 7 chiffres (ex : 1067604).',
+            'matricule.digits' => 'Le matricule doit être composé de 7 chiffres (ex : 1000678).',
+            'matricule.integer' => 'Le matricule doit être composé de 7 chiffres (ex : 1000678).',
+            'matricule.between' => 'Le matricule doit être compris entre 1000678 et 1080987.',
         ]);
     }
 }

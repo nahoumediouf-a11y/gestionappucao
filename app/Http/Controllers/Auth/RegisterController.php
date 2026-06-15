@@ -60,7 +60,7 @@ class RegisterController extends Controller
 
             Etudiant::create([
                 'user_id' => $user->id,
-                'matricule' => now()->format('y').str_pad((string) $user->id, 5, '0', STR_PAD_LEFT),
+                'matricule' => (string) (1010000 + $user->id),
                 'niveau' => $data['niveau'],
                 'filiere' => $data['filiere'],
                 'solde' => 0,

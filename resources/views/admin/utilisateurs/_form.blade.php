@@ -64,7 +64,7 @@
 
     <div class="col-md-3">
         <label for="matricule" class="form-label">Matricule</label>
-        <input type="text" class="form-control @error('matricule') is-invalid @enderror" id="matricule" name="matricule" value="{{ old('matricule', $user?->etudiant?->matricule) }}" placeholder="ex : 1067604" pattern="\d{7}" maxlength="7">
+        <input type="text" class="form-control @error('matricule') is-invalid @enderror" id="matricule" name="matricule" value="{{ old('matricule', $user?->etudiant?->matricule) }}" placeholder="ex : 1000678" pattern="\d{7}" maxlength="7" min="1000678" max="1080987">
         @error('matricule') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-3">

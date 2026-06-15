@@ -115,17 +115,17 @@ class DatabaseSeeder extends Seeder
 
         $etu1 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant1')->first()->id],
-            ['matricule' => '2400001', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 150000]
+            ['matricule' => '1000678', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 150000]
         );
 
         $etu2 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant2')->first()->id],
-            ['matricule' => '2400002', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 0]
+            ['matricule' => '1000679', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 0]
         );
 
         $etu3 = Etudiant::updateOrCreate(
             ['user_id' => User::where('login', 'etudiant3')->first()->id],
-            ['matricule' => '2400003', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 75000]
+            ['matricule' => '1000680', 'niveau' => 'L3', 'filiere' => 'Informatique', 'solde' => 75000]
         );
 
         // Paiements
@@ -218,13 +218,13 @@ class DatabaseSeeder extends Seeder
 
         // Emploi du temps (Informatique L3)
         $creneauxInfo = [
-            ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Algorithmique', 'salle' => 'A101', 'professeur_id' => $prof->id],
-            ['jour' => 'Lundi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Programmation Orientée Objet', 'salle' => 'A101', 'professeur_id' => $prof->id],
-            ['jour' => 'Mardi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Systèmes d\'exploitation', 'salle' => 'A102', 'professeur_id' => $prof3->id],
-            ['jour' => 'Mardi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Base de données', 'salle' => 'A102', 'professeur_id' => $prof->id],
-            ['jour' => 'Mercredi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Génie Logiciel', 'salle' => 'A104', 'professeur_id' => $prof3->id],
-            ['jour' => 'Jeudi', 'heure_debut' => '14:00', 'heure_fin' => '16:00', 'matiere' => 'Réseaux', 'salle' => 'A103', 'professeur_id' => $prof->id],
-            ['jour' => 'Vendredi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Mathématiques pour l\'informatique', 'salle' => 'A101', 'professeur_id' => $prof3->id],
+            ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Algorithmique', 'salle' => '1-1', 'professeur_id' => $prof->id],
+            ['jour' => 'Lundi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Programmation Orientée Objet', 'salle' => '1-1', 'professeur_id' => $prof->id],
+            ['jour' => 'Mardi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Systèmes d\'exploitation', 'salle' => '1-2', 'professeur_id' => $prof3->id],
+            ['jour' => 'Mardi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Base de données', 'salle' => '1-2', 'professeur_id' => $prof->id],
+            ['jour' => 'Mercredi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Génie Logiciel', 'salle' => '1-4', 'professeur_id' => $prof3->id],
+            ['jour' => 'Jeudi', 'heure_debut' => '14:00', 'heure_fin' => '16:00', 'matiere' => 'Réseaux', 'salle' => '1-3', 'professeur_id' => $prof->id],
+            ['jour' => 'Vendredi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Mathématiques pour l\'informatique', 'salle' => '1-1', 'professeur_id' => $prof3->id],
         ];
 
         foreach ($creneauxInfo as $creneau) {
@@ -236,10 +236,10 @@ class DatabaseSeeder extends Seeder
 
         // Emploi du temps (Gestion L3)
         $creneauxGestion = [
-            ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Comptabilité Générale', 'salle' => 'B201', 'professeur_id' => $prof2->id],
-            ['jour' => 'Mardi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Marketing', 'salle' => 'B202', 'professeur_id' => $prof2->id],
-            ['jour' => 'Mercredi', 'heure_debut' => '14:00', 'heure_fin' => '16:00', 'matiere' => 'Management des Organisations', 'salle' => 'B201', 'professeur_id' => $prof2->id],
-            ['jour' => 'Jeudi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Économie d\'Entreprise', 'salle' => 'B202', 'professeur_id' => $prof2->id],
+            ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Comptabilité Générale', 'salle' => '2-1', 'professeur_id' => $prof2->id],
+            ['jour' => 'Mardi', 'heure_debut' => '10:00', 'heure_fin' => '12:00', 'matiere' => 'Marketing', 'salle' => '2-2', 'professeur_id' => $prof2->id],
+            ['jour' => 'Mercredi', 'heure_debut' => '14:00', 'heure_fin' => '16:00', 'matiere' => 'Management des Organisations', 'salle' => '2-1', 'professeur_id' => $prof2->id],
+            ['jour' => 'Jeudi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Économie d\'Entreprise', 'salle' => '2-2', 'professeur_id' => $prof2->id],
         ];
 
         foreach ($creneauxGestion as $creneau) {

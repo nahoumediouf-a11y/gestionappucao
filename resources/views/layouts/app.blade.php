@@ -48,8 +48,17 @@
             color: var(--text);
             border-color: var(--border);
         }
+        [data-theme="dark"] .table {
+            --bs-table-bg: var(--surface);
+            --bs-table-color: var(--text);
+            --bs-table-border-color: var(--border);
+            --bs-table-hover-bg: #273449;
+            --bs-table-hover-color: var(--text);
+        }
         [data-theme="dark"] .table-light,
         [data-theme="dark"] thead.table-light th {
+            --bs-table-bg: #273449;
+            --bs-table-color: var(--text);
             background-color: #273449;
             color: var(--text);
             border-color: var(--border);
@@ -63,6 +72,47 @@
         [data-theme="dark"] .bg-light { background-color: #273449 !important; color: var(--text); }
         [data-theme="dark"] .border { border-color: var(--border) !important; }
         [data-theme="dark"] .btn-outline-secondary { color: var(--text); border-color: var(--border); }
+
+        [data-theme="dark"] .bg-light.text-dark,
+        [data-theme="dark"] .rounded-circle.text-dark {
+            color: var(--text) !important;
+        }
+        [data-theme="dark"] .rounded-circle.bg-dark.bg-opacity-10 {
+            background-color: rgba(255, 255, 255, .12) !important;
+        }
+        [data-theme="dark"] .text-secondary {
+            color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .rounded-circle.bg-secondary.bg-opacity-10 {
+            background-color: rgba(148, 163, 184, .18) !important;
+        }
+
+        [data-theme="dark"] .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .input-group-text {
+            background-color: #273449;
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] .page-link {
+            background-color: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
+        }
+        [data-theme="dark"] .page-item.disabled .page-link {
+            background-color: var(--surface);
+            color: var(--text-muted);
+            border-color: var(--border);
+        }
+        [data-theme="dark"] .page-item.active .page-link {
+            background-color: var(--ucao-blue);
+            border-color: var(--ucao-blue);
+            color: #fff;
+        }
 
         .auth-wrapper {
             position: relative;

@@ -95,6 +95,10 @@
 <script>
     const ucaoChartColors = ['#1e3a8a', '#d97706', '#16a34a', '#0ea5e9', '#9333ea', '#dc2626'];
 
+    const ucaoIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    Chart.defaults.color = ucaoIsDark ? '#e5e7eb' : '#1f2937';
+    Chart.defaults.borderColor = ucaoIsDark ? '#334155' : '#e5e7eb';
+
     new Chart(document.getElementById('chartRoles'), {
         type: 'doughnut',
         data: {

@@ -68,6 +68,8 @@ enum Role: string
                 'consulter_absences',
                 'consulter_suivi_paiement',
                 'consulter_solde',
+                'declarer_paiement',
+                'choisir_mode_paiement',
                 'telecharger_recus',
             ],
             self::Professeur => [

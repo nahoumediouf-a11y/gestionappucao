@@ -74,7 +74,7 @@ class PaiementController extends Controller
     {
         $validated = $request->validate([
             'montant' => ['required', 'numeric', 'min:0'],
-            'mode_paiement' => ['required', 'string'],
+            'mode_paiement' => ['required', 'string', 'in:'.implode(',', array_keys(\App\Models\Paiement::MODES))],
             'date_paiement' => ['required', 'date'],
             'statut' => ['required', 'string', 'in:valide,annule'],
         ]);
@@ -104,7 +104,7 @@ class PaiementController extends Controller
         return $request->validate([
             'etudiant_id' => ['required', 'exists:etudiants,id'],
             'montant' => ['required', 'numeric', 'min:1'],
-            'mode_paiement' => ['required', 'string', 'in:especes,virement,cheque,mobile_money'],
+            'mode_paiement' => ['required', 'string', 'in:'.implode(',', array_keys(\App\Models\Paiement::MODES))],
             'date_paiement' => ['required', 'date'],
             'reference' => ['required', 'string', 'unique:paiements,reference'],
         ]);

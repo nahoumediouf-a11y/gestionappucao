@@ -28,7 +28,7 @@
                         <td>{{ $paiement->etudiant->user->nom_complet }} ({{ $paiement->etudiant->matricule }})</td>
                         <td>{{ $paiement->date_paiement->format('d/m/Y') }}</td>
                         <td>{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $paiement->mode_paiement)) }}</td>
+                        <td>{{ $paiement->modeLabel() }}</td>
                         <td>{{ $paiement->agent?->nom_complet ?? '—' }}</td>
                         <td>
                             @if ($paiement->valide_par)

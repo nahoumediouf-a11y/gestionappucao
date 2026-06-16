@@ -38,17 +38,23 @@
 
                 <div class="col-md-4">
                     <label for="mode_paiement" class="form-label">Mode de paiement</label>
-                    <select class="form-select @error('mode_paiement') is-invalid @enderror" id="mode_paiement" name="mode_paiement" required>
-                        <option value="especes" {{ old('mode_paiement') === 'especes' ? 'selected' : '' }}>Espèces</option>
-                        <option value="virement" {{ old('mode_paiement') === 'virement' ? 'selected' : '' }}>Virement</option>
-                        <option value="cheque" {{ old('mode_paiement') === 'cheque' ? 'selected' : '' }}>Chèque</option>
-                        <option value="mobile_money" {{ old('mode_paiement') === 'mobile_money' ? 'selected' : '' }}>Mobile Money</option>
+                    <select class="form-select @error('mode_paiement') is-invalid @enderror" id="mode_paiement" name="mode_paiement" required onchange="ucaoToggleNumeroMobile(this.value)">
+                        @foreach (\App\Models\Paiement::MODES as $value => $label)
+                            <option value="{{ $value }}" {{ old('mode_paiement') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
                     </select>
                     @error('mode_paiement') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
+                <div class="col-md-4" id="champ-numero-mobile" style="display:none">
+                    <label for="numero_mobile" class="form-label">Numéro de téléphone</label>
+                    <input type="tel" class="form-control" id="numero_mobile" name="numero_mobile"
+                        value="{{ old('numero_mobile') }}" placeholder="Ex : 77 000 00 00">
+                    <div class="form-text">Numéro ayant effectué l'envoi.</div>
+                </div>
+
                 <div class="col-md-4">
-                    <label for="reference" class="form-label">Référence</label>
+                    <label for="reference" class="form-label">Référence / N° transaction</label>
                     <input type="text" class="form-control @error('reference') is-invalid @enderror" id="reference" name="reference" value="{{ old('reference', 'REC-'.now()->format('Y').'-'.strtoupper(substr(uniqid(), -6))) }}" required>
                     @error('reference') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
@@ -62,4 +68,18 @@
         </form>
     </div>
 </div>
+
+<script>
+function ucaoToggleNumeroMobile(mode) {
+    const mobiles = ['wave', 'orange_money', 'mobile_money'];
+    const champ = document.getElementById('champ-numero-mobile');
+    const input = document.getElementById('numero_mobile');
+    const afficher = mobiles.includes(mode);
+    champ.style.display = afficher ? '' : 'none';
+    input.required = afficher;
+}
+document.addEventListener('DOMContentLoaded', function () {
+    ucaoToggleNumeroMobile(document.getElementById('mode_paiement').value);
+});
+</script>
 @endsection

@@ -10,6 +10,21 @@ class Paiement extends Model
 {
     use HasFactory;
 
+    public const MODES = [
+        'especes'      => 'Espèces',
+        'wave'         => 'Wave',
+        'orange_money' => 'Orange Money',
+        'visa'         => 'Carte Visa / Bancaire',
+        'virement'     => 'Virement bancaire',
+        'cheque'       => 'Chèque',
+        'mobile_money' => 'Mobile Money (autre)',
+    ];
+
+    public function modeLabel(): string
+    {
+        return self::MODES[$this->mode_paiement] ?? ucfirst(str_replace('_', ' ', $this->mode_paiement));
+    }
+
     protected $fillable = [
         'etudiant_id',
         'agent_id',

@@ -28,7 +28,7 @@
                 <div class="col-md-3">
                     <label for="mode_paiement" class="form-label">Mode de paiement</label>
                     <select class="form-select @error('mode_paiement') is-invalid @enderror" id="mode_paiement" name="mode_paiement" required>
-                        @foreach (['especes' => 'Espèces', 'virement' => 'Virement', 'cheque' => 'Chèque', 'mobile_money' => 'Mobile Money'] as $value => $label)
+                        @foreach (\App\Models\Paiement::MODES as $value => $label)
                             <option value="{{ $value }}" {{ old('mode_paiement', $paiement->mode_paiement) === $value ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>

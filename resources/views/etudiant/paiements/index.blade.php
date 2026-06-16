@@ -33,7 +33,7 @@
                         <td><code>{{ $paiement->reference }}</code></td>
                         <td>{{ $paiement->date_paiement->format('d/m/Y') }}</td>
                         <td>{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $paiement->mode_paiement)) }}</td>
+                        <td>{{ $paiement->modeLabel() }}</td>
                         <td class="text-end">
                             <a href="{{ route('etudiant.paiements.recu', $paiement) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-download me-1"></i>Télécharger

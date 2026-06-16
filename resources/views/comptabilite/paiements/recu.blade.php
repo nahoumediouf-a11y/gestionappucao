@@ -42,7 +42,7 @@
                         <div class="col-6 text-end">
                             <p class="text-muted small mb-1">Enregistré par</p>
                             <p class="fw-bold mb-0">{{ $paiement->agent?->nom_complet ?? '—' }}</p>
-                            <p class="text-muted small">Mode : {{ ucfirst(str_replace('_', ' ', $paiement->mode_paiement)) }}</p>
+                            <p class="text-muted small">Mode : {{ $paiement->modeLabel() }}</p>
                         </div>
                     </div>
 

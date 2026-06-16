@@ -47,17 +47,38 @@
                         <td>{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</td>
                         <td>{{ $paiement->modeLabel() }}</td>
                         <td>
-                            <span class="badge bg-{{ $paiement->statut === 'valide' ? 'success' : 'secondary' }}">
-                                {{ ucfirst($paiement->statut) }}
-                            </span>
+                            @php $s = \App\Models\Paiement::STATUTS[$paiement->statut] ?? ['label' => $paiement->statut, 'color' => 'secondary']; @endphp
+                            <span class="badge bg-{{ $s['color'] }}">{{ $s['label'] }}</span>
+                            @if ($paiement->note_etudiant)
+                                <br><small class="text-muted">{{ $paiement->note_etudiant }}</small>
+                            @endif
+                            @if ($paiement->numero_mobile)
+                                <br><small class="text-muted"><i class="bi bi-phone"></i> {{ $paiement->numero_mobile }}</small>
+                            @endif
                         </td>
                         <td class="text-end">
-                            <a href="{{ route('comptabilite.paiements.recu', $paiement) }}" class="btn btn-sm btn-outline-secondary" target="_blank">
-                                <i class="bi bi-receipt"></i> Reçu
-                            </a>
-                            <a href="{{ route('comptabilite.paiements.edit', $paiement) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-pencil"></i>
-                            </a>
+                            @if ($paiement->statut === 'en_attente_validation')
+                                <form method="POST" action="{{ route('comptabilite.paiements.valider', $paiement) }}" class="d-inline">
+                                    @csrf @method('PATCH')
+                                    <button class="btn btn-sm btn-success" title="Valider">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('comptabilite.paiements.rejeter', $paiement) }}" class="d-inline"
+                                    onsubmit="return confirm('Rejeter cette déclaration ?')">
+                                    @csrf @method('PATCH')
+                                    <button class="btn btn-sm btn-outline-danger" title="Rejeter">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('comptabilite.paiements.recu', $paiement) }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                    <i class="bi bi-receipt"></i>
+                                </a>
+                                <a href="{{ route('comptabilite.paiements.edit', $paiement) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @empty

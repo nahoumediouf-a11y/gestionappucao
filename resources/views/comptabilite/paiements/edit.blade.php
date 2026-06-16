@@ -38,8 +38,9 @@
                 <div class="col-md-3">
                     <label for="statut" class="form-label">Statut</label>
                     <select class="form-select @error('statut') is-invalid @enderror" id="statut" name="statut" required>
-                        <option value="valide" {{ old('statut', $paiement->statut) === 'valide' ? 'selected' : '' }}>Validé</option>
-                        <option value="annule" {{ old('statut', $paiement->statut) === 'annule' ? 'selected' : '' }}>Annulé</option>
+                        @foreach (\App\Models\Paiement::STATUTS as $value => $info)
+                            <option value="{{ $value }}" {{ old('statut', $paiement->statut) === $value ? 'selected' : '' }}>{{ $info['label'] }}</option>
+                        @endforeach
                     </select>
                     @error('statut') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>

@@ -85,6 +85,8 @@ Route::middleware('auth')->group(function () {
         Route::get('paiements/{paiement}/modifier', [ComptabilitePaiementController::class, 'edit'])->name('paiements.edit');
         Route::put('paiements/{paiement}', [ComptabilitePaiementController::class, 'update'])->name('paiements.update');
         Route::get('paiements/{paiement}/recu', [ComptabilitePaiementController::class, 'recu'])->name('paiements.recu');
+        Route::patch('paiements/{paiement}/valider', [ComptabilitePaiementController::class, 'valider'])->name('paiements.valider');
+        Route::patch('paiements/{paiement}/rejeter', [ComptabilitePaiementController::class, 'rejeter'])->name('paiements.rejeter');
         Route::get('debiteurs', [DebiteurController::class, 'index'])->name('debiteurs.index');
     });
 
@@ -118,6 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::get('absences', [EtudiantAbsenceController::class, 'index'])->name('absences.index');
         Route::get('emploi-du-temps', [EtudiantEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
+        Route::post('paiements', [EtudiantPaiementController::class, 'store'])->name('paiements.store');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
         Route::get('documents', [EtudiantDocumentController::class, 'index'])->name('documents.index');

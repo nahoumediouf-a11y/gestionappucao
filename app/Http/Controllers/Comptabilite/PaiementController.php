@@ -76,7 +76,7 @@ class PaiementController extends Controller
             'montant' => ['required', 'numeric', 'min:0'],
             'mode_paiement' => ['required', 'string', 'in:'.implode(',', array_keys(\App\Models\Paiement::MODES))],
             'date_paiement' => ['required', 'date'],
-            'statut' => ['required', 'string', 'in:valide,annule'],
+            'statut' => ['required', 'string', 'in:'.implode(',', array_keys(\App\Models\Paiement::STATUTS))],
         ]);
 
         $etudiant = $paiement->etudiant;
@@ -97,6 +97,31 @@ class PaiementController extends Controller
         return view('comptabilite.paiements.recu', [
             'paiement' => $paiement,
         ]);
+    }
+
+    public function valider(Paiement $paiement): RedirectResponse
+    {
+        abort_unless($paiement->statut === 'en_attente_validation', 422);
+
+        $paiement->update([
+            'statut'     => 'valide',
+            'agent_id'   => auth()->id(),
+            'valide_par' => auth()->id(),
+            'valide_le'  => now(),
+        ]);
+
+        $paiement->etudiant->decrement('solde', $paiement->montant);
+
+        return back()->with('success', 'Paiement '.$paiement->reference.' validé et solde mis à jour.');
+    }
+
+    public function rejeter(Paiement $paiement): RedirectResponse
+    {
+        abort_unless($paiement->statut === 'en_attente_validation', 422);
+
+        $paiement->update(['statut' => 'annule']);
+
+        return back()->with('success', 'Déclaration '.$paiement->reference.' rejetée.');
     }
 
     private function validatePaiement(Request $request): array

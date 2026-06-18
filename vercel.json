@@ -6,6 +6,7 @@
             "runtime": "vercel-php@0.7.2"
         }
     },
+    "installCommand": "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer",
     "buildCommand": "bash build.sh",
     "routes": [
         { "src": "/build/(.*)", "dest": "/build/$1" },

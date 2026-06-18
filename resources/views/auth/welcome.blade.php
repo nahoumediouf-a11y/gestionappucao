@@ -38,7 +38,7 @@
                         </a>
                         <p class="text-center text-white small mt-2 mb-0">
                             Pas encore de compte ?
-                            <a href="{{ route('register') }}" class="text-white text-decoration-underline">Créer un compte étudiant</a>
+                            <span class="text-white-50 small">Contactez l'administration pour créer un compte</span>
                         </p>
                     </div>
 

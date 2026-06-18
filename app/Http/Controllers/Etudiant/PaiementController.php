@@ -9,16 +9,65 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
+/** Frais de scolarité annuels (FCFA) par niveau. Modifiable ici. */
+const SCOLARITE_PAR_NIVEAU = [
+    'L1' => 650_000,
+    'L2' => 700_000,
+    'L3' => 780_000,
+    'M1' => 850_000,
+    'M2' => 900_000,
+];
+
 class PaiementController extends Controller
 {
     public function index(): View
     {
         $etudiant = auth()->user()->etudiant;
+        $paiements = $etudiant->paiements()->orderByDesc('date_paiement')->get();
+
+        // Scolarité annuelle estimée
+        $niveauKey = strtoupper($etudiant->niveau ?? '');
+        // Handle LIG L3-2 → L3
+        if (str_contains($niveauKey, 'L3')) $niveauKey = 'L3';
+        $scolariteTotale = SCOLARITE_PAR_NIVEAU[$niveauKey] ?? 780_000;
+        $nbTranches = 6;
+        $montantTranche = (int) round($scolariteTotale / $nbTranches);
+        $totalPaye = $paiements->where('statut', 'valide')->sum('montant');
+        $progression = $scolariteTotale > 0 ? min(100, (int) round($totalPaye / $scolariteTotale * 100)) : 0;
+
+        // Générer le plan de paiement en 6 tranches (à partir de septembre)
+        $moisDebut = 9; // Septembre
+        $annee = (int) date('Y', strtotime(now()->month >= 9 ? 'now' : '-1 year'));
+        $tranches = [];
+        for ($i = 0; $i < $nbTranches; $i++) {
+            $mois = (($moisDebut - 1 + $i) % 12) + 1;
+            $yr = $annee + (($moisDebut - 1 + $i) >= 12 ? 1 : 0);
+            $echeance = \Carbon\Carbon::create($yr, $mois, 1)->endOfMonth();
+            $montant = ($i === $nbTranches - 1)
+                ? $scolariteTotale - $montantTranche * ($nbTranches - 1)
+                : $montantTranche;
+            $cumul = $montantTranche * ($i + 1);
+            $paye = $totalPaye >= $cumul;
+            $tranches[] = [
+                'numero' => $i + 1,
+                'mois' => $echeance->translatedFormat('F Y'),
+                'echeance' => $echeance,
+                'montant' => $montant,
+                'paye' => $paye,
+                'en_retard' => !$paye && $echeance->isPast(),
+            ];
+        }
 
         return view('etudiant.paiements.index', [
             'etudiant' => $etudiant,
-            'paiements' => $etudiant->paiements()->orderByDesc('date_paiement')->get(),
+            'paiements' => $paiements,
             'engagements' => $etudiant->engagements()->orderByDesc('echeance')->get(),
+            'scolariteTotale' => $scolariteTotale,
+            'montantTranche' => $montantTranche,
+            'nbTranches' => $nbTranches,
+            'totalPaye' => $totalPaye,
+            'progression' => $progression,
+            'tranches' => $tranches,
         ]);
     }
 

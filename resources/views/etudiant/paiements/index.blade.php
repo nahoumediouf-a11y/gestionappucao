@@ -8,46 +8,127 @@
 @section('page-content')
 
 {{-- ===== CARTE SCOLARITÉ ===== --}}
+@php $enAttente = $paiements->where('statut', 'en_attente_validation')->count(); @endphp
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-4">
-        <div class="row align-items-center g-3">
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle p-3 bg-{{ $etudiant->solde > 0 ? 'danger' : 'success' }} bg-opacity-10">
-                        <i class="bi bi-mortarboard fs-3 text-{{ $etudiant->solde > 0 ? 'danger' : 'success' }}"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small mb-1">Frais de scolarité — Solde restant</div>
-                        <div class="fs-2 fw-bold {{ $etudiant->solde > 0 ? 'text-danger' : 'text-success' }}">
-                            {{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA
-                        </div>
-                        @if ($etudiant->solde <= 0)
-                            <span class="badge bg-success mt-1"><i class="bi bi-check-circle me-1"></i>Scolarité à jour</span>
-                        @else
-                            <span class="badge bg-danger mt-1"><i class="bi bi-exclamation-triangle me-1"></i>Solde impayé</span>
-                        @endif
-                    </div>
-                </div>
+        {{-- Ligne 1 : titre + badge statut --}}
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="rounded-circle p-3 bg-{{ $etudiant->solde > 0 ? 'danger' : 'success' }} bg-opacity-10">
+                <i class="bi bi-mortarboard fs-3 text-{{ $etudiant->solde > 0 ? 'danger' : 'success' }}"></i>
             </div>
-            <div class="col-md-6 text-md-end">
-                @php
-                    $totalPaye = $paiements->where('statut', 'valide')->sum('montant');
-                    $enAttente = $paiements->where('statut', 'en_attente_validation')->count();
-                @endphp
-                <div class="text-muted small mb-1">Déjà réglé</div>
-                <div class="fs-5 fw-semibold text-success">{{ number_format($totalPaye, 0, ',', ' ') }} FCFA</div>
-                @if ($enAttente > 0)
-                    <div class="text-warning small mt-1">
-                        <i class="bi bi-clock me-1"></i>{{ $enAttente }} déclaration(s) en attente de validation
-                    </div>
-                @endif
-                @if ($etudiant->solde > 0)
-                    <a href="#payer-scolarite" class="btn btn-ucao mt-2">
-                        <i class="bi bi-credit-card me-1"></i>Payer ma scolarité
-                    </a>
+            <div>
+                <div class="fw-bold fs-5 mb-0">Scolarité {{ $etudiant->filiere }} — {{ $etudiant->niveau }}</div>
+                <div class="text-muted small">Année académique {{ date('Y') }}/{{ date('Y')+1 }}</div>
+            </div>
+            <div class="ms-auto text-end">
+                @if ($etudiant->solde <= 0)
+                    <span class="badge bg-success fs-6 px-3 py-2"><i class="bi bi-check-circle me-1"></i>À jour</span>
+                @else
+                    <span class="badge bg-danger fs-6 px-3 py-2"><i class="bi bi-exclamation-triangle me-1"></i>Impayé</span>
                 @endif
             </div>
         </div>
+
+        {{-- Ligne 2 : 4 KPIs --}}
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="text-center p-3 rounded-3 bg-primary bg-opacity-10">
+                    <div class="small text-muted mb-1">Scolarité totale</div>
+                    <div class="fw-bold text-primary">{{ number_format($scolariteTotale, 0, ',', ' ') }}</div>
+                    <div class="small text-muted">FCFA</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-center p-3 rounded-3 bg-success bg-opacity-10">
+                    <div class="small text-muted mb-1">Déjà réglé</div>
+                    <div class="fw-bold text-success">{{ number_format($totalPaye, 0, ',', ' ') }}</div>
+                    <div class="small text-muted">FCFA</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-center p-3 rounded-3 bg-{{ $etudiant->solde > 0 ? 'danger' : 'success' }} bg-opacity-10">
+                    <div class="small text-muted mb-1">Solde restant</div>
+                    <div class="fw-bold text-{{ $etudiant->solde > 0 ? 'danger' : 'success' }}">{{ number_format($etudiant->solde, 0, ',', ' ') }}</div>
+                    <div class="small text-muted">FCFA</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-center p-3 rounded-3 bg-warning bg-opacity-10">
+                    <div class="small text-muted mb-1">Par tranche (×{{ $nbTranches }})</div>
+                    <div class="fw-bold text-warning">{{ number_format($montantTranche, 0, ',', ' ') }}</div>
+                    <div class="small text-muted">FCFA/mois</div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Barre de progression --}}
+        <div class="mb-3">
+            <div class="d-flex justify-content-between small text-muted mb-1">
+                <span>Progression du paiement</span>
+                <span class="fw-semibold">{{ $progression }} %</span>
+            </div>
+            <div class="progress" style="height: 12px; border-radius: 8px;">
+                <div class="progress-bar bg-{{ $progression >= 100 ? 'success' : ($progression >= 50 ? 'warning' : 'danger') }}"
+                    role="progressbar" style="width: {{ $progression }}%; border-radius: 8px;"
+                    aria-valuenow="{{ $progression }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+        @if ($enAttente > 0)
+            <div class="text-warning small mb-3">
+                <i class="bi bi-clock me-1"></i>{{ $enAttente }} déclaration(s) en attente de validation par la comptabilité
+            </div>
+        @endif
+
+        @if ($etudiant->solde > 0)
+            <a href="#payer-scolarite" class="btn btn-ucao mt-1">
+                <i class="bi bi-credit-card me-1"></i>Payer ma scolarité
+            </a>
+        @endif
+    </div>
+</div>
+
+{{-- ===== PLAN DE PAIEMENT EN 6 TRANCHES ===== --}}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <strong><i class="bi bi-calendar2-range me-2 text-primary"></i>Plan de paiement — {{ $nbTranches }} tranches mensuelles</strong>
+        <div class="text-muted small mt-1">
+            Scolarité de <strong>{{ number_format($scolariteTotale, 0, ',', ' ') }} FCFA</strong>
+            répartie en <strong>{{ $nbTranches }} mensualités</strong> de
+            <strong>{{ number_format($montantTranche, 0, ',', ' ') }} FCFA</strong>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center" style="width:60px">Tranche</th>
+                    <th>Mois</th>
+                    <th>Échéance</th>
+                    <th class="text-end">Montant</th>
+                    <th class="text-center">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($tranches as $t)
+                    <tr class="{{ $t['en_retard'] ? 'table-danger' : ($t['paye'] ? 'table-success bg-opacity-25' : '') }}">
+                        <td class="text-center fw-bold">{{ $t['numero'] }}</td>
+                        <td class="fw-semibold">{{ $t['mois'] }}</td>
+                        <td class="text-muted small">{{ $t['echeance']->format('d/m/Y') }}</td>
+                        <td class="text-end fw-semibold">{{ number_format($t['montant'], 0, ',', ' ') }} FCFA</td>
+                        <td class="text-center">
+                            @if ($t['paye'])
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Réglé</span>
+                            @elseif ($t['en_retard'])
+                                <span class="badge bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>En retard</span>
+                            @else
+                                <span class="badge bg-secondary"><i class="bi bi-clock me-1"></i>À venir</span>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 

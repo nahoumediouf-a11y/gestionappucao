@@ -11,7 +11,7 @@
     </div>
     <div class="col-md-6">
         <label for="niveau" class="form-label">Niveau</label>
-        <input type="text" class="form-control @error('niveau') is-invalid @enderror" id="niveau" name="niveau" value="{{ old('niveau', $creneau?->niveau) }}" placeholder="Ex: L3" required>
+        <input type="text" class="form-control @error('niveau') is-invalid @enderror" id="niveau" name="niveau" value="{{ old('niveau', $creneau?->niveau) }}" placeholder="L1, L2, L3, M1…" required>
         @error('niveau') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
@@ -55,7 +55,7 @@
 
     <div class="col-md-6">
         <label for="salle" class="form-label">Salle</label>
-        <input type="text" class="form-control @error('salle') is-invalid @enderror" id="salle" name="salle" value="{{ old('salle', $creneau?->salle) }}" placeholder="Ex: 2.1" required>
+        <input type="text" class="form-control @error('salle') is-invalid @enderror" id="salle" name="salle" value="{{ old('salle', $creneau?->salle) }}" placeholder="Numéro de salle" required>
         @error('salle') <div class="invalid-feedback">{{ $message }}</div> @enderror
         @if ($creneau)
             <div class="form-text">Si vous changez la salle, les étudiants de {{ $creneau->filiere }} {{ $creneau->niveau }} et le professeur seront notifiés automatiquement.</div>

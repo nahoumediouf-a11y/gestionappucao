@@ -38,7 +38,7 @@
                 <div class="col-md-6">
                     <label for="session" class="form-label">Session</label>
                     <input type="text" name="session" id="session" value="{{ old('session') }}"
-                        class="form-control @error('session') is-invalid @enderror" placeholder="Ex: Semestre 1">
+                        class="form-control @error('session') is-invalid @enderror" placeholder="Semestre 1, Semestre 2…">
                     @error('session')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

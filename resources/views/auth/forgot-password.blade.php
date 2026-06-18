@@ -58,7 +58,7 @@
                                             id="login"
                                             name="login"
                                             value="{{ old('login') }}"
-                                            placeholder="Ex : etudiant1"
+                                            placeholder="Votre identifiant"
                                             required
                                             autofocus
                                         >

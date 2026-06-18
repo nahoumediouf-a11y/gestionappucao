@@ -85,7 +85,7 @@
                                             id="login"
                                             name="login"
                                             value="{{ old('login') }}"
-                                            placeholder="Ex : prenom.nom"
+                                            placeholder="Votre identifiant de connexion"
                                             required
                                         >
                                     </div>
@@ -101,7 +101,7 @@
                                             id="email"
                                             name="email"
                                             value="{{ old('email') }}"
-                                            placeholder="exemple@mail.com"
+                                            placeholder="Votre adresse email"
                                         >
                                     </div>
                                 </div>

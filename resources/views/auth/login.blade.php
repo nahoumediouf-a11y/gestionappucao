@@ -40,7 +40,7 @@
                                 @else
                                     <h1 class="h3 fw-bold mb-3">Système de contrôle de recouvrement</h1>
                                     <p class="mb-4 opacity-75">
-                                        Authentification sécurisée selon les rôles définis dans le diagramme de cas d'utilisation.
+                                        Accès réservé au personnel autorisé. Connectez-vous avec vos identifiants.
                                     </p>
                                     <ul class="list-unstyled small opacity-90 mb-0">
                                         <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Administrateur</li>
@@ -54,8 +54,8 @@
                         </div>
 
                         <div class="col-md-7 auth-form-panel p-4 p-md-5">
-                            <h2 class="h4 mb-1">S'authentifier</h2>
-                            <p class="text-muted mb-4">Cas d'utilisation UC1 — accès au système</p>
+                            <h2 class="h4 mb-1">Connexion</h2>
+                            <p class="text-muted mb-4">Entrez vos identifiants pour accéder à votre espace</p>
 
                             @if (session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -82,7 +82,7 @@
                                             id="login"
                                             name="login"
                                             value="{{ old('login') }}"
-                                            placeholder="Ex : admin"
+                                            placeholder="Votre identifiant"
                                             required
                                             autofocus
                                         >
@@ -132,28 +132,12 @@
                                 </button>
                             </form>
 
-                            <hr class="my-4">
-
-                            <p class="small text-muted mb-2 fw-semibold">Comptes de démonstration</p>
                             @if ($espace === 'etudiant')
-                                <div class="row g-2 small">
-                                    <div class="col-sm-6"><code>etudiant1</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>etudiant2</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>etudiant3</code> / <code>password</code></div>
-                                </div>
-
-                                <p class="small text-muted mt-3 mb-0">
-                                    Pas encore de compte ?
-                                    <a href="{{ route('register') }}">Créer un compte étudiant</a>
-                                </p>
-                            @else
-                                <div class="row g-2 small">
-                                    <div class="col-sm-6"><code>admin</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>comptable</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>recouvrement</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>financier</code> / <code>password</code></div>
-                                    <div class="col-sm-6"><code>prof</code> / <code>password</code></div>
-                                </div>
+                            <hr class="my-4">
+                            <p class="small text-muted mb-0">
+                                Pas encore de compte ?
+                                <a href="{{ route('register') }}">Créer un compte étudiant</a>
+                            </p>
                             @endif
                     </div>
                 </div>

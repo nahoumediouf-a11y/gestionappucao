@@ -109,7 +109,7 @@
                         <span class="input-group-text"><i class="bi bi-hash"></i></span>
                         <input type="text" name="reference"
                             class="form-control @error('reference') is-invalid @enderror"
-                            value="{{ old('reference') }}" placeholder="Ex : TXN-XXXXXXXXX" required>
+                            value="{{ old('reference') }}" placeholder="Numéro de transaction" required>
                         @error('reference') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-text">Copié depuis votre SMS / reçu Wave, Orange Money, Visa…</div>
@@ -120,7 +120,7 @@
                     <label class="form-label fw-semibold">Note (optionnel)</label>
                     <input type="text" name="note_etudiant"
                         class="form-control @error('note_etudiant') is-invalid @enderror"
-                        value="{{ old('note_etudiant') }}" placeholder="Ex : Paiement 1ère tranche">
+                        value="{{ old('note_etudiant') }}" placeholder="Commentaire sur ce paiement">
                     @error('note_etudiant') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 

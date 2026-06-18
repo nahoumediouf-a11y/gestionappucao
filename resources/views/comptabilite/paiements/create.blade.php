@@ -49,7 +49,7 @@
                 <div class="col-md-4" id="champ-numero-mobile" style="display:none">
                     <label for="numero_mobile" class="form-label">Numéro de téléphone</label>
                     <input type="tel" class="form-control" id="numero_mobile" name="numero_mobile"
-                        value="{{ old('numero_mobile') }}" placeholder="Ex : 77 000 00 00">
+                        value="{{ old('numero_mobile') }}" placeholder="77 XXX XX XX">
                     <div class="form-text">Numéro ayant effectué l'envoi.</div>
                 </div>
 

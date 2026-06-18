@@ -11,10 +11,15 @@
             @endif
 
             @unless ($etudiant->estEnRegleAvecRecouvrement())
-                <div class="alert alert-warning d-print-none">
-                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Vous avez un solde impayé de <strong>{{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA</strong>.
-                    Le téléchargement du bulletin est bloqué tant que votre situation n'est pas régularisée auprès du service de recouvrement.
+                <div class="alert alert-warning d-print-none d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div>
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        Vous avez un solde impayé de <strong>{{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA</strong>.
+                        Le téléchargement du bulletin est bloqué tant que votre situation n'est pas régularisée.
+                    </div>
+                    <a href="{{ route('etudiant.paiements.index') }}#payer-scolarite" class="btn btn-danger btn-sm text-nowrap">
+                        <i class="bi bi-credit-card-fill me-1"></i>Payer maintenant
+                    </a>
                 </div>
             @endunless
 

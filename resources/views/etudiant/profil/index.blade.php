@@ -46,6 +46,14 @@
                     </tr>
                 </table>
 
+                @if ($etudiant->solde > 0)
+                    <div class="mt-3">
+                        <a href="{{ route('etudiant.paiements.index') }}#payer-scolarite" class="btn btn-danger btn-sm w-100">
+                            <i class="bi bi-credit-card-fill me-1"></i>Payer ma scolarité — {{ number_format($etudiant->solde, 0, ',', ' ') }} FCFA
+                        </a>
+                    </div>
+                @endif
+
                 @if ($etudiant->enSituationRouge())
                     <div class="alert alert-danger mt-3 mb-0">
                         <i class="bi bi-exclamation-triangle-fill me-1"></i>

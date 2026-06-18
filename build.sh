@@ -2,42 +2,37 @@
 set -e
 echo "=== SIGE UCAO — Vercel Build ==="
 
-# Install Composer if not available
+# Download Composer if not available
 if ! command -v composer &>/dev/null; then
   echo "Downloading Composer..."
   php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  php composer-setup.php --quiet
-  rm composer-setup.php
-  mv composer.phar /usr/local/bin/composer 2>/dev/null || export PATH="$PATH:$(pwd)"
-  # If move failed, use local composer.phar
-  if ! command -v composer &>/dev/null; then
-    alias composer='php composer.phar'
-    PHP_COMPOSER="php composer.phar"
-  else
-    PHP_COMPOSER="composer"
-  fi
-else
-  PHP_COMPOSER="composer"
+  php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer 2>/dev/null \
+    || php composer-setup.php --quiet
+  rm -f composer-setup.php
 fi
+
+# Use composer.phar if global not available
+if command -v composer &>/dev/null; then
+  COMPOSER="composer"
+elif [ -f composer.phar ]; then
+  COMPOSER="php composer.phar"
+else
+  echo "ERROR: composer not found"; exit 1
+fi
+
+echo "Using: $($COMPOSER --version)"
 
 # Install PHP dependencies
-$PHP_COMPOSER install --no-dev --optimize-autoloader --no-interaction
+$COMPOSER install --no-dev --optimize-autoloader --no-interaction
 
-# Storage symlink
-php artisan storage:link 2>/dev/null || true
-
-# Generate app key if not set
-if [ -z "$APP_KEY" ]; then
-  php artisan key:generate --force
-fi
-
-# Skip DB operations if no DB configured (SQLite default won't work on Vercel)
-if [ -n "$DATABASE_URL" ] || [ -n "$DB_HOST" ]; then
+# Run migrations + seed against PostgreSQL (Neon)
+if [ -n "$DATABASE_URL" ]; then
+  echo "Running migrations..."
   php artisan migrate --force
-  php artisan db:seed --force --class=DatabaseSeeder 2>/dev/null || echo "Seed skipped"
+  php artisan db:seed --force 2>/dev/null || echo "Seed already done or skipped"
 fi
 
-# Cache for production
+# Cache for production performance
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

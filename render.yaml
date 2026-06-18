@@ -6,7 +6,7 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
-        value: "Recouvrement UCAO"
+        value: "SIGE UCAO"
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
@@ -16,18 +16,18 @@ services:
       - key: APP_URL
         sync: false
       - key: LOG_CHANNEL
-        value: stack
+        value: stderr
       - key: LOG_LEVEL
         value: error
       - key: SESSION_DRIVER
-        value: database
+        value: cookie
       - key: CACHE_STORE
-        value: database
+        value: array
       - key: QUEUE_CONNECTION
-        value: database
+        value: sync
       - key: DB_CONNECTION
-        value: sqlite
-      - key: DB_DATABASE
-        value: /app/database/database.sqlite
+        value: pgsql
+      - key: DATABASE_URL
+        sync: false
       - key: SEED_DB
         value: "true"

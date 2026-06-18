@@ -42,8 +42,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 
-    Route::get('/inscription', [RegisterController::class, 'showRegisterForm'])->name('register');
-    Route::post('/inscription', [RegisterController::class, 'register'])->middleware('throttle:5,1');
+    // Inscription désactivée : la création de compte est réservée à l'administration.
+    // Route::get('/inscription', [RegisterController::class, 'showRegisterForm'])->name('register');
+    // Route::post('/inscription', [RegisterController::class, 'register'])->middleware('throttle:5,1');
 
     Route::get('/mot-de-passe-oublie', [ForgotPasswordController::class, 'show'])->name('password.request');
     Route::post('/mot-de-passe-oublie', [ForgotPasswordController::class, 'send'])->middleware('throttle:5,1')->name('password.email');
@@ -69,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/lue', [NotificationController::class, 'read'])->name('notifications.read');
 
+        Route::get('recherche', [RechercheController::class, 'index'])->name('recherche.index');
         Route::get('emploi-du-temps', [AdminEmploiDuTempsController::class, 'index'])->name('emploi-du-temps.index');
         Route::get('emploi-du-temps/creer', [AdminEmploiDuTempsController::class, 'create'])->name('emploi-du-temps.create');
         Route::post('emploi-du-temps', [AdminEmploiDuTempsController::class, 'store'])->name('emploi-du-temps.store');
@@ -123,6 +125,9 @@ Route::middleware('auth')->group(function () {
         Route::post('paiements', [EtudiantPaiementController::class, 'store'])->name('paiements.store');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
+        Route::get('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'index'])->name('propositions.index');
+        Route::get('propositions/soumettre', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'create'])->name('propositions.create');
+        Route::post('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'store'])->name('propositions.store');
         Route::get('documents', [EtudiantDocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/{document}/telecharger', [EtudiantDocumentController::class, 'download'])->name('documents.download');
     });
@@ -143,6 +148,8 @@ Route::middleware('auth')->group(function () {
         Route::post('absences', [ProfesseurAbsenceController::class, 'store'])->name('absences.store');
         Route::get('absences/{absence}/modifier', [ProfesseurAbsenceController::class, 'edit'])->name('absences.edit');
         Route::put('absences/{absence}', [ProfesseurAbsenceController::class, 'update'])->name('absences.update');
+        Route::get('propositions', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'index'])->name('propositions.index');
+        Route::patch('propositions/{proposition}/traiter', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'traiter'])->name('propositions.traiter');
         Route::get('projets', [ProfesseurProjetController::class, 'index'])->name('projets.index');
         Route::get('projets/creer', [ProfesseurProjetController::class, 'create'])->name('projets.create');
         Route::post('projets', [ProfesseurProjetController::class, 'store'])->name('projets.store');

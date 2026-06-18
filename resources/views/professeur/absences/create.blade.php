@@ -35,7 +35,7 @@
                     @enderror
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label for="date" class="form-label">Date</label>
                     <input type="date" name="date" id="date" value="{{ old('date') }}"
                         class="form-control @error('date') is-invalid @enderror">
@@ -44,7 +44,16 @@
                     @enderror
                 </div>
 
-                <div class="col-md-6 d-flex align-items-end">
+                <div class="col-md-4">
+                    <label for="heure" class="form-label">Heure <span class="text-muted">(optionnel)</span></label>
+                    <input type="time" name="heure" id="heure" value="{{ old('heure') }}"
+                        class="form-control @error('heure') is-invalid @enderror">
+                    @error('heure')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
                     <div class="form-check">
                         <input type="checkbox" name="justifiee" id="justifiee" value="1" class="form-check-input"
                             @checked(old('justifiee'))>

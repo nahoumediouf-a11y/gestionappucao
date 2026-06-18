@@ -19,6 +19,7 @@
                     <th>Étudiant</th>
                     <th>Matière</th>
                     <th>Date</th>
+                    <th>Heure</th>
                     <th>Statut</th>
                     <th class="text-end">Actions</th>
                 </tr>
@@ -29,6 +30,7 @@
                         <td>{{ $absence->etudiant->user->nom_complet }} ({{ $absence->etudiant->matricule }})</td>
                         <td>{{ $absence->matiere }}</td>
                         <td>{{ \Illuminate\Support\Carbon::parse($absence->date)->format('d/m/Y') }}</td>
+                        <td>{{ $absence->heure ? substr($absence->heure, 0, 5) : '—' }}</td>
                         <td>
                             @if ($absence->justifiee)
                                 <span class="badge bg-success">Justifiée</span>
@@ -43,7 +45,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted py-4">Aucune absence enregistrée.</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted py-4">Aucune absence enregistrée.</td></tr>
                 @endforelse
             </tbody>
         </table>

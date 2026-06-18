@@ -14,6 +14,7 @@ class DashboardController extends Controller
         $modules = match ($user->role) {
             Role::Administrateur => [
                 ['label' => 'Gérer les utilisateurs', 'icon' => 'bi-people-fill', 'color' => 'success', 'route' => 'admin.utilisateurs.index'],
+                ['label' => 'Rechercher un étudiant', 'icon' => 'bi-search', 'color' => 'info', 'route' => 'admin.recherche.index'],
                 ['label' => 'Gestion des salles et EDT', 'icon' => 'bi-door-open', 'color' => 'primary', 'route' => 'admin.emploi-du-temps.index'],
                 ['label' => 'Statistiques', 'icon' => 'bi-graph-up-arrow', 'color' => 'dark', 'route' => 'admin.statistiques'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'admin.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
@@ -54,6 +55,7 @@ class DashboardController extends Controller
                 ['label' => 'Mes absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'etudiant.absences.index'],
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'etudiant.edt.index'],
                 ['label' => 'Projets, devoirs & examens', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'etudiant.projets.index'],
+                ['label' => 'Proposer un projet perso', 'icon' => 'bi-lightbulb', 'color' => 'warning', 'route' => 'etudiant.propositions.index'],
                 ['label' => 'Documents de cours', 'icon' => 'bi-file-earmark-arrow-down', 'color' => 'secondary', 'route' => 'etudiant.documents.index'],
                 ['label' => 'Suivi de paiement', 'icon' => 'bi-cash-coin', 'color' => 'dark', 'route' => 'etudiant.paiements.index'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'etudiant.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
@@ -65,6 +67,7 @@ class DashboardController extends Controller
                 ['label' => 'Notes', 'icon' => 'bi-journal-check', 'color' => 'success', 'route' => 'professeur.notes.index'],
                 ['label' => 'Absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'professeur.absences.index'],
                 ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'professeur.projets.index'],
+                ['label' => 'Propositions d\'étudiants', 'icon' => 'bi-lightbulb', 'color' => 'warning', 'route' => 'professeur.propositions.index'],
                 ['label' => 'Documents de cours', 'icon' => 'bi-cloud-upload', 'color' => 'secondary', 'route' => 'professeur.documents.index'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'professeur.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],

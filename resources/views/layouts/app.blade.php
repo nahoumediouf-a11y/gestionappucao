@@ -270,25 +270,32 @@
     @yield('content')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function ucaoSetThemeIcon(theme) {
+            var icon = document.getElementById('ucao-theme-icon');
+            if (!icon) return;
+            icon.classList.remove('bi-moon-stars', 'bi-sun');
+            icon.classList.add(theme === 'dark' ? 'bi-sun' : 'bi-moon-stars');
+        }
         function ucaoToggleTheme() {
             var html = document.documentElement;
             var current = html.getAttribute('data-theme') || 'light';
             var next = current === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', next);
             localStorage.setItem('ucao-theme', next);
-            var icon = document.getElementById('ucao-theme-icon');
-            if (icon) {
-                icon.classList.toggle('bi-moon-stars', next === 'light');
-                icon.classList.toggle('bi-sun', next === 'dark');
-            }
+            ucaoSetThemeIcon(next);
         }
         document.addEventListener('DOMContentLoaded', function () {
-            var icon = document.getElementById('ucao-theme-icon');
-            if (icon) {
-                var theme = document.documentElement.getAttribute('data-theme') || 'light';
-                icon.classList.toggle('bi-moon-stars', theme === 'light');
-                icon.classList.toggle('bi-sun', theme === 'dark');
-            }
+            ucaoSetThemeIcon(document.documentElement.getAttribute('data-theme') || 'light');
+            // Fix mobile: ensure touch events trigger properly
+            var toggles = document.querySelectorAll('[onclick="ucaoToggleTheme()"]');
+            toggles.forEach(function(el) {
+                el.style.cursor = 'pointer';
+                el.style.webkitTapHighlightColor = 'transparent';
+                el.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    ucaoToggleTheme();
+                });
+            });
         });
     </script>
     @stack('scripts')

@@ -28,10 +28,10 @@
     <div class="card-body">
         <form method="GET" class="row g-2">
             <div class="col-md-6">
-                <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, login, email ou matricule..." value="{{ $q }}">
+                <input type="text" name="q" id="ucao-search-q" class="form-control" placeholder="Rechercher par nom, login, email ou matricule..." value="{{ $q }}" autocomplete="off">
             </div>
             <div class="col-md-3">
-                <select name="statut" class="form-select">
+                <select name="statut" id="ucao-search-statut" class="form-select">
                     <option value="">Tous les statuts</option>
                     <option value="en_attente" {{ $statut === 'en_attente' ? 'selected' : '' }}>En attente de validation</option>
                     <option value="actif" {{ $statut === 'actif' ? 'selected' : '' }}>Actif</option>
@@ -42,6 +42,26 @@
                 <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Rechercher</button>
             </div>
         </form>
+        @push('scripts')
+        <script>
+        (function () {
+            var timer;
+            var form = document.querySelector('form[method="GET"]');
+            var qInput = document.getElementById('ucao-search-q');
+            var statutSelect = document.getElementById('ucao-search-statut');
+            function submit() { form.submit(); }
+            if (qInput) {
+                qInput.addEventListener('input', function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(submit, 400);
+                });
+            }
+            if (statutSelect) {
+                statutSelect.addEventListener('change', submit);
+            }
+        })();
+        </script>
+        @endpush
     </div>
 </div>
 

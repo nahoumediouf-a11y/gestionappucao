@@ -15,6 +15,7 @@ class Absence extends Model
         'professeur_id',
         'matiere',
         'date',
+        'heure',
         'justifiee',
     ];
 

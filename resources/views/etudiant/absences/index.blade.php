@@ -11,6 +11,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Date</th>
+                    <th>Heure</th>
                     <th>Matière</th>
                     <th>Statut</th>
                 </tr>
@@ -19,6 +20,7 @@
                 @forelse ($absences as $absence)
                     <tr>
                         <td>{{ $absence->date->format('d/m/Y') }}</td>
+                        <td>{{ $absence->heure ? substr($absence->heure, 0, 5) : '—' }}</td>
                         <td>{{ $absence->matiere }}</td>
                         <td>
                             <span class="badge bg-{{ $absence->justifiee ? 'success' : 'danger' }}">
@@ -27,7 +29,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="3" class="text-center text-muted py-4">Aucune absence enregistrée.</td></tr>
+                    <tr><td colspan="4" class="text-center text-muted py-4">Aucune absence enregistrée.</td></tr>
                 @endforelse
             </tbody>
         </table>

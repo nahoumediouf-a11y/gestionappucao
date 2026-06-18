@@ -10,9 +10,17 @@ use Illuminate\View\View;
 
 class BulletinController extends Controller
 {
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
-        return view('etudiant.bulletin.index', $this->donnees());
+        $donnees = $this->donnees();
+
+        if (! $donnees['etudiant']->estEnRegleAvecRecouvrement()) {
+            return redirect()
+                ->route('etudiant.paiements.index')
+                ->with('error', 'Votre bulletin est bloqué : vous avez un solde impayé de ' . number_format($donnees['etudiant']->solde, 0, ',', ' ') . ' FCFA. Régularisez votre situation pour y accéder.');
+        }
+
+        return view('etudiant.bulletin.index', $donnees);
     }
 
     public function telecharger(): Response|RedirectResponse

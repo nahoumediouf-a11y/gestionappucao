@@ -7,14 +7,30 @@
 @section('page-content')
 <div class="card border-0 shadow-sm mb-3">
     <div class="card-body">
-        <form method="GET" class="row g-2">
+        <form method="GET" id="ucao-recherche-form" class="row g-2">
             <div class="col-md-8">
-                <input type="text" name="q" class="form-control" placeholder="Matricule, nom ou prénom..." value="{{ $q }}" autofocus>
+                <input type="text" name="q" id="ucao-recherche-q" class="form-control" placeholder="Matricule, nom ou prénom..." value="{{ $q }}" autofocus autocomplete="off">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-ucao w-100"><i class="bi bi-search"></i> Rechercher</button>
             </div>
         </form>
+        @push('scripts')
+        <script>
+        (function () {
+            var timer;
+            var input = document.getElementById('ucao-recherche-q');
+            if (input) {
+                input.addEventListener('input', function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        document.getElementById('ucao-recherche-form').submit();
+                    }, 400);
+                });
+            }
+        })();
+        </script>
+        @endpush
     </div>
 </div>
 

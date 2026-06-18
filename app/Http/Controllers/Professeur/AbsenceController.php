@@ -47,6 +47,7 @@ class AbsenceController extends Controller
             'etudiant_id' => ['required', Rule::in($etudiantIds)],
             'matiere' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
+            'heure' => ['nullable', 'date_format:H:i'],
             'justifiee' => ['sometimes', 'boolean'],
         ]);
 
@@ -101,6 +102,7 @@ class AbsenceController extends Controller
         $validated = $request->validate([
             'matiere' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
+            'heure' => ['nullable', 'date_format:H:i'],
             'justifiee' => ['sometimes', 'boolean'],
         ]);
 

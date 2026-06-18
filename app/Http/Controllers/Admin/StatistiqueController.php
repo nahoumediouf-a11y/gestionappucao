@@ -10,14 +10,11 @@ use Illuminate\View\View;
 
 class StatistiqueController extends Controller
 {
-    /** Effectif total de l'université (toutes filières), à afficher indépendamment du nombre de comptes créés dans l'application. */
-    private const EFFECTIF_TOTAL_ETUDIANTS = 2070;
-
     public function index(): View
     {
         $stats = [
             'nb_utilisateurs' => User::count(),
-            'nb_etudiants' => self::EFFECTIF_TOTAL_ETUDIANTS,
+            'nb_etudiants' => Etudiant::count(),
             'total_paiements' => Paiement::sum('montant'),
             'total_impayes' => Etudiant::sum('solde'),
             'nb_debiteurs' => Etudiant::where('solde', '>', 0)->count(),

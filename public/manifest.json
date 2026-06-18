@@ -1,0 +1,48 @@
+{
+    "name": "SIGE UCAO",
+    "short_name": "SIGE UCAO",
+    "description": "Système d'Information et de Gestion des Étudiants — UCAO",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#1e3a8a",
+    "theme_color": "#1e3a8a",
+    "lang": "fr",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/icons/icon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/icon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Tableau de bord",
+            "url": "/dashboard",
+            "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Connexion",
+            "url": "/login",
+            "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+        }
+    ]
+}

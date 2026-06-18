@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SIGE UCAO')</title>
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SIGE UCAO">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script>
@@ -284,5 +292,14 @@
         });
     </script>
     @stack('scripts')
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function (reg) { console.log('SW registered:', reg.scope); })
+                    .catch(function (err) { console.warn('SW failed:', err); });
+            });
+        }
+    </script>
 </body>
 </html>

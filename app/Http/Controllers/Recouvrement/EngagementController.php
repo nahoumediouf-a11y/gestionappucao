@@ -15,10 +15,19 @@ class EngagementController extends Controller
     {
         $engagements = EngagementPaiement::with(['etudiant.user', 'agent'])
             ->orderByDesc('echeance')
-            ->get();
+            ->paginate(20);
 
         return view('recouvrement.engagements.index', [
             'engagements' => $engagements,
+        ]);
+    }
+
+    public function show(EngagementPaiement $engagement): View
+    {
+        $engagement->load(['etudiant.user', 'agent']);
+
+        return view('recouvrement.engagements.show', [
+            'engagement' => $engagement,
         ]);
     }
 

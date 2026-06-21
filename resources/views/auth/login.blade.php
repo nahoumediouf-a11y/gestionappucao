@@ -135,8 +135,7 @@
                             @if ($espace === 'etudiant')
                             <hr class="my-4">
                             <p class="small text-muted mb-0">
-                                Pas encore de compte ?
-                                <a href="{{ route('register') }}">Créer un compte étudiant</a>
+                                Pas encore de compte ? Contactez l'administration.
                             </p>
                             @endif
                     </div>

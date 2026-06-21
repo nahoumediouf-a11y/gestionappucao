@@ -23,3 +23,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+.vercel
+*.pdf
+*.docx
+*.pptx
+/captures_sige_ucao

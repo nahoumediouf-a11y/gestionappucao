@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\EmploiDuTempsController as AdminEmploiDuTempsController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\AssistantController;
@@ -30,12 +31,16 @@ use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiD
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
 use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
+use App\Http\Controllers\Professeur\DocumentCoursController as ProfesseurDocumentCoursController;
+use App\Http\Controllers\Etudiant\DocumentCoursController as EtudiantDocumentCoursController;
+use App\Http\Controllers\Recouvrement\AJourController;
 use App\Http\Controllers\Recouvrement\EngagementController;
 use App\Http\Controllers\Recouvrement\ImpayeController;
 use App\Http\Controllers\Recouvrement\RechercheController;
 use App\Http\Controllers\Recouvrement\RelanceController;
 use App\Http\Controllers\Recouvrement\StatistiqueController as RecouvrementStatistiqueController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class, 'showWelcome'])->name('welcome');
@@ -71,6 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('notifications/{notification}/lue', [NotificationController::class, 'read'])->name('notifications.read');
 
         Route::get('recherche', [RechercheController::class, 'index'])->name('recherche.index');
+        Route::get('journal-activites', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('emploi-du-temps', [AdminEmploiDuTempsController::class, 'index'])->name('emploi-du-temps.index');
         Route::get('emploi-du-temps/creer', [AdminEmploiDuTempsController::class, 'create'])->name('emploi-du-temps.create');
         Route::post('emploi-du-temps', [AdminEmploiDuTempsController::class, 'store'])->name('emploi-du-temps.store');
@@ -95,8 +101,9 @@ Route::middleware('auth')->group(function () {
     // ===== Agent de recouvrement =====
     Route::middleware('role:agent_recouvrement')->prefix('recouvrement')->name('recouvrement.')->group(function () {
         Route::get('impayes', [ImpayeController::class, 'index'])->name('impayes.index');
+        Route::get('a-jour', [AJourController::class, 'index'])->name('ajour.index');
         Route::get('recherche', [RechercheController::class, 'index'])->name('recherche.index');
-        Route::resource('engagements', EngagementController::class)->except(['show', 'destroy']);
+        Route::resource('engagements', EngagementController::class)->except(['destroy']);
         Route::get('relances', [RelanceController::class, 'index'])->name('relances.index');
         Route::post('relances/{engagement}', [RelanceController::class, 'relancer'])->name('relances.relancer');
         Route::get('statistiques', [RecouvrementStatistiqueController::class, 'index'])->name('statistiques');
@@ -107,6 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::get('paiements', [FinancierPaiementController::class, 'index'])->name('paiements.index');
         Route::patch('paiements/{paiement}/valider', [FinancierPaiementController::class, 'valider'])->name('paiements.valider');
         Route::get('rapports', [RapportController::class, 'index'])->name('rapports.index');
+        Route::get('rapports/telecharger', [RapportController::class, 'telecharger'])->name('rapports.telecharger');
         Route::get('statistiques', [FinancierStatistiqueController::class, 'index'])->name('statistiques');
     });
 
@@ -124,12 +132,16 @@ Route::middleware('auth')->group(function () {
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
         Route::post('paiements', [EtudiantPaiementController::class, 'store'])->name('paiements.store');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
+        Route::get('paiements/retour', [EtudiantPaiementController::class, 'retourPaydunya'])->name('paiements.paydunya.retour');
+        Route::post('paiements/callback', [EtudiantPaiementController::class, 'callbackPaydunya'])->name('paiements.paydunya.callback')->withoutMiddleware(['auth', 'role:etudiant']);
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
         Route::get('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'index'])->name('propositions.index');
         Route::get('propositions/soumettre', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'create'])->name('propositions.create');
         Route::post('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'store'])->name('propositions.store');
         Route::get('documents', [EtudiantDocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/{document}/telecharger', [EtudiantDocumentController::class, 'download'])->name('documents.download');
+        Route::get('documents-cours', [EtudiantDocumentCoursController::class, 'index'])->name('documents_cours.index');
+        Route::get('documents-cours/{document}/telecharger', [EtudiantDocumentCoursController::class, 'telecharger'])->name('documents_cours.telecharger');
     });
 
     // ===== Professeur =====
@@ -150,6 +162,10 @@ Route::middleware('auth')->group(function () {
         Route::put('absences/{absence}', [ProfesseurAbsenceController::class, 'update'])->name('absences.update');
         Route::get('propositions', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'index'])->name('propositions.index');
         Route::patch('propositions/{proposition}/traiter', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'traiter'])->name('propositions.traiter');
+        Route::get('documents-cours', [ProfesseurDocumentCoursController::class, 'index'])->name('documents_cours.index');
+        Route::get('documents-cours/ajouter', [ProfesseurDocumentCoursController::class, 'create'])->name('documents_cours.create');
+        Route::post('documents-cours', [ProfesseurDocumentCoursController::class, 'store'])->name('documents_cours.store');
+        Route::delete('documents-cours/{document}', [ProfesseurDocumentCoursController::class, 'destroy'])->name('documents_cours.destroy');
         Route::get('projets', [ProfesseurProjetController::class, 'index'])->name('projets.index');
         Route::get('projets/creer', [ProfesseurProjetController::class, 'create'])->name('projets.create');
         Route::post('projets', [ProfesseurProjetController::class, 'store'])->name('projets.store');

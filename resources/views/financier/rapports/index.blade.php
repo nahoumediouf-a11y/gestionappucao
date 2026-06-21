@@ -4,6 +4,12 @@
 
 @section('page-title', 'Rapports financiers')
 
+@section('page-actions')
+    <a href="{{ route('financier.rapports.telecharger') }}" class="btn btn-ucao">
+        <i class="bi bi-file-earmark-pdf me-1"></i>Télécharger en PDF
+    </a>
+@endsection
+
 @section('page-content')
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">

@@ -110,9 +110,28 @@ class PaiementController extends Controller
             'valide_le'  => now(),
         ]);
 
-        $paiement->etudiant->decrement('solde', $paiement->montant);
+        $etudiant = $paiement->etudiant;
+        $etudiant->decrement('solde', $paiement->montant);
+        $etudiant->refresh();
 
-        return back()->with('success', 'Paiement '.$paiement->reference.' validé et solde mis à jour.');
+        // Notifier l'étudiant
+        $msgSolde = $etudiant->solde <= 0
+            ? 'Votre scolarité est entièrement réglée. Félicitations !'
+            : 'Solde restant : '.number_format($etudiant->solde, 0, ',', ' ').' FCFA.';
+
+        $etudiant->user->notifications()->create([
+            'id'   => \Illuminate\Support\Str::uuid(),
+            'type' => 'App\\Notifications\\PaiementValide',
+            'data' => [
+                'titre'   => 'Paiement validé — '.$paiement->reference,
+                'message' => 'Votre paiement de '.number_format($paiement->montant, 0, ',', ' ').' FCFA a été validé par la comptabilité. '.$msgSolde,
+                'recu_url' => route('etudiant.paiements.recu', $paiement),
+            ],
+            'read_at' => null,
+        ]);
+
+        return redirect()->route('comptabilite.paiements.recu', $paiement)
+            ->with('success', 'Paiement '.$paiement->reference.' validé. Reçu généré.');
     }
 
     public function rejeter(Paiement $paiement): RedirectResponse

@@ -48,4 +48,7 @@
         </table>
     </div>
 </div>
+<div class="mt-3">
+    {{ $impayes->links() }}
+</div>
 @endsection

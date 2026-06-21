@@ -13,7 +13,7 @@ class ImpayeController extends Controller
         $impayes = Etudiant::with(['user', 'engagements'])
             ->where('solde', '>', 0)
             ->orderByDesc('solde')
-            ->get();
+            ->paginate(20);
 
         return view('recouvrement.impayes.index', [
             'impayes' => $impayes,

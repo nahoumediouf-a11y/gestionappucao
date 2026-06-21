@@ -18,6 +18,7 @@ class DashboardController extends Controller
                 ['label' => 'Gestion des salles et EDT', 'icon' => 'bi-door-open', 'color' => 'primary', 'route' => 'admin.emploi-du-temps.index'],
                 ['label' => 'Statistiques', 'icon' => 'bi-graph-up-arrow', 'color' => 'dark', 'route' => 'admin.statistiques'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'admin.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
+                ['label' => 'Journal des activités', 'icon' => 'bi-clock-history', 'color' => 'secondary', 'route' => 'admin.activity-logs.index'],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
             ],
             Role::AgentComptable => [
@@ -28,6 +29,7 @@ class DashboardController extends Controller
             ],
             Role::AgentRecouvrement => [
                 ['label' => 'Impayés', 'icon' => 'bi-journal-text', 'color' => 'warning', 'route' => 'recouvrement.impayes.index'],
+                ['label' => 'Étudiants à jour', 'icon' => 'bi-check-circle', 'color' => 'success', 'route' => 'recouvrement.ajour.index'],
                 ['label' => 'Rechercher un étudiant', 'icon' => 'bi-search', 'color' => 'info', 'route' => 'recouvrement.recherche.index'],
                 ['label' => 'Engagements de paiement', 'icon' => 'bi-file-earmark-text', 'color' => 'primary', 'route' => 'recouvrement.engagements.index'],
                 ['label' => 'Relances', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'recouvrement.relances.index'],
@@ -57,6 +59,7 @@ class DashboardController extends Controller
                 ['label' => 'Projets, devoirs & examens', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'etudiant.projets.index'],
                 ['label' => 'Proposer un projet perso', 'icon' => 'bi-lightbulb', 'color' => 'warning', 'route' => 'etudiant.propositions.index'],
                 ['label' => 'Documents de cours', 'icon' => 'bi-file-earmark-arrow-down', 'color' => 'secondary', 'route' => 'etudiant.documents.index'],
+                ['label' => 'Cours des professeurs', 'icon' => 'bi-file-earmark-richtext', 'color' => 'primary', 'route' => 'etudiant.documents_cours.index'],
                 ['label' => 'Suivi de paiement', 'icon' => 'bi-cash-coin', 'color' => 'dark', 'route' => 'etudiant.paiements.index'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'etudiant.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
@@ -69,6 +72,7 @@ class DashboardController extends Controller
                 ['label' => 'Projets de classe', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'professeur.projets.index'],
                 ['label' => 'Propositions d\'étudiants', 'icon' => 'bi-lightbulb', 'color' => 'warning', 'route' => 'professeur.propositions.index'],
                 ['label' => 'Documents de cours', 'icon' => 'bi-cloud-upload', 'color' => 'secondary', 'route' => 'professeur.documents.index'],
+                ['label' => 'Publier un cours', 'icon' => 'bi-file-earmark-richtext', 'color' => 'primary', 'route' => 'professeur.documents_cours.index'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'professeur.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
             ],

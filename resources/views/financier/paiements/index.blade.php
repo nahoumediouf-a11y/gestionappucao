@@ -41,7 +41,7 @@
                         </td>
                         <td class="text-end">
                             @unless ($paiement->valide_par)
-                                <form method="POST" action="{{ route('financier.paiements.valider', $paiement) }}">
+                                <form method="POST" action="{{ route('financier.paiements.valider', $paiement) }}" onsubmit="return confirm('Confirmer la validation du paiement {{ $paiement->reference }} d\'un montant de {{ number_format($paiement->montant, 0, ',', ' ') }} FCFA ?');">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-sm btn-ucao">
@@ -57,5 +57,8 @@
             </tbody>
         </table>
     </div>
+</div>
+<div class="mt-3">
+    {{ $paiements->links() }}
 </div>
 @endsection

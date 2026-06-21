@@ -58,7 +58,8 @@
                         </td>
                         <td class="text-end">
                             @if ($paiement->statut === 'en_attente_validation')
-                                <form method="POST" action="{{ route('comptabilite.paiements.valider', $paiement) }}" class="d-inline">
+                                <form method="POST" action="{{ route('comptabilite.paiements.valider', $paiement) }}" class="d-inline"
+                                    onsubmit="return confirm('Confirmer la validation de ce paiement de {{ number_format($paiement->montant, 0, ',', ' ') }} FCFA ? Le solde de l\'étudiant sera mis à jour.')">
                                     @csrf @method('PATCH')
                                     <button class="btn btn-sm btn-success" title="Valider">
                                         <i class="bi bi-check-lg"></i>

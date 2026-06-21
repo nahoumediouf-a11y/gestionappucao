@@ -18,8 +18,10 @@ class Paiement extends Model
 
     public const MODES = [
         'especes'      => 'Espèces',
-        'wave'         => 'Wave',
-        'orange_money' => 'Orange Money',
+        'wave'         => 'Wave (via PayDunya)',
+        'orange_money' => 'Orange Money (via PayDunya)',
+        'free_money'   => 'Free Money (via PayDunya)',
+        'paydunya'     => 'PayDunya (confirmé)',
         'visa'         => 'Carte Visa / Bancaire',
         'virement'     => 'Virement bancaire',
         'cheque'       => 'Chèque',

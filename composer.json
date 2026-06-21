@@ -10,7 +10,8 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "nesbot/carbon": ">=3.0,<3.12"
+        "nesbot/carbon": ">=3.0,<3.12",
+        "paydunya/paydunya": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

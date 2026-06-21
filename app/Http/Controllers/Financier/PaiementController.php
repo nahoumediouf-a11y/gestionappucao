@@ -13,7 +13,7 @@ class PaiementController extends Controller
     {
         $paiements = Paiement::with(['etudiant.user', 'agent', 'validePar'])
             ->orderByDesc('date_paiement')
-            ->get();
+            ->paginate(20);
 
         return view('financier.paiements.index', [
             'paiements' => $paiements,

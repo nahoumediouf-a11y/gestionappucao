@@ -42,6 +42,9 @@
                             </span>
                         </td>
                         <td class="text-end">
+                            <a href="{{ route('recouvrement.engagements.show', $engagement) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-eye"></i>
+                            </a>
                             <a href="{{ route('recouvrement.engagements.edit', $engagement) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
@@ -53,5 +56,8 @@
             </tbody>
         </table>
     </div>
+</div>
+<div class="mt-3">
+    {{ $engagements->links() }}
 </div>
 @endsection

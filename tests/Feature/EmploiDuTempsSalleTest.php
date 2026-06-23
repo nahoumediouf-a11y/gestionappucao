@@ -76,6 +76,7 @@ class EmploiDuTempsSalleTest extends TestCase
             'heure_debut' => '10:00',
             'heure_fin' => '12:00',
             'matiere' => 'Réseau Informatique',
+            'type' => 'CM',
             'salle' => '3.4',
             'professeur_id' => $professeur->id,
         ]);
@@ -130,6 +131,7 @@ class EmploiDuTempsSalleTest extends TestCase
             'heure_debut' => '10:00',
             'heure_fin' => '12:00',
             'matiere' => 'Réseau Informatique',
+            'type' => 'CM',
             'salle' => '3.4',
             'professeur_id' => $professeur->id,
         ]);

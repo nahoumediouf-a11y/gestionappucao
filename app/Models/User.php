@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Role;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -11,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     protected $fillable = [
@@ -81,5 +82,10 @@ class User extends Authenticatable
     public function creneaux(): HasMany
     {
         return $this->hasMany(EmploiDuTemps::class, 'professeur_id');
+    }
+
+    public function coursEnLigne(): HasMany
+    {
+        return $this->hasMany(CoursEnLigne::class, 'professeur_id');
     }
 }

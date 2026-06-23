@@ -36,6 +36,7 @@ enum Role: string
                 'consulter_toutes_infos',
                 'corriger_donnees',
                 'consulter_statistiques',
+                'gerer_cours_en_ligne',
             ],
             self::AgentComptable => [
                 'enregistrer_paiement',
@@ -71,6 +72,8 @@ enum Role: string
                 'declarer_paiement',
                 'choisir_mode_paiement',
                 'telecharger_recus',
+                'consulter_cours_en_ligne',
+                'rejoindre_cours_en_ligne',
             ],
             self::Professeur => [
                 'consulter_edt',
@@ -78,6 +81,9 @@ enum Role: string
                 'modifier_notes',
                 'enregistrer_absences',
                 'consulter_liste_etudiants',
+                'creer_cours_en_ligne',
+                'animer_cours_en_ligne',
+                'gerer_cours_en_ligne',
             ],
         };
     }

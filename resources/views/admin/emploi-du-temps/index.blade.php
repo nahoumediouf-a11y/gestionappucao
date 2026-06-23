@@ -37,6 +37,7 @@
                     <th>Jour</th>
                     <th>Horaire</th>
                     <th>Matière</th>
+                    <th>Type</th>
                     <th>Salle</th>
                     <th>Professeur</th>
                     <th class="text-end">Actions</th>
@@ -49,6 +50,7 @@
                         <td>{{ $creneau->jour }}</td>
                         <td>{{ \Illuminate\Support\Carbon::parse($creneau->heure_debut)->format('H:i') }} - {{ \Illuminate\Support\Carbon::parse($creneau->heure_fin)->format('H:i') }}</td>
                         <td>{{ $creneau->matiere }}</td>
+                        <td><span class="badge bg-{{ $creneau->typeCouleur() }}">{{ $creneau->type }}</span></td>
                         <td><span class="badge bg-info-subtle text-info">{{ $creneau->salle }}</span></td>
                         <td>{{ $creneau->professeur?->nom_complet ?? '—' }}</td>
                         <td class="text-end">
@@ -65,7 +67,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="text-center text-muted py-4">Aucun créneau programmé.</td></tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4">Aucun créneau programmé.</td></tr>
                 @endforelse
             </tbody>
         </table>

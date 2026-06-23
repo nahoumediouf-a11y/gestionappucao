@@ -16,6 +16,7 @@ class DashboardController extends Controller
                 ['label' => 'Gérer les utilisateurs', 'icon' => 'bi-people-fill', 'color' => 'success', 'route' => 'admin.utilisateurs.index'],
                 ['label' => 'Rechercher un étudiant', 'icon' => 'bi-search', 'color' => 'info', 'route' => 'admin.recherche.index'],
                 ['label' => 'Gestion des salles et EDT', 'icon' => 'bi-door-open', 'color' => 'primary', 'route' => 'admin.emploi-du-temps.index'],
+                ['label' => 'Cours en ligne', 'icon' => 'bi-camera-video', 'color' => 'info', 'route' => 'admin.cours-en-ligne.index'],
                 ['label' => 'Statistiques', 'icon' => 'bi-graph-up-arrow', 'color' => 'dark', 'route' => 'admin.statistiques'],
                 ['label' => 'Notifications', 'icon' => 'bi-bell', 'color' => 'danger', 'route' => 'admin.notifications.index', 'badge' => $user->unreadNotifications()->count() ?: null],
                 ['label' => 'Journal des activités', 'icon' => 'bi-clock-history', 'color' => 'secondary', 'route' => 'admin.activity-logs.index'],
@@ -56,6 +57,7 @@ class DashboardController extends Controller
                 ['label' => 'Mon bulletin', 'icon' => 'bi-file-earmark-text', 'color' => 'secondary', 'route' => 'etudiant.bulletin.index'],
                 ['label' => 'Mes absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'etudiant.absences.index'],
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'etudiant.edt.index'],
+                ['label' => 'Cours en ligne', 'icon' => 'bi-camera-video', 'color' => 'success', 'route' => 'etudiant.cours.index'],
                 ['label' => 'Projets, devoirs & examens', 'icon' => 'bi-kanban', 'color' => 'primary', 'route' => 'etudiant.projets.index'],
                 ['label' => 'Proposer un projet perso', 'icon' => 'bi-lightbulb', 'color' => 'warning', 'route' => 'etudiant.propositions.index'],
                 ['label' => 'Documents de cours', 'icon' => 'bi-file-earmark-arrow-down', 'color' => 'secondary', 'route' => 'etudiant.documents.index'],
@@ -66,6 +68,7 @@ class DashboardController extends Controller
             ]),
             Role::Professeur => [
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'professeur.edt.index'],
+                ['label' => 'Cours en ligne', 'icon' => 'bi-camera-video', 'color' => 'success', 'route' => 'professeur.cours.index'],
                 ['label' => 'Liste des étudiants', 'icon' => 'bi-people', 'color' => 'primary', 'route' => 'professeur.etudiants.index'],
                 ['label' => 'Notes', 'icon' => 'bi-journal-check', 'color' => 'success', 'route' => 'professeur.notes.index'],
                 ['label' => 'Absences', 'icon' => 'bi-calendar-x', 'color' => 'warning', 'route' => 'professeur.absences.index'],

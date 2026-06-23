@@ -27,6 +27,15 @@ class Etudiant extends Model
         'L3-1', 'L3-2',
     ];
 
+    /** Frais de scolarité annuels (FCFA) par niveau. */
+    public const SCOLARITE_PAR_NIVEAU = [
+        'L1' => 650_000,
+        'L2' => 700_000,
+        'L3' => 780_000,
+        'M1' => 850_000,
+        'M2' => 900_000,
+    ];
+
     protected $fillable = [
         'user_id',
         'matricule',
@@ -103,5 +112,24 @@ class Etudiant extends Model
     public function estEnRegleAvecRecouvrement(): bool
     {
         return (float) $this->solde <= 0;
+    }
+
+    /** Frais de scolarité annuels (FCFA) selon le niveau de l'étudiant. */
+    public function scolariteTotale(): int
+    {
+        $niveauKey = strtoupper($this->niveau ?? '');
+        if (str_contains($niveauKey, 'L3')) $niveauKey = 'L3';
+        elseif (str_contains($niveauKey, 'L2')) $niveauKey = 'L2';
+        elseif (str_contains($niveauKey, 'L1')) $niveauKey = 'L1';
+
+        return self::SCOLARITE_PAR_NIVEAU[$niveauKey] ?? 780_000;
+    }
+
+    /** Solde restant réel : scolarité totale moins les paiements validés. Source de vérité pour l'affichage. */
+    public function soldeReel(): float
+    {
+        $totalPaye = $this->paiements()->where('statut', 'valide')->sum('montant');
+
+        return max(0, $this->scolariteTotale() - $totalPaye);
     }
 }

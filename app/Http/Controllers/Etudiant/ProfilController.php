@@ -13,6 +13,10 @@ class ProfilController extends Controller
     {
         $etudiant = auth()->user()->etudiant;
 
+        // Le solde affiché doit toujours refléter scolarité - paiements validés,
+        // sinon il peut diverger de la colonne stockée (ex. désynchro lors d'un seed).
+        $etudiant->solde = $etudiant->soldeReel();
+
         return view('etudiant.profil.index', [
             'etudiant' => $etudiant,
             'moyenne' => $etudiant->moyenne(),

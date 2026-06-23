@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\CoursEnLigneController as AdminCoursEnLigneController;
 use App\Http\Controllers\Admin\EmploiDuTempsController as AdminEmploiDuTempsController;
 use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\AssistantController;
-use App\Http\Controllers\NotificationController as UserNotificationController;
 use App\Http\Controllers\Admin\StatistiqueController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -15,24 +15,28 @@ use App\Http\Controllers\Comptabilite\PaiementController as ComptabilitePaiement
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Etudiant\AbsenceController as EtudiantAbsenceController;
 use App\Http\Controllers\Etudiant\BulletinController;
+use App\Http\Controllers\Etudiant\CoursEnLigneController as EtudiantCoursEnLigneController;
 use App\Http\Controllers\Etudiant\DocumentController as EtudiantDocumentController;
+use App\Http\Controllers\Etudiant\DocumentCoursController as EtudiantDocumentCoursController;
 use App\Http\Controllers\Etudiant\EmploiDuTempsController as EtudiantEmploiDuTempsController;
 use App\Http\Controllers\Etudiant\NoteController as EtudiantNoteController;
 use App\Http\Controllers\Etudiant\PaiementController as EtudiantPaiementController;
 use App\Http\Controllers\Etudiant\ProfilController;
 use App\Http\Controllers\Etudiant\ProjetController as EtudiantProjetController;
+use App\Http\Controllers\Etudiant\PropositionProjetController;
 use App\Http\Controllers\Financier\PaiementController as FinancierPaiementController;
 use App\Http\Controllers\Financier\RapportController;
 use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController as UserNotificationController;
 use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceController;
+use App\Http\Controllers\Professeur\CoursEnLigneController as ProfesseurCoursEnLigneController;
 use App\Http\Controllers\Professeur\DocumentController as ProfesseurDocumentController;
+use App\Http\Controllers\Professeur\DocumentCoursController as ProfesseurDocumentCoursController;
 use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiDuTempsController;
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
 use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
-use App\Http\Controllers\Professeur\DocumentCoursController as ProfesseurDocumentCoursController;
-use App\Http\Controllers\Etudiant\DocumentCoursController as EtudiantDocumentCoursController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Recouvrement\AJourController;
 use App\Http\Controllers\Recouvrement\EngagementController;
 use App\Http\Controllers\Recouvrement\ImpayeController;
@@ -40,7 +44,6 @@ use App\Http\Controllers\Recouvrement\RechercheController;
 use App\Http\Controllers\Recouvrement\RelanceController;
 use App\Http\Controllers\Recouvrement\StatistiqueController as RecouvrementStatistiqueController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class, 'showWelcome'])->name('welcome');
@@ -83,6 +86,9 @@ Route::middleware('auth')->group(function () {
         Route::get('emploi-du-temps/{creneau}/modifier', [AdminEmploiDuTempsController::class, 'edit'])->name('emploi-du-temps.edit');
         Route::put('emploi-du-temps/{creneau}', [AdminEmploiDuTempsController::class, 'update'])->name('emploi-du-temps.update');
         Route::delete('emploi-du-temps/{creneau}', [AdminEmploiDuTempsController::class, 'destroy'])->name('emploi-du-temps.destroy');
+
+        Route::get('cours-en-ligne', [AdminCoursEnLigneController::class, 'index'])->name('cours-en-ligne.index');
+        Route::patch('cours-en-ligne/{cours}/annuler', [AdminCoursEnLigneController::class, 'annuler'])->name('cours-en-ligne.annuler');
     });
 
     // ===== Agent comptable =====
@@ -129,15 +135,18 @@ Route::middleware('auth')->group(function () {
         Route::get('bulletin/pdf', [BulletinController::class, 'telecharger'])->name('bulletin.pdf');
         Route::get('absences', [EtudiantAbsenceController::class, 'index'])->name('absences.index');
         Route::get('emploi-du-temps', [EtudiantEmploiDuTempsController::class, 'index'])->name('edt.index');
+        Route::get('emploi-du-temps/pdf', [EtudiantEmploiDuTempsController::class, 'pdf'])->name('edt.pdf');
+        Route::get('cours-en-ligne', [EtudiantCoursEnLigneController::class, 'index'])->name('cours.index');
+        Route::get('cours-en-ligne/{cours}/salle', [EtudiantCoursEnLigneController::class, 'salle'])->name('cours.salle');
         Route::get('paiements', [EtudiantPaiementController::class, 'index'])->name('paiements.index');
         Route::post('paiements', [EtudiantPaiementController::class, 'store'])->name('paiements.store');
         Route::get('paiements/{paiement}/recu', [EtudiantPaiementController::class, 'recu'])->name('paiements.recu');
         Route::get('paiements/retour', [EtudiantPaiementController::class, 'retourPaydunya'])->name('paiements.paydunya.retour');
         Route::post('paiements/callback', [EtudiantPaiementController::class, 'callbackPaydunya'])->name('paiements.paydunya.callback')->withoutMiddleware(['auth', 'role:etudiant']);
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
-        Route::get('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'index'])->name('propositions.index');
-        Route::get('propositions/soumettre', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'create'])->name('propositions.create');
-        Route::post('propositions', [\App\Http\Controllers\Etudiant\PropositionProjetController::class, 'store'])->name('propositions.store');
+        Route::get('propositions', [PropositionProjetController::class, 'index'])->name('propositions.index');
+        Route::get('propositions/soumettre', [PropositionProjetController::class, 'create'])->name('propositions.create');
+        Route::post('propositions', [PropositionProjetController::class, 'store'])->name('propositions.store');
         Route::get('documents', [EtudiantDocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/{document}/telecharger', [EtudiantDocumentController::class, 'download'])->name('documents.download');
         Route::get('documents-cours', [EtudiantDocumentCoursController::class, 'index'])->name('documents_cours.index');
@@ -149,6 +158,17 @@ Route::middleware('auth')->group(function () {
         Route::get('notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/lue', [UserNotificationController::class, 'read'])->name('notifications.read');
         Route::get('emploi-du-temps', [ProfesseurEmploiDuTempsController::class, 'index'])->name('edt.index');
+        Route::get('emploi-du-temps/pdf', [ProfesseurEmploiDuTempsController::class, 'pdf'])->name('edt.pdf');
+
+        Route::get('cours-en-ligne', [ProfesseurCoursEnLigneController::class, 'index'])->name('cours.index');
+        Route::get('cours-en-ligne/creer', [ProfesseurCoursEnLigneController::class, 'create'])->name('cours.create');
+        Route::post('cours-en-ligne', [ProfesseurCoursEnLigneController::class, 'store'])->name('cours.store');
+        Route::get('cours-en-ligne/{cours}/modifier', [ProfesseurCoursEnLigneController::class, 'edit'])->name('cours.edit');
+        Route::put('cours-en-ligne/{cours}', [ProfesseurCoursEnLigneController::class, 'update'])->name('cours.update');
+        Route::delete('cours-en-ligne/{cours}', [ProfesseurCoursEnLigneController::class, 'destroy'])->name('cours.destroy');
+        Route::post('cours-en-ligne/{cours}/demarrer', [ProfesseurCoursEnLigneController::class, 'demarrer'])->name('cours.demarrer');
+        Route::post('cours-en-ligne/{cours}/terminer', [ProfesseurCoursEnLigneController::class, 'terminer'])->name('cours.terminer');
+        Route::get('cours-en-ligne/{cours}/salle', [ProfesseurCoursEnLigneController::class, 'salle'])->name('cours.salle');
         Route::get('etudiants', [ProfesseurEtudiantController::class, 'index'])->name('etudiants.index');
         Route::get('notes', [ProfesseurNoteController::class, 'index'])->name('notes.index');
         Route::get('notes/creer', [ProfesseurNoteController::class, 'create'])->name('notes.create');
@@ -160,8 +180,8 @@ Route::middleware('auth')->group(function () {
         Route::post('absences', [ProfesseurAbsenceController::class, 'store'])->name('absences.store');
         Route::get('absences/{absence}/modifier', [ProfesseurAbsenceController::class, 'edit'])->name('absences.edit');
         Route::put('absences/{absence}', [ProfesseurAbsenceController::class, 'update'])->name('absences.update');
-        Route::get('propositions', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'index'])->name('propositions.index');
-        Route::patch('propositions/{proposition}/traiter', [\App\Http\Controllers\Professeur\PropositionProjetController::class, 'traiter'])->name('propositions.traiter');
+        Route::get('propositions', [App\Http\Controllers\Professeur\PropositionProjetController::class, 'index'])->name('propositions.index');
+        Route::patch('propositions/{proposition}/traiter', [App\Http\Controllers\Professeur\PropositionProjetController::class, 'traiter'])->name('propositions.traiter');
         Route::get('documents-cours', [ProfesseurDocumentCoursController::class, 'index'])->name('documents_cours.index');
         Route::get('documents-cours/ajouter', [ProfesseurDocumentCoursController::class, 'create'])->name('documents_cours.create');
         Route::post('documents-cours', [ProfesseurDocumentCoursController::class, 'store'])->name('documents_cours.store');

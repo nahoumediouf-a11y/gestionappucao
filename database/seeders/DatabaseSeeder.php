@@ -258,6 +258,17 @@ class DatabaseSeeder extends Seeder
             ['professeur_id' => $prof->id, 'justifiee' => false]
         );
 
+        // Type de séance déduit de la matière (TP pour les matières pratiques,
+        // TD pour les matières à exercices, CM par défaut).
+        $typeSeance = function (string $matiere): string {
+            $m = mb_strtolower($matiere);
+            return match (true) {
+                str_contains($m, 'base de données'), str_contains($m, 'programmation'), str_contains($m, 'réseaux'), str_contains($m, 'digital') => 'TP',
+                str_contains($m, 'algorithmique'), str_contains($m, 'mathématiques'), str_contains($m, 'comptabilité'), str_contains($m, 'procédure') => 'TD',
+                default => 'CM',
+            };
+        };
+
         // Emploi du temps (Informatique L3)
         $creneauxInfo = [
             ['jour' => 'Lundi', 'heure_debut' => '08:00', 'heure_fin' => '10:00', 'matiere' => 'Algorithmique', 'salle' => '1-1', 'professeur_id' => $prof->id],
@@ -272,7 +283,7 @@ class DatabaseSeeder extends Seeder
         foreach ($creneauxInfo as $creneau) {
             EmploiDuTemps::updateOrCreate(
                 ['filiere' => 'Informatique', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
-                $creneau
+                array_merge($creneau, ['type' => $typeSeance($creneau['matiere'])])
             );
         }
 
@@ -287,7 +298,7 @@ class DatabaseSeeder extends Seeder
         foreach ($creneauxGestion as $creneau) {
             EmploiDuTemps::updateOrCreate(
                 ['filiere' => 'Gestion', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
-                $creneau
+                array_merge($creneau, ['type' => $typeSeance($creneau['matiere'])])
             );
         }
 
@@ -303,7 +314,7 @@ class DatabaseSeeder extends Seeder
         foreach ($creneauxDroit as $creneau) {
             EmploiDuTemps::updateOrCreate(
                 ['filiere' => 'Droit', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
-                $creneau
+                array_merge($creneau, ['type' => $typeSeance($creneau['matiere'])])
             );
         }
 
@@ -319,7 +330,7 @@ class DatabaseSeeder extends Seeder
         foreach ($creneauxCommunication as $creneau) {
             EmploiDuTemps::updateOrCreate(
                 ['filiere' => 'Communication', 'niveau' => 'L3', 'jour' => $creneau['jour'], 'matiere' => $creneau['matiere']],
-                $creneau
+                array_merge($creneau, ['type' => $typeSeance($creneau['matiere'])])
             );
         }
 
@@ -358,5 +369,8 @@ class DatabaseSeeder extends Seeder
 
         // 50 étudiants supplémentaires (filières variées, coordonnées, situations financières diverses)
         $this->call(EtudiantsDemoSeeder::class);
+
+        // Cours en ligne de démonstration (Informatique L3)
+        $this->call(CoursEnLigneSeeder::class);
     }
 }

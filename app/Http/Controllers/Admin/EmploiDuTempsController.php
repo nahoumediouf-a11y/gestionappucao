@@ -44,6 +44,11 @@ class EmploiDuTempsController extends Controller
     {
         $validated = $this->validateCreneau($request);
 
+        $conflits = EmploiDuTemps::detecterConflits($validated);
+        if ($conflits) {
+            return back()->withInput()->withErrors(['conflit' => $conflits]);
+        }
+
         EmploiDuTemps::create($validated);
 
         ActivityLogger::log('edt.create', "Création d'un créneau d'emploi du temps : {$validated['matiere']} ({$validated['filiere']} {$validated['niveau']}, {$validated['jour']}).");
@@ -62,6 +67,11 @@ class EmploiDuTempsController extends Controller
     public function update(Request $request, EmploiDuTemps $creneau): RedirectResponse
     {
         $validated = $this->validateCreneau($request);
+
+        $conflits = EmploiDuTemps::detecterConflits($validated, $creneau->id);
+        if ($conflits) {
+            return back()->withInput()->withErrors(['conflit' => $conflits]);
+        }
 
         $ancienneSalle = $creneau->salle;
 
@@ -111,6 +121,7 @@ class EmploiDuTempsController extends Controller
             'heure_debut' => ['required', 'date_format:H:i'],
             'heure_fin' => ['required', 'date_format:H:i', 'after:heure_debut'],
             'matiere' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'in:'.implode(',', array_keys(EmploiDuTemps::TYPES))],
             'salle' => ['required', 'string', 'max:50'],
             'professeur_id' => ['nullable', 'exists:users,id'],
         ]);

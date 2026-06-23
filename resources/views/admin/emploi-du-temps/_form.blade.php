@@ -1,7 +1,18 @@
 @php
     $creneau = $creneau ?? null;
-    $jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    $jours = \App\Models\EmploiDuTemps::JOURS;
 @endphp
+
+@if ($errors->has('conflit'))
+    <div class="alert alert-danger">
+        <div class="fw-semibold mb-1"><i class="bi bi-exclamation-octagon me-1"></i>Conflit d'emploi du temps — créneau non enregistré :</div>
+        <ul class="mb-0">
+            @foreach ($errors->get('conflit') as $message)
+                <li>{{ $message }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <div class="row g-3">
     <div class="col-md-6">
@@ -15,10 +26,19 @@
         @error('niveau') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <label for="matiere" class="form-label">Matière</label>
         <input type="text" class="form-control @error('matiere') is-invalid @enderror" id="matiere" name="matiere" value="{{ old('matiere', $creneau?->matiere) }}" required>
         @error('matiere') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+    <div class="col-md-2">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+            @foreach (\App\Models\EmploiDuTemps::TYPES as $code => $info)
+                <option value="{{ $code }}" {{ old('type', $creneau?->type ?? 'CM') === $code ? 'selected' : '' }}>{{ $code }} — {{ $info['label'] }}</option>
+            @endforeach
+        </select>
+        @error('type') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-6">
         <label for="professeur_id" class="form-label">Professeur</label>

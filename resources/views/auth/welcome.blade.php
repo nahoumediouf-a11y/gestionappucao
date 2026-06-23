@@ -16,7 +16,7 @@
                         <span class="fs-3 fw-semibold">UCAO Saint Michel</span>
                     </div>
                     <h1 class="h2 fw-bold mb-2 text-uppercase">SIGE UCAO</h1>
-                    <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants — Choisissez votre espace pour continuer</p>
+                    <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants - Choisissez votre espace pour continuer</p>
                 </div>
 
                 <div class="row g-4 justify-content-center">

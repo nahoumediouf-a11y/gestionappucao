@@ -59,15 +59,48 @@ class AssistantService
     {
         $instructions = $this->instructions($user);
         $contexte     = $this->contexte($user);
+        $connaissance = $this->connaissanceGenerale();
 
         return <<<PROMPT
             Tu es l'assistant virtuel de "SIGE UCAO", une plateforme de gestion académique et financière universitaire.
             Réponds toujours en français, de manière concise, claire et professionnelle.
             Utilise le Markdown : tableaux, listes, gras, titres selon ce qui est le plus lisible.
             {$instructions}
+            --- RÈGLEMENT ET INFORMATIONS GÉNÉRALES DE L'ÉTABLISSEMENT ---
+            {$connaissance}
             --- DONNÉES ACTUELLES DE L'UTILISATEUR CONNECTÉ ---
             {$contexte}
             PROMPT;
+    }
+
+    /**
+     * Base de connaissances institutionnelle (règlement, scolarité, paiement) commune à tous les rôles.
+     * Sert de contexte factuel fiable pour éviter que l'IA invente des règles ou des montants.
+     */
+    private function connaissanceGenerale(): string
+    {
+        $scolarites = collect(Etudiant::SCOLARITE_PAR_NIVEAU)
+            ->map(fn ($montant, $niveau) => "{$niveau} : ".number_format($montant, 0, ',', ' ').' FCFA/an')
+            ->implode("\n- ");
+
+        $modes = collect(Paiement::MODES)->implode(', ');
+
+        return <<<TXT
+            Frais de scolarité annuels par niveau :
+            - {$scolarites}
+            La scolarité est payable en 6 tranches mensuelles égales, de septembre à février.
+
+            Modes de paiement acceptés : {$modes}.
+            Un paiement déclaré par un étudiant (Wave, Orange Money, virement, etc.) passe par le statut
+            "en attente de validation" jusqu'à confirmation par le service comptable (sous 24h en général).
+            Les paiements via PayDunya (Wave, Orange Money, Free Money) sont validés automatiquement après confirmation du prestataire.
+
+            Règlement assiduité : un étudiant atteignant 3 absences non justifiées passe en "situation rouge"
+            et son accès aux examens est bloqué jusqu'à régularisation auprès de l'administration.
+
+            En cas de solde impayé prolongé, le service de recouvrement peut proposer un engagement de paiement
+            (échéancier) à l'étudiant ; le non-respect d'un engagement entraîne une relance.
+            TXT;
     }
 
     // -------------------------------------------------------------------------
@@ -221,7 +254,7 @@ class AssistantService
             Rôle : Étudiant
             Matricule : {$etudiant->matricule}
             Filière / Classe : {$etudiant->filiere} {$etudiant->niveau}
-            Solde restant à payer : {$etudiant->solde} FCFA
+            Solde restant à payer : {$etudiant->soldeReel()} FCFA
             Moyenne générale : {$etudiant->moyenne()}/20
             Absences non justifiées : {$absNJ} (seuil blocage : 3)
             Situation rouge (accès examens bloqué) : {$rouge}

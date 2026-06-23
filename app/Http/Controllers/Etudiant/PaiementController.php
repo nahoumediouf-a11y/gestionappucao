@@ -10,15 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
-/** Frais de scolarité annuels (FCFA) par niveau. Modifiable ici. */
-const SCOLARITE_PAR_NIVEAU = [
-    'L1' => 650_000,
-    'L2' => 700_000,
-    'L3' => 780_000,
-    'M1' => 850_000,
-    'M2' => 900_000,
-];
-
 class PaiementController extends Controller
 {
     public function index(): View
@@ -27,14 +18,15 @@ class PaiementController extends Controller
         $paiements = $etudiant->paiements()->orderByDesc('date_paiement')->get();
 
         // Scolarité annuelle estimée
-        $niveauKey = strtoupper($etudiant->niveau ?? '');
-        // Handle LIG L3-2 → L3
-        if (str_contains($niveauKey, 'L3')) $niveauKey = 'L3';
-        $scolariteTotale = SCOLARITE_PAR_NIVEAU[$niveauKey] ?? 780_000;
+        $scolariteTotale = $etudiant->scolariteTotale();
         $nbTranches = 6;
         $montantTranche = (int) round($scolariteTotale / $nbTranches);
         $totalPaye = $paiements->where('statut', 'valide')->sum('montant');
         $progression = $scolariteTotale > 0 ? min(100, (int) round($totalPaye / $scolariteTotale * 100)) : 0;
+
+        // Le solde affiché doit toujours refléter scolarité - paiements validés,
+        // sinon il peut diverger de la colonne stockée (ex. désynchro lors d'un seed).
+        $etudiant->solde = $etudiant->soldeReel();
 
         // Générer le plan de paiement en 6 tranches (à partir de septembre)
         $moisDebut = 9; // Septembre

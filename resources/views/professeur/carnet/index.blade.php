@@ -6,6 +6,9 @@
 @section('page-subtitle', $filiere.' '.$niveau.($matiere ? ' — '.$matiere : ''))
 
 @section('page-actions')
+    <a href="{{ route('professeur.ponderation.edit', ['filiere' => $filiere, 'niveau' => $niveau, 'matiere' => $matiere]) }}" class="btn btn-outline-primary">
+        <i class="bi bi-sliders me-1"></i>Pondération
+    </a>
     <a href="{{ route('professeur.carnet.export', ['filiere' => $filiere, 'niveau' => $niveau, 'matiere' => $matiere]) }}" class="btn btn-outline-secondary">
         <i class="bi bi-filetype-csv me-1"></i>Export CSV
     </a>
@@ -26,14 +29,28 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-5">
-                <label for="nouvelle_session" class="form-label mb-1">Ajouter une évaluation (colonne)</label>
+            <div class="col-md-3">
+                <label for="nouvelle_session" class="form-label mb-1">Ajouter une évaluation</label>
                 <input type="text" name="nouvelle_session" id="nouvelle_session" class="form-control" placeholder="Ex : Contrôle n°2">
             </div>
             <div class="col-md-3">
-                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-plus-lg me-1"></i>Ajouter la colonne</button>
+                <label for="nouvelle_categorie" class="form-label mb-1">Catégorie</label>
+                <select name="nouvelle_categorie" id="nouvelle_categorie" class="form-select">
+                    @foreach ($categories as $cle => $libelle)
+                        <option value="{{ $cle }}" @selected($cle === 'tp')>{{ $libelle }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-plus-lg me-1"></i>Ajouter</button>
             </div>
         </form>
+        <div class="small text-muted mt-2">
+            Pondération actuelle :
+            @foreach ($ponderation->poids() as $cat => $p)
+                @if ($p > 0)<span class="badge bg-light text-dark border">{{ $categories[$cat] }} {{ $p }}%</span>@endif
+            @endforeach
+        </div>
     </div>
 </div>
 
@@ -47,17 +64,17 @@
                 <tr>
                     <th>Étudiant</th>
                     @foreach ($sessions as $s)
-                        <th class="text-center">{{ $s }}</th>
+                        <th class="text-center">
+                            {{ $s }}
+                            <div><span class="badge bg-secondary fw-normal">{{ $categories[$categoriesParSession[$s] ?? 'examen'] ?? '' }}</span></div>
+                        </th>
                     @endforeach
-                    <th class="text-center">Moyenne</th>
+                    <th class="text-center">Moyenne pondérée</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($etudiants as $e)
-                    @php
-                        $valeurs = collect($sessions)->map(fn ($s) => $notes[$e->id][$s] ?? null)->filter(fn ($v) => $v !== null);
-                        $moy = $valeurs->isNotEmpty() ? round($valeurs->avg(), 2) : null;
-                    @endphp
+                    @php $moy = $moyennes[$e->id] ?? null; @endphp
                     <tr>
                         <td>
                             <div class="small fw-semibold">{{ $e->user?->nom_complet }}</div>
@@ -72,6 +89,7 @@
                                     <input type="hidden" name="niveau" value="{{ $niveau }}">
                                     <input type="hidden" name="matiere" value="{{ $matiere }}">
                                     <input type="hidden" name="session" value="{{ $s }}">
+                                    <input type="hidden" name="categorie" value="{{ $categoriesParSession[$s] ?? 'examen' }}">
                                     <input type="hidden" name="etudiant_id" value="{{ $e->id }}">
                                     <input type="number" step="0.25" min="0" max="20" name="valeur"
                                         value="{{ $val !== null ? rtrim(rtrim((string) $val, '0'), '.') : '' }}"

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Etudiant;
 
 use App\Http\Controllers\Controller;
+use App\Models\Etudiant;
+use App\Models\Note;
+use App\Support\CalculMoyenne;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class BulletinController extends Controller
@@ -17,7 +21,7 @@ class BulletinController extends Controller
         if (! $donnees['etudiant']->estEnRegleAvecRecouvrement()) {
             return redirect()
                 ->route('etudiant.paiements.index')
-                ->with('error', 'Votre bulletin est bloqué : vous avez un solde impayé de ' . number_format($donnees['etudiant']->solde, 0, ',', ' ') . ' FCFA. Régularisez votre situation pour y accéder.');
+                ->with('error', 'Votre bulletin est bloqué : vous avez un solde impayé de '.number_format($donnees['etudiant']->solde, 0, ',', ' ').' FCFA. Régularisez votre situation pour y accéder.');
         }
 
         return view('etudiant.bulletin.index', $donnees);
@@ -39,7 +43,7 @@ class BulletinController extends Controller
     }
 
     /**
-     * @return array{etudiant: \App\Models\Etudiant, parSession: \Illuminate\Support\Collection, moyenneGenerale: float}
+     * @return array{etudiant: Etudiant, parSession: Collection, moyenneGenerale: float}
      */
     private function donnees(): array
     {
@@ -56,6 +60,8 @@ class BulletinController extends Controller
         return [
             'etudiant' => $etudiant,
             'parSession' => $parSession,
+            'parMatiere' => CalculMoyenne::detailParMatiere($etudiant),
+            'categories' => Note::CATEGORIES,
             'moyenneGenerale' => $etudiant->moyenne(),
         ];
     }

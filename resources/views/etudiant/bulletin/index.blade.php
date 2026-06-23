@@ -59,6 +59,38 @@
                 @empty
                     <div class="alert alert-info">Aucune note disponible pour le moment.</div>
                 @endforelse
+
+                @if ($parMatiere->isNotEmpty())
+                    <hr>
+                    <h6 class="mb-2">Moyennes pondérées par matière</h6>
+                    <p class="text-muted small mb-2">La moyenne de chaque matière tient compte du poids de chaque catégorie (Examen, TP, TD, Contrôle continu) défini par le professeur.</p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Détail par catégorie (note · poids)</th>
+                                    <th class="text-end">Moyenne pondérée</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($parMatiere as $matiere => $detail)
+                                    <tr>
+                                        <td>{{ $matiere }}</td>
+                                        <td class="small">
+                                            @foreach ($detail['categories'] as $cat => $info)
+                                                <span class="badge bg-light text-dark border me-1">
+                                                    {{ $categories[$cat] ?? $cat }} : {{ $info['moyenne'] }}/20 · {{ $info['poids'] }}%
+                                                </span>
+                                            @endforeach
+                                        </td>
+                                        <td class="text-end fw-bold">{{ $detail['moyenne'] !== null ? $detail['moyenne'].' / 20' : '—' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
         </div>
 

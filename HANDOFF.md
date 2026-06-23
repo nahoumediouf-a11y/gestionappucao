@@ -303,6 +303,28 @@ arithmétique (« combien font X + Y »).
       / `recouvrement.recherche.index` restent en place (non cassées).
     - **Cahier des charges UI/UX entièrement couvert** (phases 1→5).
 
+11. **Pondération des notes (TP / Examen / TD / CC) — implémenté**.
+    Prompt : `PROMPT_PONDERATION_NOTES.md`.
+    - `notes.categorie` (`examen|tp|td|cc`, défaut `examen`, backfill) +
+      `Note::CATEGORIES`. Table `ponderations` (par filière+niveau+matiere) +
+      modèle `Ponderation` (`DEFAUTS` = Examen 70 / TP 30, `pour()`, `poids()`,
+      `valide()`).
+    - **Service `App\Support\CalculMoyenne`** : moyenne pondérée par matière avec
+      **re-normalisation** (une catégorie active sans note ne pénalise pas), et
+      moyenne générale. `Etudiant::moyenne()` y délègue (cohérence partout :
+      profil, dashboard, fiche classe, bulletin).
+    - **Écran pondération prof** (`Professeur\PonderationController`,
+      `professeur.ponderation.edit/update`) : 4 poids %, total live (vert=100),
+      presets (TP30/70, TP60/40, Examen 100, 50/50, CC40/60), validation somme=100,
+      accès restreint aux classes enseignées.
+    - **Carnet** : choix de la catégorie par colonne, badges de catégorie, moyenne
+      **pondérée** par étudiant, bouton « Pondération », rappel des poids actifs.
+    - **Évaluations** : la correction publie la note dans la catégorie `examen`
+      (type examen) ou `tp` (projet/devoir). **Bulletin** : section « moyennes
+      pondérées par matière » (détail catégorie · poids) + moyenne générale pondérée.
+    - **Défauts retenus** : TP 30 % / Examen 70 % ; pondération par classe+matière ;
+      projet/devoir → catégorie TP. **Tests** : `PonderationTest` (6 verts).
+
 ---
 
 ## 6. Conventions

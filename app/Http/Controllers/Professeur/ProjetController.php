@@ -136,6 +136,9 @@ class ProjetController extends Controller
         // Publication au bulletin : note ramenée sur 20.
         $valeurSur20 = round((float) $validated['note'] / max(1, $projet->bareme) * 20, 2);
 
+        // Catégorie de la note publiée : un examen alimente « Examen », un projet/devoir « TP ».
+        $categorie = $projet->type === 'examen' ? 'examen' : 'tp';
+
         Note::updateOrCreate(
             [
                 'etudiant_id' => $soumission->etudiant_id,
@@ -145,6 +148,7 @@ class ProjetController extends Controller
             [
                 'professeur_id' => auth()->id(),
                 'valeur' => $valeurSur20,
+                'categorie' => $categorie,
             ]
         );
 

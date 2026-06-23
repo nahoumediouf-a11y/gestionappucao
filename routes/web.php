@@ -40,6 +40,7 @@ use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiD
 use App\Http\Controllers\Professeur\EspaceController as ProfesseurEspaceController;
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
+use App\Http\Controllers\Professeur\PonderationController as ProfesseurPonderationController;
 use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RechercheGlobaleController;
@@ -187,6 +188,8 @@ Route::middleware('auth')->group(function () {
         Route::get('carnet', [ProfesseurCarnetController::class, 'index'])->name('carnet.index');
         Route::get('carnet/export', [ProfesseurCarnetController::class, 'export'])->name('carnet.export');
         Route::post('carnet/note', [ProfesseurCarnetController::class, 'storeNote'])->name('carnet.note');
+        Route::get('ponderation', [ProfesseurPonderationController::class, 'edit'])->name('ponderation.edit');
+        Route::put('ponderation', [ProfesseurPonderationController::class, 'update'])->name('ponderation.update');
 
         Route::get('emploi-du-temps', [ProfesseurEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('emploi-du-temps/pdf', [ProfesseurEmploiDuTempsController::class, 'pdf'])->name('edt.pdf');

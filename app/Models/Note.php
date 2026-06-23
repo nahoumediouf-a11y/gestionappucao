@@ -10,10 +10,19 @@ class Note extends Model
 {
     use HasFactory;
 
+    /** Catégories d'évaluation et leur libellé. */
+    public const CATEGORIES = [
+        'examen' => 'Examen',
+        'tp' => 'Travaux pratiques',
+        'td' => 'Travaux dirigés',
+        'cc' => 'Contrôle continu',
+    ];
+
     protected $fillable = [
         'etudiant_id',
         'professeur_id',
         'matiere',
+        'categorie',
         'valeur',
         'session',
     ];

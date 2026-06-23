@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\CalculMoyenne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -97,9 +98,10 @@ class Etudiant extends Model
             ->get();
     }
 
+    /** Moyenne générale pondérée (Examen / TP / TD / CC selon la pondération par matière). */
     public function moyenne(): float
     {
-        return round((float) $this->notes()->avg('valeur'), 2);
+        return CalculMoyenne::moyenneGenerale($this);
     }
 
     public function absencesNonJustifieesCount(): int

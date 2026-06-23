@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Professeur\Concerns\InteractsWithEtudiants;
 use App\Models\Etudiant;
 use App\Models\Note;
+use App\Models\Ponderation;
 use App\Support\ActivityLogger;
+use App\Support\CalculMoyenne;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -26,9 +28,24 @@ class CarnetController extends Controller
             ->where('filiere', $filiere)->where('niveau', $niveau)
             ->orderBy('matricule')->get();
 
-        [$sessions, $notes] = $this->grilleNotes($etudiants->pluck('id'), $matiere, $request->string('nouvelle_session')->toString());
+        $nouvelleSession = $request->string('nouvelle_session')->toString();
+        $nouvelleCategorie = in_array($request->query('nouvelle_categorie'), array_keys(Note::CATEGORIES), true)
+            ? $request->query('nouvelle_categorie') : 'examen';
+
+        [$sessions, $notes, $categoriesParSession] = $this->grilleNotes(
+            $etudiants->pluck('id'), $matiere, $nouvelleSession, $nouvelleCategorie
+        );
+
+        // Moyenne pondérée par étudiant pour cette matière.
+        $ponderation = Ponderation::pour($filiere, $niveau, $matiere);
+        $moyennes = Note::whereIn('etudiant_id', $etudiants->pluck('id'))
+            ->where('matiere', $matiere)
+            ->get(['etudiant_id', 'categorie', 'valeur'])
+            ->groupBy('etudiant_id')
+            ->map(fn ($g) => CalculMoyenne::moyenneMatiere($g, $ponderation->poids()));
 
         return view('professeur.carnet.index', [
+            'moyennes' => $moyennes,
             'filiere' => $filiere,
             'niveau' => $niveau,
             'matieres' => $matieres,
@@ -36,6 +53,9 @@ class CarnetController extends Controller
             'etudiants' => $etudiants,
             'sessions' => $sessions,
             'notes' => $notes,
+            'categoriesParSession' => $categoriesParSession,
+            'categories' => Note::CATEGORIES,
+            'ponderation' => $ponderation,
         ]);
     }
 
@@ -47,8 +67,11 @@ class CarnetController extends Controller
             'etudiant_id' => ['required', 'integer'],
             'matiere' => ['required', 'string', 'max:255'],
             'session' => ['required', 'string', 'max:255'],
+            'categorie' => ['nullable', 'string', 'in:'.implode(',', array_keys(Note::CATEGORIES))],
             'valeur' => ['nullable', 'numeric', 'min:0', 'max:20'],
         ]);
+
+        $categorie = $validated['categorie'] ?? 'examen';
 
         abort_unless($this->enseigneClasse($validated['filiere'], $validated['niveau']), Response::HTTP_FORBIDDEN);
 
@@ -70,7 +93,7 @@ class CarnetController extends Controller
                     'matiere' => $validated['matiere'],
                     'session' => $validated['session'],
                 ],
-                ['professeur_id' => auth()->id(), 'valeur' => $validated['valeur']]
+                ['professeur_id' => auth()->id(), 'valeur' => $validated['valeur'], 'categorie' => $categorie]
             );
             ActivityLogger::log('carnet.note', "Saisie d'une note ({$validated['matiere']} — {$validated['session']}).");
         }
@@ -125,20 +148,28 @@ class CarnetController extends Controller
     }
 
     /**
-     * Construit la liste des sessions (colonnes) et la grille [etudiant_id][session] => note.
+     * Construit les colonnes (sessions), la grille [etudiant_id][session] => note,
+     * et la catégorie de chaque session.
      *
-     * @return array{0: array<int, string>, 1: array<int, array<string, float>>}
+     * @return array{0: array<int, string>, 1: array<int, array<string, float>>, 2: array<string, string>}
      */
-    private function grilleNotes($etudiantIds, string $matiere, ?string $nouvelleSession): array
+    private function grilleNotes($etudiantIds, string $matiere, ?string $nouvelleSession, string $nouvelleCategorie = 'examen'): array
     {
         $lignes = Note::whereIn('etudiant_id', $etudiantIds)
             ->where('matiere', $matiere)
-            ->get(['etudiant_id', 'session', 'valeur']);
+            ->get(['etudiant_id', 'session', 'categorie', 'valeur']);
 
         $sessions = $lignes->pluck('session')->unique()->sort()->values()->all();
 
+        // Catégorie de chaque session (première rencontrée).
+        $categoriesParSession = [];
+        foreach ($lignes as $l) {
+            $categoriesParSession[$l->session] ??= $l->categorie ?? 'examen';
+        }
+
         if ($nouvelleSession && ! in_array($nouvelleSession, $sessions, true)) {
             $sessions[] = $nouvelleSession;
+            $categoriesParSession[$nouvelleSession] = $nouvelleCategorie;
         }
 
         $notes = [];
@@ -146,6 +177,6 @@ class CarnetController extends Controller
             $notes[$l->etudiant_id][$l->session] = (float) $l->valeur;
         }
 
-        return [$sessions, $notes];
+        return [$sessions, $notes, $categoriesParSession];
     }
 }

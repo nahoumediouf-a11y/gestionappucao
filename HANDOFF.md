@@ -159,6 +159,38 @@ arithmétique (« combien font X + Y »).
    - ⚠️ Hypothèse retenue : « meetgitsi » = **Jitsi Meet**. À reconfirmer si un
      autre service était visé (Zoom, Google Meet, BigBlueButton).
 
+5. **Module Évaluations (rendu en ligne + correction) — implémenté et testé**.
+   Étend le module `Projet` existant. Prompt d'origine : `PROMPT_EVALUATIONS_SUP.md`.
+   - **Modèle** `App\Models\Soumission` (table `soumissions`, 1 par projet+étudiant) :
+     `texte`, `fichier_path`/`fichier_nom`, `rendu_a`, `en_retard`, `note`,
+     `commentaire_correction`, `corrige_a`, `corrige_par`. Helpers `estCorrigee()`,
+     `statutLabel()`/`statutCouleur()`.
+   - **`Projet`** enrichi : `bareme` (défaut 20), `rendu_en_ligne`, `ouverture_at`,
+     `fermeture_at`, `copie_unique` ; méthodes `echeance()` (limite souple → retard),
+     `accepteRendu()` (ouverture/fermeture dure), `soumissionDe()`. Relation
+     `soumissions()`. `Etudiant::soumissions()` ajoutée.
+   - **Étudiant** : `Etudiant\ProjetController` → `show` (détail + état de sa copie +
+     note/commentaire si corrigée), `soumettre` (upload pdf/doc/docx/zip/image max
+     10 Mo + texte, re-soumission tant qu'ouvert sauf copie unique), `telecharger`.
+     Stockage privé `storage/app/soumissions`.
+   - **Professeur** : `Professeur\ProjetController` → `soumissions` (liste + stats :
+     rendus/attendus, retards, corrigées, moyenne), `corriger` (note + commentaire →
+     **publie une `Note`** session « Contrôle continu », note ramenée sur 20),
+     `telecharger`, `exportCsv`. Validation ownership via `abort_unless`.
+   - **Routes** : `etudiant.projets.{show,soumettre,fichier}`,
+     `professeur.projets.{soumissions,export,copie.fichier,corriger}`.
+   - **Vues** : `etudiant/projets/{index (statut),show}`,
+     `professeur/projets/{index (bouton Copies),soumissions,_eval-fields}` (champs
+     barème/fenêtre/copie unique dans create+edit).
+   - **Permissions** : `rendre_evaluations` (étudiant), `corriger_evaluations` (prof).
+   - **Seeder** `SoumissionSeeder` : 2 copies démo (etudiant1 corrigée 15/20,
+     etudiant2 en attente) sur un travail Informatique L3.
+   - **Tests** : `tests/Feature/EvaluationTest.php` (7 verts). `bareme` rendu
+     optionnel (défaut 20) pour ne pas régresser `RappelEcheanceTest`.
+   - **Vérifié** : migrate + seed OK, vues rendues avec données réelles, suite
+     `php artisan test` au vert (seul `RegistrationTest` échoue — inscription
+     désactivée volontairement).
+
 ---
 
 ## 6. Conventions
@@ -178,12 +210,11 @@ Cours en ligne (Jitsi) — **fait** (cf. §5). Améliorations possibles : table 
 présence (`participations`) + stats, JWT/JaaS pour salles privées, pastille
 « En ligne » sur la grille EDT, rappels de séance avant le début.
 
-- **Évaluations modernes (projets / devoirs / examens en ligne)** — prompt
-  d'implémentation prêt dans `PROMPT_EVALUATIONS_SUP.md`. Étend le module
-  `Projet` existant : rendu en ligne (fichier + texte), barème/grille de
-  correction, examen chronométré (fenêtre + durée), publication des notes vers
-  le module Notes, suivi prof + export CSV, rappels et notifications, Policies
-  et tests. Le coller dans une session pour implémenter.
+- **Évaluations (rendu en ligne + correction)** — **fait** (cf. §5). Reste à
+  faire si on veut aller plus loin (cf. `PROMPT_EVALUATIONS_SUP.md`) : grille de
+  critères pondérés (`CritereEvaluation`), examen réellement chronométré
+  (compte à rebours + `duree_minutes`), notifications de correction et rappels
+  automatiques, Policies dédiées, blocage du rendu en situation rouge.
 
 Issues du « prompt emploi du temps » non encore implémentées si on veut aller
 plus loin :

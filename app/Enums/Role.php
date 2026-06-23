@@ -74,6 +74,7 @@ enum Role: string
                 'telecharger_recus',
                 'consulter_cours_en_ligne',
                 'rejoindre_cours_en_ligne',
+                'rendre_evaluations',
             ],
             self::Professeur => [
                 'consulter_edt',
@@ -84,6 +85,7 @@ enum Role: string
                 'creer_cours_en_ligne',
                 'animer_cours_en_ligne',
                 'gerer_cours_en_ligne',
+                'corriger_evaluations',
             ],
         };
     }

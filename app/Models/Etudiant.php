@@ -83,6 +83,11 @@ class Etudiant extends Model
         return $this->hasMany(EngagementPaiement::class);
     }
 
+    public function soumissions(): HasMany
+    {
+        return $this->hasMany(Soumission::class);
+    }
+
     public function emploiDuTemps()
     {
         return EmploiDuTemps::where('filiere', $this->filiere)
@@ -118,9 +123,13 @@ class Etudiant extends Model
     public function scolariteTotale(): int
     {
         $niveauKey = strtoupper($this->niveau ?? '');
-        if (str_contains($niveauKey, 'L3')) $niveauKey = 'L3';
-        elseif (str_contains($niveauKey, 'L2')) $niveauKey = 'L2';
-        elseif (str_contains($niveauKey, 'L1')) $niveauKey = 'L1';
+        if (str_contains($niveauKey, 'L3')) {
+            $niveauKey = 'L3';
+        } elseif (str_contains($niveauKey, 'L2')) {
+            $niveauKey = 'L2';
+        } elseif (str_contains($niveauKey, 'L1')) {
+            $niveauKey = 'L1';
+        }
 
         return self::SCOLARITE_PAR_NIVEAU[$niveauKey] ?? 780_000;
     }

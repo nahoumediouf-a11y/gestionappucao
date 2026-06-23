@@ -91,6 +91,8 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                @include('professeur.projets._eval-fields')
             </div>
 
             <div class="mt-4">

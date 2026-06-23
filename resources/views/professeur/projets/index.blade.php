@@ -43,6 +43,12 @@
                             </span>
                         </td>
                         <td class="text-end">
+                            <a href="{{ route('professeur.projets.soumissions', $projet) }}" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-inbox"></i> Copies
+                                @if ($projet->soumissions_count)
+                                    <span class="badge bg-success">{{ $projet->soumissions_count }}</span>
+                                @endif
+                            </a>
                             <a href="{{ route('professeur.projets.edit', $projet) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>

@@ -262,6 +262,7 @@ class DatabaseSeeder extends Seeder
         // TD pour les matières à exercices, CM par défaut).
         $typeSeance = function (string $matiere): string {
             $m = mb_strtolower($matiere);
+
             return match (true) {
                 str_contains($m, 'base de données'), str_contains($m, 'programmation'), str_contains($m, 'réseaux'), str_contains($m, 'digital') => 'TP',
                 str_contains($m, 'algorithmique'), str_contains($m, 'mathématiques'), str_contains($m, 'comptabilité'), str_contains($m, 'procédure') => 'TD',
@@ -372,5 +373,8 @@ class DatabaseSeeder extends Seeder
 
         // Cours en ligne de démonstration (Informatique L3)
         $this->call(CoursEnLigneSeeder::class);
+
+        // Copies de démonstration pour un travail (rendus + correction)
+        $this->call(SoumissionSeeder::class);
     }
 }

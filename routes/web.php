@@ -144,6 +144,9 @@ Route::middleware('auth')->group(function () {
         Route::get('paiements/retour', [EtudiantPaiementController::class, 'retourPaydunya'])->name('paiements.paydunya.retour');
         Route::post('paiements/callback', [EtudiantPaiementController::class, 'callbackPaydunya'])->name('paiements.paydunya.callback')->withoutMiddleware(['auth', 'role:etudiant']);
         Route::get('projets', [EtudiantProjetController::class, 'index'])->name('projets.index');
+        Route::get('projets/{projet}', [EtudiantProjetController::class, 'show'])->name('projets.show');
+        Route::post('projets/{projet}/rendre', [EtudiantProjetController::class, 'soumettre'])->name('projets.soumettre');
+        Route::get('projets/{projet}/fichier', [EtudiantProjetController::class, 'telecharger'])->name('projets.fichier');
         Route::get('propositions', [PropositionProjetController::class, 'index'])->name('propositions.index');
         Route::get('propositions/soumettre', [PropositionProjetController::class, 'create'])->name('propositions.create');
         Route::post('propositions', [PropositionProjetController::class, 'store'])->name('propositions.store');
@@ -192,6 +195,10 @@ Route::middleware('auth')->group(function () {
         Route::get('projets/{projet}/modifier', [ProfesseurProjetController::class, 'edit'])->name('projets.edit');
         Route::put('projets/{projet}', [ProfesseurProjetController::class, 'update'])->name('projets.update');
         Route::delete('projets/{projet}', [ProfesseurProjetController::class, 'destroy'])->name('projets.destroy');
+        Route::get('projets/{projet}/copies', [ProfesseurProjetController::class, 'soumissions'])->name('projets.soumissions');
+        Route::get('projets/{projet}/copies/export', [ProfesseurProjetController::class, 'exportCsv'])->name('projets.export');
+        Route::get('projets/{projet}/copies/{soumission}/fichier', [ProfesseurProjetController::class, 'telecharger'])->name('projets.copie.fichier');
+        Route::post('projets/{projet}/copies/{soumission}/corriger', [ProfesseurProjetController::class, 'corriger'])->name('projets.corriger');
         Route::get('documents', [ProfesseurDocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/ajouter', [ProfesseurDocumentController::class, 'create'])->name('documents.create');
         Route::post('documents', [ProfesseurDocumentController::class, 'store'])->name('documents.store');

@@ -89,6 +89,102 @@
     </div>
 @endif
 
+@if (! empty($stats))
+    {{-- Cartes statistiques --}}
+    <div class="row g-3 mb-3">
+        @php
+            $cartesStats = [
+                ['Étudiants', number_format($stats['cartes']['etudiants'], 0, ',', ' '), 'bi-people', 'primary'],
+                ['Professeurs', number_format($stats['cartes']['professeurs'], 0, ',', ' '), 'bi-easel', 'info'],
+                ['Paiements du mois', number_format($stats['cartes']['paiementsMois'], 0, ',', ' ').' FCFA', 'bi-cash-coin', 'success'],
+                ['Taux de recouvrement', $stats['cartes']['tauxRecouvrement'].' %', 'bi-graph-up-arrow', $stats['cartes']['tauxRecouvrement'] >= 50 ? 'success' : 'warning'],
+            ];
+        @endphp
+        @foreach ($cartesStats as [$label, $valeur, $icon, $couleur])
+            <div class="col-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-{{ $couleur }} bg-opacity-10 text-{{ $couleur }} p-3">
+                            <i class="bi {{ $icon }} fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="h5 mb-0">{{ $valeur }}</div>
+                            <div class="small text-muted">{{ $label }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- Graphiques --}}
+    <div class="row g-3 mb-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Évolution des paiements (6 mois)</h2>
+                    <canvas id="chartPaiements" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Répartition des étudiants</h2>
+                    <canvas id="chartFilieres" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Absences par mois</h2>
+                    <canvas id="chartAbsences" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof Chart === 'undefined') return;
+            var bleu = '#2563eb', vert = '#10b981', orange = '#f59e0b', rouge = '#ef4444', violet = '#8b5cf6', cyan = '#06b6d4';
+            var palette = [bleu, vert, orange, rouge, violet, cyan];
+
+            new Chart(document.getElementById('chartPaiements'), {
+                type: 'line',
+                data: {
+                    labels: @json($stats['paiements']['labels']),
+                    datasets: [{ label: 'Paiements (FCFA)', data: @json($stats['paiements']['valeurs']),
+                        borderColor: bleu, backgroundColor: 'rgba(37,99,235,.12)', fill: true, tension: .35 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+
+            new Chart(document.getElementById('chartFilieres'), {
+                type: 'doughnut',
+                data: {
+                    labels: @json($stats['filieres']['labels']),
+                    datasets: [{ data: @json($stats['filieres']['valeurs']), backgroundColor: palette }]
+                },
+                options: { plugins: { legend: { position: 'bottom' } } }
+            });
+
+            new Chart(document.getElementById('chartAbsences'), {
+                type: 'bar',
+                data: {
+                    labels: @json($stats['absences']['labels']),
+                    datasets: [{ label: 'Absences', data: @json($stats['absences']['valeurs']), backgroundColor: orange }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+        });
+    </script>
+    @endpush
+@endif
+
 <div class="row g-3">
     @forelse ($modules as $module)
         @php

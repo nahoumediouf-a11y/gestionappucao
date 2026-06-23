@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Models\Absence;
 use App\Models\CoursEnLigne;
 use App\Models\EmploiDuTemps;
+use App\Models\Etudiant;
+use App\Models\Paiement;
 use App\Models\Projet;
 use App\Models\Soumission;
+use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -89,11 +94,65 @@ class DashboardController extends Controller
             ],
         };
 
+        $roleStats = [Role::Administrateur, Role::ResponsableFinancier];
+
         return view('dashboard.index', [
             'user' => $user,
             'modules' => $modules,
             'apercu' => $user->role === Role::Etudiant ? $this->apercuEtudiant($user) : null,
+            'stats' => in_array($user->role, $roleStats, true) ? $this->statsGestion() : null,
         ]);
+    }
+
+    /** Indicateurs et données de graphiques pour les tableaux de bord de pilotage. */
+    private function statsGestion(): array
+    {
+        // 6 derniers mois (clé AAAA-MM => libellé court).
+        $mois = collect(range(5, 0))->mapWithKeys(function ($i) {
+            $d = Carbon::now()->startOfMonth()->subMonths($i);
+
+            return [$d->format('Y-m') => $d->locale('fr')->isoFormat('MMM YY')];
+        });
+
+        $paiementsParMois = Paiement::where('statut', 'valide')
+            ->where('date_paiement', '>=', Carbon::now()->startOfMonth()->subMonths(5))
+            ->get(['montant', 'date_paiement'])
+            ->groupBy(fn ($p) => Carbon::parse($p->date_paiement)->format('Y-m'))
+            ->map(fn ($g) => (float) $g->sum('montant'));
+
+        $absencesParMois = Absence::where('date', '>=', Carbon::now()->startOfMonth()->subMonths(5))
+            ->get(['date'])
+            ->groupBy(fn ($a) => Carbon::parse($a->date)->format('Y-m'))
+            ->map(fn ($g) => $g->count());
+
+        $etudiants = Etudiant::get(['filiere', 'niveau']);
+        $totalPaye = (float) Paiement::where('statut', 'valide')->sum('montant');
+        $totalAttendu = $etudiants->sum(fn ($e) => $e->scolariteTotale());
+
+        $parFiliere = $etudiants->groupBy('filiere')->map->count()->sortDesc();
+
+        $debutMois = Carbon::now()->startOfMonth();
+
+        return [
+            'cartes' => [
+                'etudiants' => $etudiants->count(),
+                'professeurs' => User::where('role', Role::Professeur->value)->count(),
+                'paiementsMois' => (float) Paiement::where('statut', 'valide')->where('date_paiement', '>=', $debutMois)->sum('montant'),
+                'tauxRecouvrement' => $totalAttendu > 0 ? min(100, round($totalPaye / $totalAttendu * 100)) : 0,
+            ],
+            'paiements' => [
+                'labels' => $mois->values(),
+                'valeurs' => $mois->keys()->map(fn ($k) => $paiementsParMois[$k] ?? 0),
+            ],
+            'absences' => [
+                'labels' => $mois->values(),
+                'valeurs' => $mois->keys()->map(fn ($k) => $absencesParMois[$k] ?? 0),
+            ],
+            'filieres' => [
+                'labels' => $parFiliere->keys(),
+                'valeurs' => $parFiliere->values(),
+            ],
+        ];
     }
 
     /** Données de synthèse affichées en tête du tableau de bord étudiant. */

@@ -269,10 +269,14 @@ arithmétique (« combien font X + Y »).
     - Toutes les pages existantes conservent leurs sections
       (`page-title`/`page-subtitle`/`page-actions`/`page-content`). Vérifié en live
       sur les 6 rôles (dashboard 200, sidebar/menu/topbar OK).
-    - **Reste à faire (phases suivantes du cahier des charges)** : cartes
-      statistiques + mini-graphes et graphiques Chart.js sur le tableau de bord,
-      tableaux avancés (tri/filtres/export Excel), messagerie, recherche globale
-      cross-modules.
+    - **Phase 2 — cartes stats + graphiques (faite)** : `DashboardController::statsGestion()`
+      (sans N+1) alimente, pour Administrateur et Responsable financier, 4 cartes
+      (étudiants, professeurs, paiements du mois, taux de recouvrement) + 3
+      graphiques **Chart.js** (CDN) sur `dashboard/index` : évolution des paiements
+      (6 mois, ligne), répartition des étudiants par filière (doughnut), absences
+      par mois (barres). Vérifié en live (admin).
+    - **Reste à faire (phases 3-5)** : tableaux avancés réutilisables (tri/filtres/
+      export PDF & Excel), messagerie interne, recherche globale cross-modules.
 
 ---
 

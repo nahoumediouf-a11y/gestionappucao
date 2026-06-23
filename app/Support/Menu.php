@@ -15,6 +15,7 @@ class Menu
     public static function pour(User $user): array
     {
         $tableau = ['label' => 'Tableau de bord', 'icon' => 'bi-grid-1x2', 'route' => 'dashboard'];
+        $messagerie = ['label' => 'Messagerie', 'icon' => 'bi-envelope', 'route' => 'messagerie.index'];
         $assistant = ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'route' => 'assistant.index'];
         $compte = ['label' => 'Mon compte', 'icon' => 'bi-person-circle', 'route' => 'compte.show'];
 
@@ -76,6 +77,7 @@ class Menu
             ],
         };
 
+        $items[] = $messagerie;
         $items[] = $assistant;
         $items[] = $compte;
 

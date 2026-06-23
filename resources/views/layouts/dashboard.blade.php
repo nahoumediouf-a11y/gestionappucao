@@ -15,6 +15,7 @@
         'agent_recouvrement' => 'recouvrement.recherche.index',
     ];
     $rechercheRoute = $rechercheRoutes[$user->role->value] ?? null;
+    $messagesNonLus = \App\Models\Message::nonLusPour($user->id)->count();
 @endphp
 
 @section('content')
@@ -68,6 +69,12 @@
                 <span class="ucao-icon-btn theme-toggle" onclick="ucaoToggleTheme()" title="Changer de thème" role="button" tabindex="0">
                     <i id="ucao-theme-icon" class="bi bi-moon-stars"></i>
                 </span>
+                <a href="{{ route('messagerie.index') }}" class="ucao-icon-btn" title="Messagerie" aria-label="Messagerie">
+                    <i class="bi bi-envelope"></i>
+                    @if ($messagesNonLus)
+                        <span class="badge bg-primary rounded-pill">{{ $messagesNonLus }}</span>
+                    @endif
+                </a>
                 @if ($notifRoute)
                     <a href="{{ route($notifRoute) }}" class="ucao-icon-btn" title="Notifications" aria-label="Notifications">
                         <i class="bi bi-bell"></i>

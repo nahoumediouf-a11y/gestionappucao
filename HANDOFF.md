@@ -283,8 +283,15 @@ arithmétique (« combien font X + Y »).
       (recherche + rôle + statut) partagés index/export, **bouton Export CSV**
       (route `admin.utilisateurs.export`). Tests : `TableauAvanceTest` (4 verts).
       Ces briques sont réutilisables sur les autres listes.
-    - **Reste à faire (phases 4-5)** : messagerie interne, recherche globale
-      cross-modules. (Export choisi : CSV ouvrable Excel, pas de dépendance.)
+    - **Phase 4 — messagerie interne (faite)** : modèle `Message` (table
+      `messages` : expediteur/destinataire, sujet, corps, lu_a) +
+      `MessagerieController` (réception, envoyés, composer, lire, supprimer),
+      routes `messagerie.*` (tous rôles). Lecture marque comme lu ; un tiers ne
+      peut pas lire (403) ; pas d'auto-message. Entrée « Messagerie » au menu +
+      **icône enveloppe avec compteur de non-lus** dans la barre supérieure.
+      Tests : `MessagerieTest` (5 verts).
+    - **Reste à faire (phase 5)** : recherche globale cross-modules.
+      (Export choisi : CSV ouvrable Excel, pas de dépendance.)
 
 ---
 

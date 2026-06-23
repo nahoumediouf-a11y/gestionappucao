@@ -28,6 +28,7 @@ use App\Http\Controllers\Etudiant\PropositionProjetController;
 use App\Http\Controllers\Financier\PaiementController as FinancierPaiementController;
 use App\Http\Controllers\Financier\RapportController;
 use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
+use App\Http\Controllers\MessagerieController;
 use App\Http\Controllers\NotificationController as UserNotificationController;
 use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceController;
 use App\Http\Controllers\Professeur\CarnetController as ProfesseurCarnetController;
@@ -77,6 +78,14 @@ Route::middleware('auth')->group(function () {
     // Compte unifié (tous rôles)
     Route::get('/mon-compte', [CompteController::class, 'show'])->name('compte.show');
     Route::put('/mon-compte', [CompteController::class, 'update'])->name('compte.update');
+
+    // Messagerie interne (tous rôles)
+    Route::get('/messagerie', [MessagerieController::class, 'index'])->name('messagerie.index');
+    Route::get('/messagerie/envoyes', [MessagerieController::class, 'envoyes'])->name('messagerie.envoyes');
+    Route::get('/messagerie/nouveau', [MessagerieController::class, 'create'])->name('messagerie.create');
+    Route::post('/messagerie', [MessagerieController::class, 'store'])->name('messagerie.store');
+    Route::get('/messagerie/{message}', [MessagerieController::class, 'show'])->name('messagerie.show');
+    Route::delete('/messagerie/{message}', [MessagerieController::class, 'destroy'])->name('messagerie.destroy');
 
     // ===== Administrateur =====
     Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {

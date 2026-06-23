@@ -6,6 +6,9 @@
 @section('page-subtitle', 'Ajouter, modifier ou supprimer un utilisateur et gérer les rôles.')
 
 @section('page-actions')
+    <a href="{{ route('admin.utilisateurs.export', request()->query()) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-filetype-csv me-1"></i>Export CSV
+    </a>
     <a href="{{ route('admin.utilisateurs.create') }}" class="btn btn-ucao">
         <i class="bi bi-person-plus me-1"></i>Ajouter un utilisateur
     </a>
@@ -82,9 +85,9 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Identité</th>
-                    <th>Login</th>
-                    <th>Email</th>
+                    <th><x-tri colonne="nom" :tri="$tri" :dir="$dir">Identité</x-tri></th>
+                    <th><x-tri colonne="login" :tri="$tri" :dir="$dir">Login</x-tri></th>
+                    <th><x-tri colonne="email" :tri="$tri" :dir="$dir">Email</x-tri></th>
                     <th>Détails</th>
                     <th class="text-end">Actions</th>
                 </tr>

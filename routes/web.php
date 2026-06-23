@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
 
     // ===== Administrateur =====
     Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('utilisateurs/export', [UserController::class, 'export'])->name('utilisateurs.export');
         Route::resource('utilisateurs', UserController::class)->except('show');
         Route::patch('utilisateurs/{utilisateur}/activer', [UserController::class, 'activer'])->name('utilisateurs.activer');
         Route::get('statistiques', [StatistiqueController::class, 'index'])->name('statistiques');

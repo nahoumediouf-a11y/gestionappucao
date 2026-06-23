@@ -275,8 +275,16 @@ arithmétique (« combien font X + Y »).
       graphiques **Chart.js** (CDN) sur `dashboard/index` : évolution des paiements
       (6 mois, ligne), répartition des étudiants par filière (doughnut), absences
       par mois (barres). Vérifié en live (admin).
-    - **Reste à faire (phases 3-5)** : tableaux avancés réutilisables (tri/filtres/
-      export PDF & Excel), messagerie interne, recherche globale cross-modules.
+    - **Phase 3 — tableaux avancés réutilisables (faite)** : briques génériques
+      `App\Support\CsvExport` (CSV BOM UTF-8 + séparateur « ; », ouvrable dans
+      Excel FR), `Concerns\TrieListe` (tri sécurisé par liste blanche de colonnes)
+      et composant Blade `<x-tri>` (en-tête de colonne triable). Appliquées à la
+      liste admin des utilisateurs : tri sur nom/login/email, filtres
+      (recherche + rôle + statut) partagés index/export, **bouton Export CSV**
+      (route `admin.utilisateurs.export`). Tests : `TableauAvanceTest` (4 verts).
+      Ces briques sont réutilisables sur les autres listes.
+    - **Reste à faire (phases 4-5)** : messagerie interne, recherche globale
+      cross-modules. (Export choisi : CSV ouvrable Excel, pas de dépendance.)
 
 ---
 

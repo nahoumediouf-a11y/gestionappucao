@@ -3,21 +3,75 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\Role;
+use App\Http\Controllers\Concerns\TrieListe;
 use App\Http\Controllers\Controller;
 use App\Models\Etudiant;
 use App\Models\User;
 use App\Notifications\CompteActiveNotification;
 use App\Support\ActivityLogger;
+use App\Support\CsvExport;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserController extends Controller
 {
+    use TrieListe;
+
+    /** Colonnes autorisées au tri. */
+    private const COLONNES_TRI = ['nom', 'login', 'email', 'role', 'statut'];
+
     public function index(Request $request): View
     {
-        $users = User::with('etudiant')
+        [$tri, $dir] = $this->resoudreTri($request, self::COLONNES_TRI, 'nom');
+
+        $users = $this->appliquerTri($this->filtrer($request), $tri, $dir)
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.utilisateurs.index', [
+            'users' => $users,
+            'roles' => Role::cases(),
+            'q' => $request->string('q'),
+            'statut' => $request->string('statut'),
+            'role' => $request->string('role'),
+            'tri' => $tri,
+            'dir' => $dir,
+            'enAttenteCount' => User::where('statut', 'en_attente')->count(),
+        ]);
+    }
+
+    /** Export CSV de la liste filtrée (ouvrable dans Excel). */
+    public function export(Request $request): StreamedResponse
+    {
+        [$tri, $dir] = $this->resoudreTri($request, self::COLONNES_TRI, 'nom');
+
+        $users = $this->appliquerTri($this->filtrer($request), $tri, $dir)->get();
+
+        $lignes = $users->map(fn (User $u) => [
+            $u->nom_complet,
+            $u->login,
+            $u->email ?? '',
+            $u->role->label(),
+            $u->statut,
+            $u->etudiant?->matricule ?? '',
+            $u->etudiant ? $u->etudiant->filiere.' '.$u->etudiant->niveau : '',
+        ]);
+
+        return CsvExport::stream(
+            'utilisateurs-'.now()->format('Y-m-d').'.csv',
+            ['Nom complet', 'Login', 'Email', 'Rôle', 'Statut', 'Matricule', 'Classe'],
+            $lignes
+        );
+    }
+
+    /** Construit la requête filtrée (recherche + rôle + statut), partagée index/export. */
+    private function filtrer(Request $request): Builder
+    {
+        return User::with('etudiant')
             ->when($request->filled('q'), function ($query) use ($request) {
                 $term = $request->string('q');
                 $query->where(function ($q) use ($term) {
@@ -29,19 +83,7 @@ class UserController extends Controller
                 });
             })
             ->when($request->filled('statut'), fn ($query) => $query->where('statut', $request->string('statut')))
-            ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')))
-            ->orderBy('nom')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.utilisateurs.index', [
-            'users' => $users,
-            'roles' => Role::cases(),
-            'q' => $request->string('q'),
-            'statut' => $request->string('statut'),
-            'role' => $request->string('role'),
-            'enAttenteCount' => User::where('statut', 'en_attente')->count(),
-        ]);
+            ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')));
     }
 
     public function create(): View

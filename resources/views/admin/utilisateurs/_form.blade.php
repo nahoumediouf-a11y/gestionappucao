@@ -34,7 +34,7 @@
     <div class="col-md-6">
         <label for="photo" class="form-label">Photo de profil (portrait réel)</label>
         <input type="file" name="photo" id="photo" accept="image/*" class="form-control @error('photo') is-invalid @enderror">
-        <div class="form-text">JPG, PNG ou WebP, 2 Mo max.</div>
+        <div class="form-text">Toute image (JPG, PNG, GIF, WebP…), 8 Mo max.</div>
         @error('photo') <div class="invalid-feedback">{{ $message }}</div> @enderror
         @if ($user?->photoUrl())
             <div class="d-flex align-items-center gap-2 mt-2">

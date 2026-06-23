@@ -15,18 +15,31 @@ use Illuminate\Validation\ValidationException;
  */
 class PhotoUtilisateur
 {
-    /** Extensions autorisées dérivées du MIME réel (jamais l'extension cliente). */
+    /** Taille maximale acceptée (Ko). */
+    private const TAILLE_MAX_KO = 8192;
+
+    /** Extension dérivée du MIME réel (toutes les images courantes). */
     private const EXTENSIONS = [
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
         'image/webp' => 'webp',
+        'image/gif' => 'gif',
+        'image/bmp' => 'bmp',
+        'image/svg+xml' => 'svg',
+        'image/tiff' => 'tiff',
+        'image/heic' => 'heic',
+        'image/heif' => 'heif',
     ];
 
-    /** Règles de validation réutilisables pour le champ `photo` (formulaires Compte / Admin). */
+    /**
+     * Règles de validation réutilisables : on accepte TOUTE image (n'importe quel
+     * format/dimension), seule la taille est plafonnée. `image` reste exigé pour
+     * refuser les fichiers qui ne sont pas des images (sécurité).
+     */
     public static function regles(): array
     {
         return [
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
+            'photo' => ['nullable', 'image', 'max:'.self::TAILLE_MAX_KO],
             'supprimer_photo' => ['nullable', 'boolean'],
         ];
     }
@@ -35,9 +48,7 @@ class PhotoUtilisateur
     {
         return [
             'photo.image' => 'Le fichier doit être une image.',
-            'photo.mimes' => 'Formats acceptés : JPG, PNG ou WebP (les fichiers HEIC ne sont pas supportés — convertissez-les).',
-            'photo.max' => 'La photo ne doit pas dépasser 2 Mo.',
-            'photo.dimensions' => 'La photo doit faire au moins 100 × 100 pixels.',
+            'photo.max' => 'La photo ne doit pas dépasser 8 Mo.',
         ];
     }
 
@@ -56,12 +67,10 @@ class PhotoUtilisateur
 
         $fichier = $request->file('photo');
 
-        // Défense en profondeur : on se fie au MIME réel détecté, pas à l'extension du nom.
+        // Extension dérivée du MIME réel (toute image acceptée) ; repli sur
+        // l'extension devinée puis « img ». On n'utilise jamais le nom client.
         $mime = $fichier->getMimeType();
-        $extension = self::EXTENSIONS[$mime] ?? null;
-        if ($extension === null) {
-            throw ValidationException::withMessages(['photo' => 'Type d\'image non supporté (JPG, PNG ou WebP uniquement).']);
-        }
+        $extension = self::EXTENSIONS[$mime] ?? ($fichier->extension() ?: 'img');
 
         // Nom aléatoire basé sur l'id (pas de nom client → ni exécution, ni collision, ni traversal).
         $nom = 'photos/u'.$user->id.'-'.Str::lower(Str::random(10)).'.'.$extension;

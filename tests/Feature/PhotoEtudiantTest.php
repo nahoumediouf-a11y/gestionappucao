@@ -68,13 +68,19 @@ class PhotoEtudiantTest extends TestCase
         $this->assertNull($u->fresh()->photo);
     }
 
-    public function test_image_trop_petite_refusee(): void
+    public function test_toute_image_acceptee_petite_et_gif(): void
     {
         Storage::fake('public');
-        $u = $this->etudiant();
 
-        $this->maj($u, ['photo' => UploadedFile::fake()->image('petite.jpg', 50, 50)])
-            ->assertSessionHasErrors('photo');
+        // Petite image : acceptée.
+        $u1 = $this->etudiant('etu_p');
+        $this->maj($u1, ['photo' => UploadedFile::fake()->image('petite.jpg', 40, 40)])->assertRedirect();
+        $this->assertNotNull($u1->fresh()->photo);
+
+        // GIF : accepté et stocké avec l'extension .gif.
+        $u2 = $this->etudiant('etu_g');
+        $this->maj($u2, ['photo' => UploadedFile::fake()->image('anim.gif', 200, 200)])->assertRedirect();
+        $this->assertStringEndsWith('.gif', $u2->fresh()->photo);
     }
 
     public function test_remplacement_supprime_lancienne_photo(): void

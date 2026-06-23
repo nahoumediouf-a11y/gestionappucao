@@ -357,10 +357,12 @@ arithmétique (« combien font X + Y »).
       lazy) sinon les initiales ; idem avatar profil de la barre supérieure. Répercuté
       partout où `_identite` est utilisé (liste admin, recherche, Mon compte).
     - **Upload fiabilisé** (`PROMPT_UPLOAD_PHOTO_FIABLE.md`) : règles partagées
-      `PhotoUtilisateur::regles()`/`messages()` (image, mimes jpg/png/webp, max 2 Mo,
-      `dimensions:min 100×100`), **MIME réel** vérifié (extension dérivée du MIME,
-      **nom aléatoire** basé sur l'id), suppression de l'ancien fichier + suppression
-      à la suppression du compte (`User::booted` → `deleting`), try/catch storage,
+      `PhotoUtilisateur::regles()`/`messages()`. **Toute image est acceptée**
+      (jpg/png/gif/webp/bmp/svg/tiff/heic… — règle `image`, **sans contrainte de
+      dimensions**), plafonnée à **8 Mo**. Extension dérivée du MIME réel (repli sur
+      l'extension devinée), **nom aléatoire** basé sur l'id ; suppression de l'ancien
+      fichier + suppression à la suppression du compte (`User::booted` → `deleting`),
+      try/catch storage,
       `PostTooLargeException` → message « fichier trop volumineux »
       (`bootstrap/app.php`), `<img onerror>` repli initiales dans `_identite`.
     - **Déploiement** : `php artisan storage:link` requis ; `php.ini`

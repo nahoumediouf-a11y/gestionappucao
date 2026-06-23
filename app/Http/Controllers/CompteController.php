@@ -38,8 +38,8 @@ class CompteController extends Controller
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'telephone' => ['nullable', 'string', 'max:30'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ]);
+            ...PhotoUtilisateur::regles(),
+        ], PhotoUtilisateur::messages());
 
         $user->update([
             'nom' => $validated['nom'],

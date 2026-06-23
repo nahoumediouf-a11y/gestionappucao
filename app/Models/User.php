@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Role;
+use App\Support\PhotoUtilisateur;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +40,14 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class,
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // Supprime le fichier photo quand le compte est supprimé (évite les orphelins).
+        static::deleting(function (User $user) {
+            PhotoUtilisateur::supprimerFichier($user->photo);
+        });
     }
 
     public function getNomCompletAttribute(): string

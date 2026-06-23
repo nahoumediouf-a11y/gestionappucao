@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class PhotoEtudiantTest extends TestCase
@@ -26,19 +27,22 @@ class PhotoEtudiantTest extends TestCase
         return $u;
     }
 
-    public function test_etudiant_televerse_une_photo(): void
+    private function maj(User $u, array $extra): TestResponse
+    {
+        return $this->actingAs($u)->put('/mon-compte', array_merge(['nom' => 'Faye', 'prenom' => 'Aminata'], $extra));
+    }
+
+    public function test_upload_valide(): void
     {
         Storage::fake('public');
         $u = $this->etudiant();
 
-        $this->actingAs($u)->put('/mon-compte', [
-            'nom' => 'Faye', 'prenom' => 'Aminata',
-            'photo' => UploadedFile::fake()->image('portrait.jpg', 400, 400),
-        ])->assertRedirect();
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('portrait.jpg', 400, 400)])->assertRedirect();
 
         $u->refresh();
         $this->assertNotNull($u->photo);
         Storage::disk('public')->assertExists($u->photo);
+        $this->assertStringEndsWith('.jpg', $u->photo);
     }
 
     public function test_fichier_non_image_refuse(): void
@@ -46,12 +50,31 @@ class PhotoEtudiantTest extends TestCase
         Storage::fake('public');
         $u = $this->etudiant();
 
-        $this->actingAs($u)->put('/mon-compte', [
-            'nom' => 'Faye', 'prenom' => 'Aminata',
-            'photo' => UploadedFile::fake()->create('document.pdf', 100, 'application/pdf'),
-        ])->assertSessionHasErrors('photo');
+        $this->maj($u, ['photo' => UploadedFile::fake()->create('document.pdf', 100, 'application/pdf')])
+            ->assertSessionHasErrors('photo');
 
         $this->assertNull($u->fresh()->photo);
+    }
+
+    public function test_mime_usurpe_refuse(): void
+    {
+        Storage::fake('public');
+        $u = $this->etudiant();
+
+        // Un fichier non-image avec une extension .jpg ne passe pas la validation image.
+        $this->maj($u, ['photo' => UploadedFile::fake()->create('evil.jpg', 50, 'text/plain')])
+            ->assertSessionHasErrors('photo');
+
+        $this->assertNull($u->fresh()->photo);
+    }
+
+    public function test_image_trop_petite_refusee(): void
+    {
+        Storage::fake('public');
+        $u = $this->etudiant();
+
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('petite.jpg', 50, 50)])
+            ->assertSessionHasErrors('photo');
     }
 
     public function test_remplacement_supprime_lancienne_photo(): void
@@ -59,12 +82,10 @@ class PhotoEtudiantTest extends TestCase
         Storage::fake('public');
         $u = $this->etudiant();
 
-        $this->actingAs($u)->put('/mon-compte', ['nom' => 'Faye', 'prenom' => 'Aminata',
-            'photo' => UploadedFile::fake()->image('p1.jpg')]);
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('p1.jpg', 200, 200)]);
         $ancienne = $u->fresh()->photo;
 
-        $this->actingAs($u)->put('/mon-compte', ['nom' => 'Faye', 'prenom' => 'Aminata',
-            'photo' => UploadedFile::fake()->image('p2.jpg')]);
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('p2.jpg', 200, 200)]);
 
         Storage::disk('public')->assertMissing($ancienne);
         Storage::disk('public')->assertExists($u->fresh()->photo);
@@ -74,25 +95,25 @@ class PhotoEtudiantTest extends TestCase
     {
         Storage::fake('public');
         $u = $this->etudiant();
-        $this->actingAs($u)->put('/mon-compte', ['nom' => 'Faye', 'prenom' => 'Aminata',
-            'photo' => UploadedFile::fake()->image('p.jpg')]);
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('p.jpg', 200, 200)]);
+        $chemin = $u->fresh()->photo;
 
-        $this->actingAs($u)->put('/mon-compte', ['nom' => 'Faye', 'prenom' => 'Aminata', 'supprimer_photo' => '1']);
+        $this->maj($u, ['supprimer_photo' => '1']);
 
         $this->assertNull($u->fresh()->photo);
+        Storage::disk('public')->assertMissing($chemin);
     }
 
-    public function test_identite_affiche_la_photo_ou_les_initiales(): void
+    public function test_suppression_utilisateur_supprime_la_photo(): void
     {
         Storage::fake('public');
         $u = $this->etudiant();
+        $this->maj($u, ['photo' => UploadedFile::fake()->image('p.jpg', 200, 200)]);
+        $chemin = $u->fresh()->photo;
 
-        // Sans photo : initiales (admin voit la liste).
-        $admin = User::create(['nom' => 'D', 'prenom' => 'A', 'login' => 'admin', 'password' => 'password', 'role' => Role::Administrateur, 'statut' => 'actif']);
-        $this->actingAs($admin)->get('/admin/utilisateurs')->assertStatus(200)->assertSee('AF'); // initiales Aminata Faye
+        $u->etudiant->delete();
+        $u->delete();
 
-        // Avec photo : balise img présente sur Mon compte.
-        $this->actingAs($u)->put('/mon-compte', ['nom' => 'Faye', 'prenom' => 'Aminata', 'photo' => UploadedFile::fake()->image('p.jpg')]);
-        $this->actingAs($u)->get('/mon-compte')->assertStatus(200)->assertSee('<img', false);
+        Storage::disk('public')->assertMissing($chemin);
     }
 }

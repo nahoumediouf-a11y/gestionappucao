@@ -226,7 +226,7 @@ class UserController extends Controller
             'login' => ['required', 'string', 'max:255', 'unique:users,login,'.$userId],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email,'.$userId],
             'telephone' => ['nullable', 'string', 'max:30'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            ...PhotoUtilisateur::regles(),
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
             'statut' => ['required', 'string', 'in:actif,inactif,en_attente'],
             'matricule' => ['required_if:role,etudiant', 'nullable', 'digits:7', 'integer', 'between:1000678,1080987', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],
@@ -249,6 +249,7 @@ class UserController extends Controller
             'matricule.digits' => 'Le matricule doit être composé de 7 chiffres (ex : 1000678).',
             'matricule.integer' => 'Le matricule doit être composé de 7 chiffres (ex : 1000678).',
             'matricule.between' => 'Le matricule doit être compris entre 1000678 et 1080987.',
+            ...PhotoUtilisateur::messages(),
         ]);
     }
 }

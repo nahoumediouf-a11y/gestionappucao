@@ -356,7 +356,18 @@ arithmétique (« combien font X + Y »).
     - **Affichage** : `partials/_identite` montre la photo (ronde, `object-fit:cover`,
       lazy) sinon les initiales ; idem avatar profil de la barre supérieure. Répercuté
       partout où `_identite` est utilisé (liste admin, recherche, Mon compte).
-    - **Tests** : `PhotoEtudiantTest` (5 verts).
+    - **Upload fiabilisé** (`PROMPT_UPLOAD_PHOTO_FIABLE.md`) : règles partagées
+      `PhotoUtilisateur::regles()`/`messages()` (image, mimes jpg/png/webp, max 2 Mo,
+      `dimensions:min 100×100`), **MIME réel** vérifié (extension dérivée du MIME,
+      **nom aléatoire** basé sur l'id), suppression de l'ancien fichier + suppression
+      à la suppression du compte (`User::booted` → `deleting`), try/catch storage,
+      `PostTooLargeException` → message « fichier trop volumineux »
+      (`bootstrap/app.php`), `<img onerror>` repli initiales dans `_identite`.
+    - **Déploiement** : `php artisan storage:link` requis ; `php.ini`
+      `upload_max_filesize`/`post_max_size` ≥ 4 Mo. Affichage : fiche classe et
+      liste étudiants du prof montrent aussi les photos.
+    - **Tests** : `PhotoEtudiantTest` (7 verts — upload, non-image, MIME usurpé,
+      trop petite, remplacement, retrait, suppression compte).
 
 ---
 

@@ -10,13 +10,19 @@
     $statutLabels = ['actif' => 'Actif', 'inactif' => 'Inactif', 'en_attente' => 'En attente'];
 @endphp
 <div class="d-flex align-items-center gap-2">
+    @php $tailleInitiales = $taille === 'sm' ? '.85rem' : '1.1rem'; @endphp
     @if ($identite->photoUrl())
+        {{-- Si la photo est introuvable (fichier supprimé, storage:link manquant…), on bascule sur les initiales. --}}
         <img src="{{ $identite->photoUrl() }}" alt="Photo de {{ $identite->nom_complet }}" loading="lazy"
-             class="rounded-circle flex-shrink-0 object-fit-cover border"
-             style="width: {{ $dim }}px; height: {{ $dim }}px; object-fit: cover;">
+             class="rounded-circle flex-shrink-0 border"
+             style="width: {{ $dim }}px; height: {{ $dim }}px; object-fit: cover;"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+        <span class="rounded-circle bg-primary text-white align-items-center justify-content-center fw-semibold flex-shrink-0"
+              style="display: none; width: {{ $dim }}px; height: {{ $dim }}px; font-size: {{ $tailleInitiales }};"
+              aria-hidden="true">{{ $initiales ?: '?' }}</span>
     @else
         <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold flex-shrink-0"
-              style="width: {{ $dim }}px; height: {{ $dim }}px; font-size: {{ $taille === 'sm' ? '.85rem' : '1.1rem' }};"
+              style="width: {{ $dim }}px; height: {{ $dim }}px; font-size: {{ $tailleInitiales }};"
               aria-hidden="true">{{ $initiales ?: '?' }}</span>
     @endif
     <div class="lh-sm">

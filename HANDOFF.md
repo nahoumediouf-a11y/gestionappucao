@@ -373,6 +373,36 @@ arithmétique (« combien font X + Y »).
 
 ---
 
+## 5 bis. Documents du mémoire (dossier `docs/`)
+
+Documents Word produits pour le mémoire (à la **mise en page du mémoire** : Times
+New Roman, texte justifié, en-tête « L'e-gouvernance… UCAO Saint Michel », pied de
+page « Becaye Sane & Nahoume Diouf — Page N », A4 ; titres en **bleu UCAO #2563EB** ;
+sommaire et sauts de page).
+
+- **`docs/SIGE_UCAO_Memoire_Complements_complet.docx`** — **document final** (fusion
+  des trois ci-dessous, 50 figures).
+- `docs/SIGE_UCAO_Chapitre5_Interfaces.docx` — Chapitre 5 §5.2 actualisé (46 captures
+  de la version courante, anciennes captures remplacées).
+- `docs/SIGE_UCAO_Complements_Memoire.docx` — Tests (85 tests, 84 verts), matrice
+  fonctionnalités × rôles, UML actualisé (cas d'usage, classes, séquence), sécurité.
+- `docs/SIGE_UCAO_Annexes_Memoire.docx` — architecture, matrice besoins→réalisation,
+  guide & comptes de démo, difficultés, perspectives.
+
+Sources & régénération :
+- Sources éditables : `docs/CHAPITRE5_INTERFACES.md`, `docs/COMPLEMENTS_MEMOIRE.md`,
+  `docs/ANNEXES_MEMOIRE.md`.
+- Captures : `docs/captures/*.png` (47 écrans + 4 diagrammes `uml-*.png`).
+- Modèle de mise en page : `docs/ucao-reference.docx`.
+- Régénérer : `pandoc <source.md> -o <sortie.docx> --reference-doc=docs/ucao-reference.docx`.
+- **Captures** : `php artisan serve` + le script `/tmp/shots/capture.js` (Puppeteer +
+  Chrome headless, connexion/captcha automatiques). Diagrammes via `@mermaid-js/mermaid-cli`.
+- ⚠️ `.gitignore` contient `*.docx` → les `.docx` sont ajoutés avec `git add -f`.
+- Note démo : capturer le **bulletin** exige un étudiant **sans impayé** (solde 0) ;
+  sinon l'accès est bloqué (règle de recouvrement).
+
+---
+
 ## 6. Conventions
 
 - Code et UI **en français** (commentaires, libellés, messages).

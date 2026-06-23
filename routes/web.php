@@ -42,6 +42,7 @@ use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantCont
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
 use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RechercheGlobaleController;
 use App\Http\Controllers\Recouvrement\AJourController;
 use App\Http\Controllers\Recouvrement\EngagementController;
 use App\Http\Controllers\Recouvrement\ImpayeController;
@@ -78,6 +79,9 @@ Route::middleware('auth')->group(function () {
     // Compte unifié (tous rôles)
     Route::get('/mon-compte', [CompteController::class, 'show'])->name('compte.show');
     Route::put('/mon-compte', [CompteController::class, 'update'])->name('compte.update');
+
+    // Recherche globale (personnel)
+    Route::get('/recherche', [RechercheGlobaleController::class, 'index'])->name('recherche.globale');
 
     // Messagerie interne (tous rôles)
     Route::get('/messagerie', [MessagerieController::class, 'index'])->name('messagerie.index');

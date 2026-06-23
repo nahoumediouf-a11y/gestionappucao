@@ -10,11 +10,8 @@
     ];
     $notifRoute = $notifRoutes[$user->role->value] ?? null;
     $notifCount = $user->unreadNotifications()->count();
-    $rechercheRoutes = [
-        'administrateur' => 'admin.recherche.index',
-        'agent_recouvrement' => 'recouvrement.recherche.index',
-    ];
-    $rechercheRoute = $rechercheRoutes[$user->role->value] ?? null;
+    // Recherche globale unifiée pour le personnel (l'étudiant n'en a pas).
+    $rechercheRoute = $user->role === \App\Enums\Role::Etudiant ? null : route('recherche.globale');
     $messagesNonLus = \App\Models\Message::nonLusPour($user->id)->count();
 @endphp
 
@@ -57,10 +54,10 @@
             </button>
 
             @if ($rechercheRoute)
-                <form class="ucao-topbar__search d-none d-sm-block" method="GET" action="{{ route($rechercheRoute) }}">
+                <form class="ucao-topbar__search d-none d-sm-block" method="GET" action="{{ $rechercheRoute }}">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="search" name="q" class="form-control" placeholder="Rechercher un étudiant..." aria-label="Recherche">
+                        <input type="search" name="q" value="{{ request('q') }}" class="form-control" placeholder="Rechercher un étudiant..." aria-label="Recherche">
                     </div>
                 </form>
             @endif

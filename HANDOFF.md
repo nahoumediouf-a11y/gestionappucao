@@ -291,8 +291,17 @@ arithmétique (« combien font X + Y »).
       peut pas lire (403) ; pas d'auto-message. Entrée « Messagerie » au menu +
       **icône enveloppe avec compteur de non-lus** dans la barre supérieure.
       Tests : `MessagerieTest` (5 verts).
-    - **Reste à faire (phase 5)** : recherche globale cross-modules.
-      (Export choisi : CSV ouvrable Excel, pas de dépendance.)
+    - **Phase 5 — recherche globale (faite)**. Prompt : `PROMPT_RECHERCHE_GLOBALE.md`.
+      `RechercheGlobaleController` + route `recherche.globale` (`GET /recherche`,
+      personnel uniquement, 403 pour l'étudiant). La **barre de recherche de la
+      topbar** pointe désormais (unifiée) vers `/recherche` pour tout rôle ≠
+      étudiant. Filtrage des étudiants (matricule/nom/prénom/filière/niveau) ;
+      le professeur est restreint à ses classes ; l'admin peut filtrer
+      `type=personnel`. **Redirection contextuelle** par rôle
+      (`RechercheGlobaleController::destinationEtudiant()`). Tests :
+      `RechercheGlobaleTest` (5 verts). Les anciennes pages `admin.recherche.index`
+      / `recouvrement.recherche.index` restent en place (non cassées).
+    - **Cahier des charges UI/UX entièrement couvert** (phases 1→5).
 
 ---
 

@@ -255,6 +255,25 @@ arithmétique (« combien font X + Y »).
    - **Tests** : `tests/Feature/CompteUnifieTest.php` (6 verts). Vérifié en live
      (mon-compte comptable + filtre rôle admin).
 
+10. **Refonte UI — shell moderne (phase 1)**. Prompt : `PROMPT_UI_UX_SIGE.md`
+    (cahier des charges UI/UX). Auth conservée (login + captcha + espaces).
+    - **Design tokens** (`layouts/app`) : palette SaaS (#2563EB primaire, #10B981,
+      #F59E0B, #EF4444, fond #F8FAFC, texte #1E293B), coins arrondis (--radius),
+      ombres douces. `.btn-ucao` passe au bleu. Mode sombre conservé.
+    - **Layout `layouts/dashboard` refondu** en shell : **sidebar rétractable**
+      (menu par rôle via `App\Support\Menu::pour()`, état actif), **barre
+      supérieure** (recherche globale pour admin/recouvrement, cloche de
+      notifications, sélecteur de thème, menu profil avec avatar à initiales),
+      **toasts** auto pour les messages flash (succès/erreur). Responsive
+      (sidebar en overlay < 992px, `ucaoToggleSidebar()`).
+    - Toutes les pages existantes conservent leurs sections
+      (`page-title`/`page-subtitle`/`page-actions`/`page-content`). Vérifié en live
+      sur les 6 rôles (dashboard 200, sidebar/menu/topbar OK).
+    - **Reste à faire (phases suivantes du cahier des charges)** : cartes
+      statistiques + mini-graphes et graphiques Chart.js sur le tableau de bord,
+      tableaux avancés (tri/filtres/export Excel), messagerie, recherche globale
+      cross-modules.
+
 ---
 
 ## 6. Conventions

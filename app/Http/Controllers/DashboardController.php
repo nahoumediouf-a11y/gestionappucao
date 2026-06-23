@@ -45,11 +45,11 @@ class DashboardController extends Controller
             ],
             Role::Etudiant => array_filter([
                 $user->etudiant?->solde > 0 ? [
-                    'label'   => 'Payer ma scolarité',
-                    'icon'    => 'bi-credit-card-fill',
-                    'color'   => 'danger',
-                    'url'     => route('etudiant.paiements.index').'#payer-scolarite',
-                    'badge'   => number_format((float) $user->etudiant->solde, 0, ',', ' ').' FCFA',
+                    'label' => 'Payer ma scolarité',
+                    'icon' => 'bi-credit-card-fill',
+                    'color' => 'danger',
+                    'url' => route('etudiant.paiements.index').'#payer-scolarite',
+                    'badge' => number_format((float) $user->etudiant->solde, 0, ',', ' ').' FCFA',
                     'highlight' => true,
                 ] : null,
                 ['label' => 'Mon profil', 'icon' => 'bi-person-circle', 'color' => 'primary', 'route' => 'etudiant.profil.index'],
@@ -67,6 +67,7 @@ class DashboardController extends Controller
                 ['label' => 'Assistant IA', 'icon' => 'bi-robot', 'color' => 'info', 'route' => 'assistant.index'],
             ]),
             Role::Professeur => [
+                ['label' => 'Mon espace enseignant', 'icon' => 'bi-grid-1x2', 'color' => 'success', 'route' => 'professeur.espace'],
                 ['label' => 'Emploi du temps', 'icon' => 'bi-calendar3', 'color' => 'info', 'route' => 'professeur.edt.index'],
                 ['label' => 'Cours en ligne', 'icon' => 'bi-camera-video', 'color' => 'success', 'route' => 'professeur.cours.index'],
                 ['label' => 'Liste des étudiants', 'icon' => 'bi-people', 'color' => 'primary', 'route' => 'professeur.etudiants.index'],

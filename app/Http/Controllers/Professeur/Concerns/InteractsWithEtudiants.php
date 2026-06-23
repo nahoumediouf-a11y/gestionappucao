@@ -39,4 +39,20 @@ trait InteractsWithEtudiants
             ->unique(fn ($c) => $c->filiere.'|'.$c->niveau.'|'.$c->matiere)
             ->values();
     }
+
+    /** Classes (filière + niveau) enseignées par le professeur connecté. */
+    protected function classesDuProfesseur(): Collection
+    {
+        return EmploiDuTemps::where('professeur_id', auth()->id())
+            ->get(['filiere', 'niveau'])
+            ->unique(fn ($c) => $c->filiere.'|'.$c->niveau)
+            ->values();
+    }
+
+    /** Le professeur connecté enseigne-t-il cette classe ? */
+    protected function enseigneClasse(string $filiere, string $niveau): bool
+    {
+        return $this->classesDuProfesseur()
+            ->contains(fn ($c) => $c->filiere === $filiere && $c->niveau === $niveau);
+    }
 }

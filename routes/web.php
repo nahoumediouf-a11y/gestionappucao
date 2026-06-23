@@ -29,10 +29,13 @@ use App\Http\Controllers\Financier\RapportController;
 use App\Http\Controllers\Financier\StatistiqueController as FinancierStatistiqueController;
 use App\Http\Controllers\NotificationController as UserNotificationController;
 use App\Http\Controllers\Professeur\AbsenceController as ProfesseurAbsenceController;
+use App\Http\Controllers\Professeur\CarnetController as ProfesseurCarnetController;
+use App\Http\Controllers\Professeur\ClasseController as ProfesseurClasseController;
 use App\Http\Controllers\Professeur\CoursEnLigneController as ProfesseurCoursEnLigneController;
 use App\Http\Controllers\Professeur\DocumentController as ProfesseurDocumentController;
 use App\Http\Controllers\Professeur\DocumentCoursController as ProfesseurDocumentCoursController;
 use App\Http\Controllers\Professeur\EmploiDuTempsController as ProfesseurEmploiDuTempsController;
+use App\Http\Controllers\Professeur\EspaceController as ProfesseurEspaceController;
 use App\Http\Controllers\Professeur\EtudiantController as ProfesseurEtudiantController;
 use App\Http\Controllers\Professeur\NoteController as ProfesseurNoteController;
 use App\Http\Controllers\Professeur\ProjetController as ProfesseurProjetController;
@@ -160,6 +163,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:professeur')->prefix('professeur')->name('professeur.')->group(function () {
         Route::get('notifications', [UserNotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/lue', [UserNotificationController::class, 'read'])->name('notifications.read');
+        Route::get('espace', [ProfesseurEspaceController::class, 'index'])->name('espace');
+        Route::get('classe', [ProfesseurClasseController::class, 'show'])->name('classes.show');
+        Route::get('carnet', [ProfesseurCarnetController::class, 'index'])->name('carnet.index');
+        Route::get('carnet/export', [ProfesseurCarnetController::class, 'export'])->name('carnet.export');
+        Route::post('carnet/note', [ProfesseurCarnetController::class, 'storeNote'])->name('carnet.note');
+
         Route::get('emploi-du-temps', [ProfesseurEmploiDuTempsController::class, 'index'])->name('edt.index');
         Route::get('emploi-du-temps/pdf', [ProfesseurEmploiDuTempsController::class, 'pdf'])->name('edt.pdf');
 

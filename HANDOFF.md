@@ -191,6 +191,23 @@ arithmétique (« combien font X + Y »).
      `php artisan test` au vert (seul `RegistrationTest` échoue — inscription
      désactivée volontairement).
 
+6. **Espace enseignant (poste de travail professeur) — implémenté et testé**.
+   Relie les modules existants. Prompt d'origine : `PROMPT_ESPACE_ENSEIGNANT.md`.
+   - **Tableau de bord** `Professeur\EspaceController` (`professeur.espace`) :
+     séances EDT du jour, cours en ligne à venir, compteurs « à traiter » (copies
+     à corriger, échéances, propositions en attente), liste « mes classes ».
+   - **Fiche classe** `Professeur\ClasseController` (`professeur.classes.show`,
+     query `filiere`+`niveau`, accès restreint via `enseigneClasse()`) :
+     indicateurs (effectif, moyenne classe, taux de rendu, étudiants à risque),
+     liste des étudiants avec moyenne/absences (calculs sans N+1), actions rapides.
+   - **Carnet de notes** `Professeur\CarnetController` (`professeur.carnet.*`) :
+     tableau étudiants × sessions par matière, **saisie inline** (auto-submit,
+     case vidée = note supprimée), ajout de colonne d'évaluation, **export CSV**.
+   - Helpers ajoutés au trait `InteractsWithEtudiants` : `classesDuProfesseur()`,
+     `enseigneClasse()`.
+   - Carte « Mon espace enseignant » en tête du tableau de bord professeur.
+   - **Tests** : `tests/Feature/EspaceEnseignantTest.php` (6 verts).
+
 ---
 
 ## 6. Conventions

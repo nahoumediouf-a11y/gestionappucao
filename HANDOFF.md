@@ -208,6 +208,21 @@ arithmétique (« combien font X + Y »).
    - Carte « Mon espace enseignant » en tête du tableau de bord professeur.
    - **Tests** : `tests/Feature/EspaceEnseignantTest.php` (6 verts).
 
+7. **Interface unifiée connexion + tableau de bord étudiant — implémenté**.
+   Prompt d'origine : `PROMPT_UI_CONNEXION_DASHBOARD.md`. Le design system est
+   centralisé dans `layouts/app` (variables CSS, `.auth-*`, `.btn-ucao`, mode
+   sombre) et partagé par la connexion (déjà refondue, `auth/login.blade.php`) et
+   le dashboard.
+   - **Dashboard étudiant** (`dashboard/index.blade.php`) enrichi : en-tête
+     personnalisé « Bonjour {prénom} » (filière/niveau/matricule, dégradé UCAO) +
+     **bandeau d'aperçu** de 4 cartes — solde restant (`soldeReel()`, badge
+     À payer/À jour), moyenne générale, prochaine séance (EDT du jour ou cours en
+     ligne en cours), travaux à rendre + prochaine échéance.
+   - `DashboardController::apercuEtudiant()` calcule ces données (sans N+1) et ne
+     les passe qu'aux étudiants ; les autres rôles gardent l'affichage en cartes.
+   - **Tests** : `tests/Feature/DashboardEtudiantTest.php` (2 verts) ; `AuthTest`
+     reste vert (connexion + captcha intacts).
+
 ---
 
 ## 6. Conventions

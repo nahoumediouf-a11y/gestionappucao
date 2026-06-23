@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Models\CoursEnLigne;
+use App\Models\EmploiDuTemps;
+use App\Models\Projet;
+use App\Models\Soumission;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    /** Correspondance jour Carbon (0=dimanche) → libellé de l'emploi du temps. */
+    private const JOURS = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi'];
+
     public function index(): View
     {
         $user = auth()->user();
@@ -85,6 +92,61 @@ class DashboardController extends Controller
         return view('dashboard.index', [
             'user' => $user,
             'modules' => $modules,
+            'apercu' => $user->role === Role::Etudiant ? $this->apercuEtudiant($user) : null,
         ]);
+    }
+
+    /** Données de synthèse affichées en tête du tableau de bord étudiant. */
+    private function apercuEtudiant($user): ?array
+    {
+        $etudiant = $user->etudiant;
+
+        if (! $etudiant) {
+            return null;
+        }
+
+        $jour = self::JOURS[now()->dayOfWeek] ?? null;
+        $heure = now()->format('H:i');
+
+        // Prochaine séance d'aujourd'hui encore à venir/en cours.
+        $prochaineSeance = $jour
+            ? EmploiDuTemps::where('filiere', $etudiant->filiere)
+                ->where('niveau', $etudiant->niveau)
+                ->where('jour', $jour)
+                ->where('heure_fin', '>=', $heure)
+                ->orderBy('heure_debut')
+                ->first()
+            : null;
+
+        // Cours en ligne actuellement en cours pour sa classe.
+        $coursEnCours = CoursEnLigne::pourClasse($etudiant->filiere, $etudiant->niveau)
+            ->where('statut', 'en_cours')
+            ->orderBy('debut_prevu')
+            ->first();
+
+        // Prochaine échéance de travail.
+        $prochaineEcheance = Projet::where('filiere', $etudiant->filiere)
+            ->where('niveau', $etudiant->niveau)
+            ->whereDate('date_limite', '>=', now()->toDateString())
+            ->orderBy('date_limite')
+            ->first();
+
+        // Travaux à rendre (en ligne, échéance à venir) sans soumission de l'étudiant.
+        $idsRendus = Soumission::where('etudiant_id', $etudiant->id)->pluck('projet_id');
+        $aRendre = Projet::where('filiere', $etudiant->filiere)
+            ->where('niveau', $etudiant->niveau)
+            ->where('rendu_en_ligne', true)
+            ->whereDate('date_limite', '>=', now()->toDateString())
+            ->whereNotIn('id', $idsRendus)
+            ->count();
+
+        return [
+            'solde' => $etudiant->soldeReel(),
+            'moyenne' => $etudiant->moyenne(),
+            'prochaineSeance' => $prochaineSeance,
+            'coursEnCours' => $coursEnCours,
+            'prochaineEcheance' => $prochaineEcheance,
+            'aRendre' => $aRendre,
+        ];
     }
 }

@@ -15,11 +15,21 @@ lang: fr
 > enseignant** (carnet de notes et **pondération TP / Examen / TD / Contrôle
 > continu**), **messagerie interne** et **recherche globale**.
 
+L'interface du SIGE UCAO a été conçue selon les principes des applications de
+gestion modernes : sobriété visuelle, cohérence entre les écrans, navigation en
+peu de clics et accessibilité. Chaque utilisateur, après authentification, est
+dirigé vers un espace dont le contenu et les menus sont strictement adaptés à son
+rôle, conformément à la politique de contrôle d'accès définie en phase de
+conception. Les sections suivantes présentent, pour chaque profil, les principales
+interfaces réalisées.
+
 ## 5.2.1 Interface d'authentification
 
-Le point d'entrée du système propose deux espaces (Étudiant / Administration &
-Personnel). L'authentification reste sécurisée par identifiant, mot de passe et
-**CAPTCHA arithmétique**.
+Le point d'entrée du système propose deux espaces distincts — **Étudiant** et
+**Administration / Personnel** — afin d'orienter l'utilisateur dès l'accueil.
+L'authentification reste sécurisée par un identifiant, un mot de passe (haché) et
+un **CAPTCHA arithmétique** qui limite les tentatives automatisées. Cette
+séparation visuelle clarifie le parcours sans modifier le mécanisme de connexion.
 
 ![Figure 5.1 : Page d'accueil — choix de l'espace](docs/captures/01-accueil.png){width=15cm}
 
@@ -29,20 +39,25 @@ Personnel). L'authentification reste sécurisée par identifiant, mot de passe e
 
 ## 5.2.2 Tableau de bord dynamique
 
-Après authentification, chaque utilisateur accède à un tableau de bord adapté à
-son rôle. Le tableau de bord de pilotage (administration / responsable financier)
-présente des **cartes statistiques** (effectifs, paiements du mois, taux de
-recouvrement) et des **graphiques Chart.js** (évolution des paiements, répartition
-des étudiants, absences).
+Après authentification, chaque utilisateur accède à un tableau de bord
+personnalisé. Pour les profils de pilotage (administration, responsable
+financier), il agrège des **indicateurs clés** — effectifs, nombre de professeurs,
+paiements du mois, taux de recouvrement — et des **graphiques** (évolution des
+paiements, répartition des étudiants par filière, absences) générés avec Chart.js.
+Ce tableau de bord constitue un véritable outil d'aide à la décision.
 
 ![Figure 5.4 : Tableau de bord de pilotage avec indicateurs et graphiques](docs/captures/80-admin-dashboard.png){width=15cm}
 
 ## 5.2.3 Interface Étudiant
 
-L'étudiant dispose d'un espace personnel regroupant sa scolarité, ses résultats et
-ses services en ligne.
+L'espace étudiant centralise la scolarité, les résultats et les services en ligne.
+Dès la page d'accueil, un bandeau de synthèse rappelle le solde restant, la moyenne
+générale, la prochaine séance et les travaux à rendre. L'étudiant peut consulter et
+mettre à jour son profil (y compris sa **photo**), suivre ses notes et son
+**bulletin** (dont les moyennes sont désormais **pondérées par catégorie**), ses
+absences et son emploi du temps.
 
-![Figure 5.5 : Tableau de bord étudiant (aperçu : solde, moyenne, prochaine séance, travaux à rendre)](docs/captures/10-etudiant-dashboard.png){width=15cm}
+![Figure 5.5 : Tableau de bord étudiant (solde, moyenne, prochaine séance, travaux à rendre)](docs/captures/10-etudiant-dashboard.png){width=15cm}
 
 ![Figure 5.6 : Mon compte — informations personnelles et photo de profil](docs/captures/11-etudiant-compte.png){width=15cm}
 
@@ -54,11 +69,20 @@ ses services en ligne.
 
 ![Figure 5.10 : Emploi du temps](docs/captures/15-etudiant-edt.png){width=15cm}
 
+Au-delà de la consultation, l'étudiant accède à de **nouveaux services** : il peut
+rejoindre les **cours en ligne** (visioconférence) programmés pour sa classe et
+**déposer ses travaux** (fichier et/ou texte) directement depuis la plateforme, le
+dépôt étant horodaté et signalé en cas de retard.
+
 ![Figure 5.11 : Cours en ligne — séances de visioconférence de la classe (nouveau)](docs/captures/16-etudiant-cours-en-ligne.png){width=15cm}
 
 ![Figure 5.12 : Projets, devoirs et examens](docs/captures/17-etudiant-projets.png){width=15cm}
 
 ![Figure 5.13 : Détail d'un travail et dépôt en ligne de la copie (nouveau)](docs/captures/18-etudiant-projet-rendu.png){width=15cm}
+
+Enfin, l'étudiant suit ses paiements, échange avec l'administration via la
+**messagerie interne** et peut solliciter l'**assistant intelligent** pour toute
+question relative à sa scolarité.
 
 ![Figure 5.14 : Suivi des paiements](docs/captures/19-etudiant-paiements.png){width=15cm}
 
@@ -68,16 +92,29 @@ ses services en ligne.
 
 ## 5.2.4 Interface Professeur
 
-L'enseignant dispose d'un véritable poste de travail pédagogique reliant ses
-classes, ses notes, ses cours et ses corrections.
+L'enseignant dispose d'un véritable **poste de travail pédagogique**. Son espace
+réunit, sur un tableau de bord, sa journée (séances et cours en ligne), ses classes
+et les tâches en attente (copies à corriger, échéances). Pour chaque classe, une
+fiche dédiée présente des indicateurs (effectif, moyenne, taux de rendu, étudiants
+à risque) et la liste des étudiants accompagnés de leur photo.
 
 ![Figure 5.17 : Mon espace enseignant — journée, classes et tâches à traiter (nouveau)](docs/captures/31-prof-espace.png){width=15cm}
 
 ![Figure 5.18 : Fiche de classe — indicateurs, étudiants et photos (nouveau)](docs/captures/32-prof-fiche-classe.png){width=15cm}
 
+La gestion des notes s'effectue au moyen d'un **carnet** où la saisie est rapide et
+organisée par catégorie d'évaluation. L'enseignant définit librement la
+**pondération** de la matière : par défaut les travaux pratiques comptent pour
+30 % et l'examen pour 70 %, mais il peut ajuster ces poids (par exemple TP à 60 %)
+ou ne retenir que l'examen ; la moyenne est recalculée automatiquement.
+
 ![Figure 5.19 : Carnet de notes — saisie par catégorie et moyenne pondérée (nouveau)](docs/captures/33-prof-carnet.png){width=15cm}
 
 ![Figure 5.20 : Pondération des notes — poids TP / Examen / TD / Contrôle continu (nouveau)](docs/captures/34-prof-ponderation.png){width=15cm}
+
+L'enseignant planifie et anime des **cours en ligne**, saisit notes et absences,
+assigne des travaux et **corrige les copies** déposées ; la note publiée alimente
+directement le bulletin de l'étudiant.
 
 ![Figure 5.21 : Cours en ligne — planification et animation des séances (nouveau)](docs/captures/35-prof-cours-en-ligne.png){width=15cm}
 
@@ -93,7 +130,10 @@ classes, ses notes, ses cours et ses corrections.
 
 ## 5.2.5 Interface Comptabilité
 
-L'agent comptable gère les encaissements, les reçus et le suivi des débiteurs.
+L'agent comptable gère le cycle des encaissements : enregistrement des paiements,
+génération des reçus, validation des déclarations effectuées par les étudiants et
+suivi des étudiants débiteurs. Son tableau de bord met en avant les actions
+courantes et les situations à traiter.
 
 ![Figure 5.27 : Tableau de bord comptabilité](docs/captures/50-comptable-dashboard.png){width=15cm}
 
@@ -105,8 +145,9 @@ L'agent comptable gère les encaissements, les reçus et le suivi des débiteurs
 
 ## 5.2.6 Interface Recouvrement
 
-L'agent de recouvrement suit les impayés, les engagements de paiement et les
-relances.
+L'agent de recouvrement dispose des outils nécessaires au suivi des impayés :
+consultation des étudiants en situation d'impayé, création d'**engagements de
+paiement échelonné**, **relances** et statistiques de recouvrement.
 
 ![Figure 5.31 : Tableau de bord recouvrement](docs/captures/60-recouvrement-dashboard.png){width=15cm}
 
@@ -120,8 +161,10 @@ relances.
 
 ## 5.2.7 Interface Responsable Financier
 
-Le responsable financier supervise l'ensemble des paiements, valide les opérations
-et consulte les rapports.
+Le responsable financier supervise l'ensemble des opérations : vue consolidée des
+paiements, validation des opérations, rapports financiers et statistiques. Ces
+écrans offrent une lecture synthétique de la situation financière de
+l'établissement.
 
 ![Figure 5.36 : Tableau de bord financier](docs/captures/70-financier-dashboard.png){width=15cm}
 
@@ -133,8 +176,12 @@ et consulte les rapports.
 
 ## 5.2.8 Interface Administration
 
-L'administrateur gère les comptes (tous rôles, avec photos), les emplois du temps,
-les cours en ligne, les statistiques et la traçabilité.
+L'administrateur assure la gestion globale : comptes utilisateurs (tous rôles, avec
+photos), recherche, tri, filtres et **export CSV** ; gestion des emplois du temps
+et des salles ; supervision des cours en ligne ; consultation des statistiques et
+du **journal des activités** garantissant la traçabilité. Une **recherche globale**
+lui permet de retrouver rapidement un étudiant ou un membre du personnel, avec
+redirection contextuelle vers l'action pertinente.
 
 ![Figure 5.40 : Gestion des utilisateurs — recherche, tri, filtres, export CSV (avec photos)](docs/captures/81-admin-utilisateurs.png){width=15cm}
 
@@ -155,13 +202,12 @@ les cours en ligne, les statistiques et la traçabilité.
 - **Refonte de l'interface** : barre latérale rétractable + barre supérieure
   (recherche, notifications, messagerie, thème, profil), design moderne (coins
   arrondis, ombres douces), **mode clair/sombre** et notifications par *toasts*.
-- **Cours en ligne** : visioconférence (Jitsi) planifiée et animée par le
-  professeur, rejointe par les étudiants de la classe.
+- **Cours en ligne** : visioconférence planifiée et animée par le professeur,
+  rejointe par les étudiants de la classe.
 - **Évaluations** : dépôt en ligne des copies par l'étudiant, **correction** et
   publication des notes par le professeur.
 - **Espace enseignant** : tableau de bord, fiche de classe, **carnet de notes** et
-  **pondération configurable** (TP / Examen / TD / Contrôle continu — TP à 30 %
-  par défaut, modifiable).
+  **pondération configurable** (TP / Examen / TD / Contrôle continu).
 - **Photos de profil réelles** des étudiants (repli sur des initiales).
 - **Messagerie interne** entre tous les utilisateurs et **recherche globale**.
 - **Tableaux** enrichis : tri des colonnes, filtres et **export CSV (Excel)**.
@@ -169,4 +215,5 @@ les cours en ligne, les statistiques et la traçabilité.
   connexion par identifiant + mot de passe + CAPTCHA (inchangée sur le fond).
 
 > Les anciennes captures d'écran (version initiale) sont remplacées par les
-> figures ci-dessus, qui reflètent l'état actuel de l'application.
+> figures ci-dessus, qui reflètent l'état actuel de l'application. La **liste des
+> figures** du mémoire doit être régénérée en conséquence (Figures 5.1 à 5.46).

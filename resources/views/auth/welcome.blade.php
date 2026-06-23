@@ -19,34 +19,28 @@
                     <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants — choisissez votre espace pour continuer</p>
                 </div>
 
-                @php $delai = 0; @endphp
-                @foreach ($familles as $famille => $espaces)
-                    <div class="d-flex align-items-center gap-2 text-white-50 text-uppercase small fw-semibold mt-4 mb-2">
-                        <span>{{ $famille }}</span>
-                        <span class="flex-grow-1 border-top border-light opacity-25"></span>
-                    </div>
-                    <div class="row g-3">
-                        @foreach ($espaces as $espace)
-                            @php $delai += 0.05; @endphp
-                            <div class="col-sm-6 col-lg-4">
-                                <a href="{{ route('login', ['espace' => $espace['cle']]) }}"
-                                   class="text-decoration-none"
-                                   aria-label="Accéder à l'espace {{ $espace['label'] }}">
-                                    <div class="card auth-card h-100 ucao-fade-up ucao-choice-card" style="animation-delay:{{ $delai }}s">
-                                        <div class="card-body text-center p-4">
-                                            <i class="bi {{ $espace['icone'] }} fs-1 text-{{ $espace['couleur'] }} mb-3 d-block ucao-choice-icon"></i>
-                                            <h2 class="h5 fw-bold mb-2">{{ $espace['label'] }}</h2>
-                                            <p class="text-muted small mb-3">{{ $espace['baseline'] }}</p>
-                                            <span class="btn btn-ucao btn-sm px-4">
-                                                <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
-                                            </span>
-                                        </div>
+                <div class="row g-4 justify-content-center">
+                    @php $delai = 0; @endphp
+                    @foreach ($espaces as $espace)
+                        @php $delai += 0.1; @endphp
+                        <div class="col-md-6">
+                            <a href="{{ route('login', ['espace' => $espace['cle']]) }}"
+                               class="text-decoration-none"
+                               aria-label="Accéder à l'espace {{ $espace['label'] }}">
+                                <div class="card auth-card h-100 ucao-fade-up ucao-choice-card" style="animation-delay:{{ $delai }}s">
+                                    <div class="card-body text-center p-4 p-md-5">
+                                        <i class="bi {{ $espace['icone'] }} fs-1 text-{{ $espace['couleur'] }} mb-3 d-block ucao-choice-icon"></i>
+                                        <h2 class="h4 fw-bold mb-2">{{ $espace['label'] }}</h2>
+                                        <p class="text-muted mb-3">{{ $espace['baseline'] }}</p>
+                                        <span class="btn btn-ucao px-4">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
+                                        </span>
                                     </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                @endforeach
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
 
                 <p class="text-center text-white-50 small mt-4 mb-0">
                     Pas encore de compte ? Contactez l'administration pour en créer un.

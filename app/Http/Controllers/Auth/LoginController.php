@@ -17,7 +17,7 @@ class LoginController extends Controller
 {
     public function showWelcome(): View
     {
-        return view('auth.welcome', ['familles' => Espaces::parFamille()]);
+        return view('auth.welcome', ['espaces' => Espaces::all()]);
     }
 
     public function showLoginForm(Request $request): View|RedirectResponse

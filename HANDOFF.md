@@ -223,20 +223,21 @@ arithmétique (« combien font X + Y »).
    - **Tests** : `tests/Feature/DashboardEtudiantTest.php` (2 verts) ; `AuthTest`
      reste vert (connexion + captcha intacts).
 
-8. **Connexion différenciée par partie prenante — implémenté**.
-   Prompt d'origine : `PROMPT_CONNEXION_PARTIES_PRENANTES.md`.
-   - **Définition centralisée** `App\Support\Espaces` (méthodes `all()`, `get()`,
-     `parFamille()`, `generique()`) : 6 espaces (Étudiant, Professeur,
-     Administration, Comptabilité, Recouvrement, Finances), chacun avec libellé,
-     icône, couleur, baseline, fonctionnalités, rôles et famille (Pédagogie/Gestion).
-   - **Accueil** (`auth/welcome.blade.php`) : cartes générées par boucle, groupées
-     par famille (plus de HTML dupliqué). **Login** (`auth/login.blade.php`) :
-     panneau de marque piloté par la définition de l'espace.
-   - `LoginController::showWelcome` passe `Espaces::parFamille()` ;
-     `showLoginForm` lit `?espace=` via `Espaces::get()` avec **repli** sur un
-     espace générique si la clé est invalide. Auth/captcha inchangés.
+8. **Connexion par espace — implémenté** (prompt : `PROMPT_CONNEXION_PARTIES_PRENANTES.md`).
+   - **Définition centralisée** `App\Support\Espaces` (`all()`, `get()`,
+     `generique()`). **Deux espaces** : `etudiant` et `personnel`
+     (Administration / Personnel — regroupe admin, professeurs, comptabilité,
+     recouvrement, finances). Chaque espace : libellé, icône, couleur, baseline,
+     fonctionnalités, rôles.
+     > Historique : une version à 6 espaces (un par rôle, avec familles
+     > Pédagogie/Gestion) a existé, puis **simplifiée à 2 espaces** à la demande.
+   - **Accueil** (`auth/welcome.blade.php`) : 2 cartes centrées générées par
+     boucle. **Login** (`auth/login.blade.php`) : panneau de marque piloté par la
+     définition de l'espace. `showWelcome` passe `Espaces::all()` ; `showLoginForm`
+     lit `?espace=` via `Espaces::get()` avec **repli** générique si clé invalide.
+     Auth/captcha inchangés.
    - **Tests** : `tests/Feature/ConnexionEspacesTest.php` (4 verts), `AuthTest`
-     toujours vert. Vérifié en live (accueil + 6 espaces + fallback).
+     toujours vert. Vérifié en live (2 espaces + fallback).
 
 9. **Socle utilisateur unifié — implémenté**. Prompt : `PROMPT_UTILISATEURS_UNIFIES.md`.
    - **Page « Mon compte » unique** (`CompteController`, route `/mon-compte`,

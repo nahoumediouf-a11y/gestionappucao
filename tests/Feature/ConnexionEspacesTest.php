@@ -9,33 +9,28 @@ class ConnexionEspacesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_accueil_liste_toutes_les_parties_prenantes(): void
+    public function test_accueil_propose_deux_espaces(): void
     {
         $this->get('/')
             ->assertStatus(200)
             ->assertSee('Espace Étudiant')
-            ->assertSee('Espace Professeur')
-            ->assertSee('Administration')
-            ->assertSee('Comptabilité')
-            ->assertSee('Recouvrement')
-            ->assertSee('Finances')
-            ->assertSee('Pédagogie')
-            ->assertSee('Gestion');
+            ->assertSee('Administration / Personnel');
     }
 
-    public function test_login_affiche_la_marque_de_lespace_professeur(): void
+    public function test_login_affiche_la_marque_etudiant(): void
     {
-        $this->get('/login?espace=professeur')
+        $this->get('/login?espace=etudiant')
             ->assertStatus(200)
-            ->assertSee('Espace Professeur')
-            ->assertSee('Carnet de notes');
+            ->assertSee('Espace Étudiant')
+            ->assertSee('Notes et bulletin');
     }
 
-    public function test_login_affiche_la_marque_de_la_comptabilite(): void
+    public function test_login_affiche_la_marque_personnel(): void
     {
-        $this->get('/login?espace=comptabilite')
+        $this->get('/login?espace=personnel')
             ->assertStatus(200)
-            ->assertSee('Comptabilité');
+            ->assertSee('Administration / Personnel')
+            ->assertSee('Professeur');
     }
 
     public function test_login_avec_espace_invalide_retombe_sur_le_generique(): void

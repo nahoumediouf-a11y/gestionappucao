@@ -10,8 +10,12 @@
 
 **SIGE UCAO** (Système Intégré de Gestion des Étudiants) est une application web
 de gestion académique et financière pour l'UCAO Saint Michel (projet de classe /
-soutenance). Elle gère les étudiants, paiements/recouvrement, notes, absences,
-emplois du temps, documents de cours, projets, et intègre un assistant IA.
+soutenance). Elle gère les étudiants, paiements/recouvrement, notes (avec
+**pondération TP/Examen/TD/CC**), absences, emplois du temps, **cours en ligne
+(visioconférence Jitsi)**, documents de cours, **projets/devoirs/examens avec rendu
+en ligne et correction**, **messagerie interne**, **recherche globale**, et intègre
+un assistant IA. Interface refondue (shell sidebar/topbar, mode sombre, photos de
+profil réelles). Voir le détail des modules en §5.
 
 - **Répertoire projet** : `/Users/nahoumediouf/classproject/recouvrement-ucao`
 - **Stack** : Laravel 12, PHP 8.2+ (8.5 installé), SQLite, Blade + Bootstrap 5
@@ -76,16 +80,30 @@ arithmétique (« combien font X + Y »).
 - **Routing** : `routes/web.php` — groupes par rôle via middleware `role:xxx`,
   préfixes `admin/`, `comptabilite/`, `recouvrement/`, `financier/`,
   `etudiant/`, `professeur/`.
-- **Controllers** : `app/Http/Controllers/{Admin,Auth,Comptabilite,Etudiant,Financier,Professeur,Recouvrement}/`.
-- **Models** : `app/Models/` — Absence, ActivityLog, Document, DocumentCours,
-  EmploiDuTemps, EngagementPaiement, Etudiant, Note, Paiement, Projet,
-  PropositionProjet, User.
-- **Services** : `AssistantService.php` (IA), `PaydunyaService.php` (paiement mobile).
-- **Vues** : `resources/views/` — layouts `layouts/app` (auth) et
-  `layouts/dashboard` (espace connecté). Partials dans `resources/views/partials/`.
-- **PDF** : DomPDF (`barryvdh/laravel-dompdf`) — voir bulletins et emploi du temps.
-- **Tests** : `tests/Feature/` (Auth, BulletinPdf, EmploiDuTempsSalle, RappelEcheance,
-  Registration, RoleAccess). Lancer : `php artisan test`.
+- **Controllers** : `app/Http/Controllers/{Admin,Auth,Comptabilite,Etudiant,Financier,Professeur,Recouvrement}/`
+  + à la racine : `CompteController` (Mon compte), `MessagerieController`,
+  `RechercheGlobaleController`, `DashboardController`. Trait partagé
+  `Http/Controllers/Concerns/TrieListe` (tri sécurisé) et
+  `Professeur/Concerns/InteractsWithEtudiants` (`classesDuProfesseur`, `enseigneClasse`).
+- **Models** : `app/Models/` — Absence, ActivityLog, CoursEnLigne, Document,
+  DocumentCours, EmploiDuTemps, EngagementPaiement, Etudiant, Message, Note,
+  Paiement, Ponderation, Projet, PropositionProjet, Soumission, User.
+- **Services / Support** (`app/Support/`) : `AssistantService` (IA, dans Services),
+  `PaydunyaService` (paiement), `Menu` (nav par rôle), `Espaces` (espaces de
+  connexion), `CsvExport` (export Excel), `CalculMoyenne` (moyennes pondérées),
+  `PhotoUtilisateur` (photos de profil), `ActivityLogger`, `Captcha`.
+- **Vues** : `resources/views/` — layouts `layouts/app` (auth + design system/tokens)
+  et `layouts/dashboard` (shell sidebar/topbar/toasts). Partials dans
+  `resources/views/partials/` (dont `_identite`), composants Blade dans
+  `resources/views/components/` (dont `<x-tri>`).
+- **PDF** : DomPDF (`barryvdh/laravel-dompdf`) — bulletins et emploi du temps.
+- **Stockage** : disque `public` (photos, soumissions) → `php artisan storage:link`.
+- **Tests** : `tests/Feature/` — anciens (Auth, BulletinPdf, EmploiDuTempsSalle,
+  RappelEcheance, Registration, RoleAccess) + nouveaux (CoursEnLigne, Evaluation,
+  EspaceEnseignant, DashboardEtudiant, ConnexionEspaces, CompteUnifie, TableauAvance,
+  Messagerie, RechercheGlobale, Ponderation, PhotoEtudiant). Lancer : `php artisan test`.
+  ⚠️ **`RegistrationTest` échoue volontairement** (inscription désactivée) — c'est
+  le seul échec attendu ; tout le reste doit être vert.
 
 ### Logique métier importante
 

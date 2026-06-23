@@ -11,8 +11,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Matricule</th>
-                    <th>Nom complet</th>
+                    <th>Étudiant</th>
                     <th>Filière</th>
                     <th>Niveau</th>
                     <th>Situation</th>
@@ -21,8 +20,13 @@
             <tbody>
                 @forelse ($etudiants as $etudiant)
                     <tr>
-                        <td><code>{{ $etudiant->matricule }}</code></td>
-                        <td>{{ $etudiant->user->nom_complet }}</td>
+                        <td>
+                            @if ($etudiant->user)
+                                @include('partials._identite', ['identite' => $etudiant->user, 'taille' => 'sm', 'sousTitre' => $etudiant->matricule])
+                            @else
+                                <code>{{ $etudiant->matricule }}</code>
+                            @endif
+                        </td>
                         <td>{{ $etudiant->filiere }}</td>
                         <td>{{ $etudiant->niveau }}</td>
                         <td>
@@ -34,7 +38,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted py-4">Aucun étudiant trouvé pour vos cours.</td></tr>
+                    <tr><td colspan="4" class="text-center text-muted py-4">Aucun étudiant trouvé pour vos cours.</td></tr>
                 @endforelse
             </tbody>
         </table>

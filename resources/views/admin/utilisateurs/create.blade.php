@@ -7,7 +7,7 @@
 @section('page-content')
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
-        <form method="POST" action="{{ route('admin.utilisateurs.store') }}">
+        <form method="POST" action="{{ route('admin.utilisateurs.store') }}" enctype="multipart/form-data">
             @csrf
             @include('admin.utilisateurs._form')
 

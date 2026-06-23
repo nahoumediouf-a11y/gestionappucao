@@ -32,6 +32,22 @@
     </div>
 
     <div class="col-md-6">
+        <label for="photo" class="form-label">Photo de profil (portrait réel)</label>
+        <input type="file" name="photo" id="photo" accept="image/*" class="form-control @error('photo') is-invalid @enderror">
+        <div class="form-text">JPG, PNG ou WebP, 2 Mo max.</div>
+        @error('photo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        @if ($user?->photoUrl())
+            <div class="d-flex align-items-center gap-2 mt-2">
+                <img src="{{ $user->photoUrl() }}" alt="Photo de {{ $user->nom_complet }}" class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                <div class="form-check mb-0">
+                    <input type="checkbox" name="supprimer_photo" value="1" id="supprimer_photo" class="form-check-input">
+                    <label for="supprimer_photo" class="form-check-label small">Retirer la photo</label>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <div class="col-md-6">
         <label for="password" class="form-label">Mot de passe {{ $user ? '(laisser vide pour ne pas changer)' : '' }}</label>
         <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" {{ $user ? '' : 'required' }}>
         @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror

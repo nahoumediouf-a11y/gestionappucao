@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\CompteActiveNotification;
 use App\Support\ActivityLogger;
 use App\Support\CsvExport;
+use App\Support\PhotoUtilisateur;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -128,6 +129,8 @@ class UserController extends Controller
             return $user;
         });
 
+        PhotoUtilisateur::appliquer($user, $request);
+
         ActivityLogger::log('user.create', 'Création de l\'utilisateur '.$user->login.' (rôle : '.$user->role->label().')');
 
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur créé avec succès.');
@@ -181,6 +184,8 @@ class UserController extends Controller
             }
         });
 
+        PhotoUtilisateur::appliquer($utilisateur, $request);
+
         ActivityLogger::log('user.update', 'Modification de l\'utilisateur '.$utilisateur->login);
 
         return redirect()->route('admin.utilisateurs.index')->with('success', 'Utilisateur modifié avec succès.');
@@ -221,6 +226,7 @@ class UserController extends Controller
             'login' => ['required', 'string', 'max:255', 'unique:users,login,'.$userId],
             'email' => ['nullable', 'email', 'max:255', 'unique:users,email,'.$userId],
             'telephone' => ['nullable', 'string', 'max:30'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'role' => ['required', 'string', 'in:'.implode(',', array_column(Role::cases(), 'value'))],
             'statut' => ['required', 'string', 'in:actif,inactif,en_attente'],
             'matricule' => ['required_if:role,etudiant', 'nullable', 'digits:7', 'integer', 'between:1000678,1080987', 'unique:etudiants,matricule,'.($user?->etudiant?->id)],

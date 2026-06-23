@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\PhotoUtilisateur;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -37,9 +38,17 @@ class CompteController extends Controller
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'telephone' => ['nullable', 'string', 'max:30'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'email' => $validated['email'] ?? null,
+            'telephone' => $validated['telephone'] ?? null,
+        ]);
+
+        PhotoUtilisateur::appliquer($user, $request);
 
         return back()->with('success', 'Vos informations ont été mises à jour.');
     }

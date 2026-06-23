@@ -371,6 +371,9 @@ class DatabaseSeeder extends Seeder
         // 50 étudiants supplémentaires (filières variées, coordonnées, situations financières diverses)
         $this->call(EtudiantsDemoSeeder::class);
 
+        // Portraits réels des étudiants (randomuser.me ; idempotent, tolérant hors-ligne)
+        $this->call(PhotosEtudiantsSeeder::class);
+
         // Cours en ligne de démonstration (Informatique L3)
         $this->call(CoursEnLigneSeeder::class);
 

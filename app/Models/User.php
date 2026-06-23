@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'login',
         'email',
         'telephone',
+        'photo',
         'password',
         'role',
         'statut',
@@ -42,6 +44,12 @@ class User extends Authenticatable
     public function getNomCompletAttribute(): string
     {
         return trim("{$this->prenom} {$this->nom}");
+    }
+
+    /** URL publique de la photo de profil, ou null (repli sur l'avatar à initiales). */
+    public function photoUrl(): ?string
+    {
+        return $this->photo ? Storage::disk('public')->url($this->photo) : null;
     }
 
     public function isActif(): bool

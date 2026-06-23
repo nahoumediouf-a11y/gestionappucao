@@ -10,9 +10,15 @@
     $statutLabels = ['actif' => 'Actif', 'inactif' => 'Inactif', 'en_attente' => 'En attente'];
 @endphp
 <div class="d-flex align-items-center gap-2">
-    <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold flex-shrink-0"
-          style="width: {{ $dim }}px; height: {{ $dim }}px; font-size: {{ $taille === 'sm' ? '.85rem' : '1.1rem' }};"
-          aria-hidden="true">{{ $initiales ?: '?' }}</span>
+    @if ($identite->photoUrl())
+        <img src="{{ $identite->photoUrl() }}" alt="Photo de {{ $identite->nom_complet }}" loading="lazy"
+             class="rounded-circle flex-shrink-0 object-fit-cover border"
+             style="width: {{ $dim }}px; height: {{ $dim }}px; object-fit: cover;">
+    @else
+        <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold flex-shrink-0"
+              style="width: {{ $dim }}px; height: {{ $dim }}px; font-size: {{ $taille === 'sm' ? '.85rem' : '1.1rem' }};"
+              aria-hidden="true">{{ $initiales ?: '?' }}</span>
+    @endif
     <div class="lh-sm">
         <div class="fw-semibold">{{ $identite->nom_complet }}</div>
         <div class="small">

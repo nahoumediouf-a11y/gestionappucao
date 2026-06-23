@@ -83,7 +83,11 @@
                 <div class="dropdown">
                     <button class="btn d-flex align-items-center gap-2 p-1 border-0" data-bs-toggle="dropdown" aria-expanded="false">
                         @php $initiales = strtoupper(mb_substr($user->prenom ?? '', 0, 1).mb_substr($user->nom ?? '', 0, 1)); @endphp
-                        <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold" style="width:36px;height:36px;font-size:.85rem;">{{ $initiales ?: '?' }}</span>
+                        @if ($user->photoUrl())
+                            <img src="{{ $user->photoUrl() }}" alt="Photo de {{ $user->nom_complet }}" class="rounded-circle" style="width:36px;height:36px;object-fit:cover;">
+                        @else
+                            <span class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold" style="width:36px;height:36px;font-size:.85rem;">{{ $initiales ?: '?' }}</span>
+                        @endif
                         <span class="d-none d-md-inline small text-start lh-1">
                             <span class="fw-semibold d-block">{{ $user->nom_complet }}</span>
                             <span class="text-muted">{{ $user->role->label() }}</span>

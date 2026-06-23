@@ -17,9 +17,25 @@
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body p-4">
                 <h3 class="h6 text-muted mb-3"><i class="bi bi-person-vcard me-1"></i>Informations personnelles</h3>
-                <form method="POST" action="{{ route('compte.update') }}">
+                <form method="POST" action="{{ route('compte.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        @include('partials._identite', ['identite' => $user, 'taille' => 'md', 'sousTitre' => null])
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo de profil</label>
+                        <input type="file" name="photo" id="photo" accept="image/*"
+                            class="form-control @error('photo') is-invalid @enderror">
+                        <div class="form-text">JPG, PNG ou WebP, 2 Mo max.</div>
+                        @error('photo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @if ($user->photoUrl())
+                            <div class="form-check mt-2">
+                                <input type="checkbox" name="supprimer_photo" value="1" id="supprimer_photo" class="form-check-input">
+                                <label for="supprimer_photo" class="form-check-label small">Retirer ma photo actuelle</label>
+                            </div>
+                        @endif
+                    </div>
                     <div class="row g-2">
                         <div class="col-md-6">
                             <label for="prenom" class="form-label">Prénom</label>

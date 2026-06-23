@@ -325,6 +325,21 @@ arithmétique (« combien font X + Y »).
     - **Défauts retenus** : TP 30 % / Examen 70 % ; pondération par classe+matière ;
       projet/devoir → catégorie TP. **Tests** : `PonderationTest` (6 verts).
 
+12. **Photos réelles des étudiants — implémenté**. Prompt : `PROMPT_PHOTOS_ETUDIANTS.md`.
+    - Migration `users.photo` (chemin disque `public`) + `User::photoUrl()` +
+      helper `App\Support\PhotoUtilisateur` (enregistrer/remplacer/retirer,
+      suppression de l'ancien fichier).
+    - **Upload** (image, mimes jpg/png/webp, max 2 Mo) via « Mon compte »
+      (`CompteController`, l'étudiant ne change que la sienne) et le formulaire
+      admin (`Admin\UserController`). Case « retirer la photo ».
+    - **Seed** `PhotosEtudiantsSeeder` : portraits **réels** (randomuser.me — vraies
+      personnes, libres, **pas d'IA**), idempotent et **tolérant hors-ligne** (échec
+      → photo vide). Appelé par `DatabaseSeeder`. Nécessite `php artisan storage:link`.
+    - **Affichage** : `partials/_identite` montre la photo (ronde, `object-fit:cover`,
+      lazy) sinon les initiales ; idem avatar profil de la barre supérieure. Répercuté
+      partout où `_identite` est utilisé (liste admin, recherche, Mon compte).
+    - **Tests** : `PhotoEtudiantTest` (5 verts).
+
 ---
 
 ## 6. Conventions

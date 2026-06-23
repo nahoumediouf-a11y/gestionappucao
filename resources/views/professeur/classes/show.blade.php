@@ -53,7 +53,6 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Matricule</th>
                     <th>Étudiant</th>
                     <th>Moyenne</th>
                     <th>Absences non justifiées</th>
@@ -68,8 +67,13 @@
                         $risque = $abs >= $seuilAbsences || ($moy !== null && $moy < 10);
                     @endphp
                     <tr class="{{ $risque ? 'table-danger' : '' }}">
-                        <td>{{ $e->matricule }}</td>
-                        <td>{{ $e->user?->nom_complet }}</td>
+                        <td>
+                            @if ($e->user)
+                                @include('partials._identite', ['identite' => $e->user, 'taille' => 'sm', 'sousTitre' => $e->matricule])
+                            @else
+                                <span class="text-muted">{{ $e->matricule }}</span>
+                            @endif
+                        </td>
                         <td>{{ $moy !== null ? $moy.' /20' : '—' }}</td>
                         <td>{{ $abs }}</td>
                         <td>
@@ -81,7 +85,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted py-4">Aucun étudiant dans cette classe.</td></tr>
+                    <tr><td colspan="4" class="text-center text-muted py-4">Aucun étudiant dans cette classe.</td></tr>
                 @endforelse
             </tbody>
         </table>

@@ -27,19 +27,27 @@
 <div class="card border-0 shadow-sm mb-3">
     <div class="card-body">
         <form method="GET" class="row g-2">
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <input type="text" name="q" id="ucao-search-q" class="form-control" placeholder="Rechercher par nom, login, email ou matricule..." value="{{ $q }}" autocomplete="off">
             </div>
             <div class="col-md-3">
+                <select name="role" id="ucao-search-role" class="form-select">
+                    <option value="">Tous les rôles</option>
+                    @foreach ($roles as $r)
+                        <option value="{{ $r->value }}" {{ (string) $role === $r->value ? 'selected' : '' }}>{{ $r->label() }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
                 <select name="statut" id="ucao-search-statut" class="form-select">
                     <option value="">Tous les statuts</option>
-                    <option value="en_attente" {{ $statut === 'en_attente' ? 'selected' : '' }}>En attente de validation</option>
+                    <option value="en_attente" {{ $statut === 'en_attente' ? 'selected' : '' }}>En attente</option>
                     <option value="actif" {{ $statut === 'actif' ? 'selected' : '' }}>Actif</option>
                     <option value="inactif" {{ $statut === 'inactif' ? 'selected' : '' }}>Inactif</option>
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Rechercher</button>
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Filtrer</button>
             </div>
         </form>
         @push('scripts')
@@ -59,6 +67,10 @@
             if (statutSelect) {
                 statutSelect.addEventListener('change', submit);
             }
+            var roleSelect = document.getElementById('ucao-search-role');
+            if (roleSelect) {
+                roleSelect.addEventListener('change', submit);
+            }
         })();
         </script>
         @endpush
@@ -70,11 +82,9 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Nom</th>
+                    <th>Identité</th>
                     <th>Login</th>
                     <th>Email</th>
-                    <th>Rôle</th>
-                    <th>Statut</th>
                     <th>Détails</th>
                     <th class="text-end">Actions</th>
                 </tr>
@@ -82,19 +92,9 @@
             <tbody>
                 @foreach ($users as $user)
                     <tr>
-                        <td>{{ $user->nom_complet }}</td>
+                        <td>@include('partials._identite', ['identite' => $user, 'taille' => 'sm'])</td>
                         <td><code>{{ $user->login }}</code></td>
                         <td>{{ $user->email ?? '—' }}</td>
-                        <td><span class="badge bg-primary-subtle text-primary">{{ $user->role->label() }}</span></td>
-                        <td>
-                            @php
-                                $statutLabels = ['actif' => 'Actif', 'inactif' => 'Inactif', 'en_attente' => 'En attente'];
-                                $statutColors = ['actif' => 'success', 'inactif' => 'secondary', 'en_attente' => 'warning'];
-                            @endphp
-                            <span class="badge bg-{{ $statutColors[$user->statut] ?? 'secondary' }}">
-                                {{ $statutLabels[$user->statut] ?? ucfirst($user->statut) }}
-                            </span>
-                        </td>
                         <td class="small text-muted">
                             @if ($user->etudiant)
                                 {{ $user->etudiant->matricule }} — {{ $user->etudiant->filiere }} {{ $user->etudiant->niveau }}

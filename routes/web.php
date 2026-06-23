@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Comptabilite\DebiteurController;
 use App\Http\Controllers\Comptabilite\PaiementController as ComptabilitePaiementController;
+use App\Http\Controllers\CompteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Etudiant\AbsenceController as EtudiantAbsenceController;
 use App\Http\Controllers\Etudiant\BulletinController;
@@ -72,6 +73,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/mot-de-passe', [ProfileController::class, 'edit'])->name('profile.password.edit');
     Route::put('/mot-de-passe', [ProfileController::class, 'update'])->name('profile.password.update');
+
+    // Compte unifié (tous rôles)
+    Route::get('/mon-compte', [CompteController::class, 'show'])->name('compte.show');
+    Route::put('/mon-compte', [CompteController::class, 'update'])->name('compte.update');
 
     // ===== Administrateur =====
     Route::middleware('role:administrateur')->prefix('admin')->name('admin.')->group(function () {

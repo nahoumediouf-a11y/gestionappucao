@@ -19,8 +19,8 @@
                 <span class="theme-toggle fs-5" onclick="ucaoToggleTheme()" title="Changer de thème">
                     <i id="ucao-theme-icon" class="bi bi-moon-stars"></i>
                 </span>
-                <a href="{{ route('profile.password.edit') }}" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-key me-1"></i>Mot de passe
+                <a href="{{ route('compte.show') }}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-person-circle me-1"></i>Mon compte
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

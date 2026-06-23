@@ -238,6 +238,23 @@ arithmétique (« combien font X + Y »).
    - **Tests** : `tests/Feature/ConnexionEspacesTest.php` (4 verts), `AuthTest`
      toujours vert. Vérifié en live (accueil + 6 espaces + fallback).
 
+9. **Socle utilisateur unifié — implémenté**. Prompt : `PROMPT_UTILISATEURS_UNIFIES.md`.
+   - **Page « Mon compte » unique** (`CompteController`, route `/mon-compte`,
+     `compte.show`/`compte.update`) pour **tous les rôles** : édition de ses infos
+     (nom, prénom, email unique sauf soi, téléphone), changement de mot de passe
+     (réutilise `profile.password.update`), et pour l'étudiant un bloc situation
+     + contact d'urgence (réutilise `etudiant.profil.contact-urgence.update`).
+     La navbar pointe désormais vers « Mon compte » (les anciennes routes
+     `/mot-de-passe` et `/etudiant/profil` restent fonctionnelles).
+   - **Partial identité** `resources/views/partials/_identite.blade.php` (avatar à
+     initiales + nom + badge rôle + badge statut), réutilisé dans « Mon compte »
+     et la liste admin.
+   - **Admin** (`Admin\UserController`, déjà multi-rôles) : ajout du **filtre par
+     rôle**, création/màj User+Etudiant en **transaction** (`DB::transaction`),
+     liste refondue avec le bloc identité.
+   - **Tests** : `tests/Feature/CompteUnifieTest.php` (6 verts). Vérifié en live
+     (mon-compte comptable + filtre rôle admin).
+
 ---
 
 ## 6. Conventions

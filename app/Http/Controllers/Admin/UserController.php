@@ -10,6 +10,7 @@ use App\Notifications\CompteActiveNotification;
 use App\Support\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -28,6 +29,7 @@ class UserController extends Controller
                 });
             })
             ->when($request->filled('statut'), fn ($query) => $query->where('statut', $request->string('statut')))
+            ->when($request->filled('role'), fn ($query) => $query->where('role', $request->string('role')))
             ->orderBy('nom')
             ->paginate(15)
             ->withQueryString();
@@ -37,6 +39,7 @@ class UserController extends Controller
             'roles' => Role::cases(),
             'q' => $request->string('q'),
             'statut' => $request->string('statut'),
+            'role' => $request->string('role'),
             'enAttenteCount' => User::where('statut', 'en_attente')->count(),
         ]);
     }
@@ -52,32 +55,36 @@ class UserController extends Controller
     {
         $validated = $this->validateUser($request);
 
-        $user = User::create([
-            'nom' => $validated['nom'],
-            'prenom' => $validated['prenom'],
-            'login' => $validated['login'],
-            'email' => $validated['email'],
-            'telephone' => $validated['telephone'] ?? null,
-            'password' => $validated['password'],
-            'role' => $validated['role'],
-            'statut' => $validated['statut'],
-        ]);
-
-        if ($validated['role'] === Role::Etudiant->value) {
-            Etudiant::create([
-                'user_id' => $user->id,
-                'matricule' => $validated['matricule'],
-                'niveau' => $validated['niveau'],
-                'filiere' => $validated['filiere'],
-                'solde' => $validated['solde'] ?? 0,
-                'adresse' => $validated['adresse'] ?? null,
-                'date_naissance' => $validated['date_naissance'] ?? null,
-                'lieu_naissance' => $validated['lieu_naissance'] ?? null,
-                'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
-                'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
-                'email_parent' => $validated['email_parent'] ?? null,
+        $user = DB::transaction(function () use ($validated) {
+            $user = User::create([
+                'nom' => $validated['nom'],
+                'prenom' => $validated['prenom'],
+                'login' => $validated['login'],
+                'email' => $validated['email'],
+                'telephone' => $validated['telephone'] ?? null,
+                'password' => $validated['password'],
+                'role' => $validated['role'],
+                'statut' => $validated['statut'],
             ]);
-        }
+
+            if ($validated['role'] === Role::Etudiant->value) {
+                Etudiant::create([
+                    'user_id' => $user->id,
+                    'matricule' => $validated['matricule'],
+                    'niveau' => $validated['niveau'],
+                    'filiere' => $validated['filiere'],
+                    'solde' => $validated['solde'] ?? 0,
+                    'adresse' => $validated['adresse'] ?? null,
+                    'date_naissance' => $validated['date_naissance'] ?? null,
+                    'lieu_naissance' => $validated['lieu_naissance'] ?? null,
+                    'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
+                    'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
+                    'email_parent' => $validated['email_parent'] ?? null,
+                ]);
+            }
+
+            return $user;
+        });
 
         ActivityLogger::log('user.create', 'Création de l\'utilisateur '.$user->login.' (rôle : '.$user->role->label().')');
 
@@ -112,23 +119,25 @@ class UserController extends Controller
             $data['password'] = $validated['password'];
         }
 
-        $utilisateur->update($data);
+        DB::transaction(function () use ($utilisateur, $data, $validated) {
+            $utilisateur->update($data);
 
-        if ($validated['role'] === Role::Etudiant->value) {
-            Etudiant::updateOrCreate(
-                ['user_id' => $utilisateur->id],
-                [
-                    'matricule' => $validated['matricule'],
-                    'niveau' => $validated['niveau'],
-                    'filiere' => $validated['filiere'],
-                    'solde' => $validated['solde'] ?? 0,
-                    'adresse' => $validated['adresse'] ?? null,
-                    'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
-                    'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
-                    'email_parent' => $validated['email_parent'] ?? null,
-                ]
-            );
-        }
+            if ($validated['role'] === Role::Etudiant->value) {
+                Etudiant::updateOrCreate(
+                    ['user_id' => $utilisateur->id],
+                    [
+                        'matricule' => $validated['matricule'],
+                        'niveau' => $validated['niveau'],
+                        'filiere' => $validated['filiere'],
+                        'solde' => $validated['solde'] ?? 0,
+                        'adresse' => $validated['adresse'] ?? null,
+                        'contact_urgence_nom' => $validated['contact_urgence_nom'] ?? null,
+                        'contact_urgence_telephone' => $validated['contact_urgence_telephone'] ?? null,
+                        'email_parent' => $validated['email_parent'] ?? null,
+                    ]
+                );
+            }
+        });
 
         ActivityLogger::log('user.update', 'Modification de l\'utilisateur '.$utilisateur->login);
 
@@ -139,7 +148,7 @@ class UserController extends Controller
     {
         $utilisateur->update(['statut' => 'actif']);
 
-        $utilisateur->notify(new CompteActiveNotification());
+        $utilisateur->notify(new CompteActiveNotification);
 
         ActivityLogger::log('user.activate', "Activation du compte de {$utilisateur->login} après vérification de l'inscription.");
 

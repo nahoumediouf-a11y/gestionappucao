@@ -9,57 +9,48 @@
     </span>
     <div class="container py-4">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-lg-10">
                 <div class="text-center text-white mb-4 ucao-fade-up">
                     <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
                         <i class="bi bi-mortarboard-fill fs-1"></i>
                         <span class="fs-3 fw-semibold">UCAO Saint Michel</span>
                     </div>
                     <h1 class="h2 fw-bold mb-2 text-uppercase">SIGE UCAO</h1>
-                    <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants - Choisissez votre espace pour continuer</p>
+                    <p class="opacity-75 mb-0">Système Intégré de Gestion des Étudiants — choisissez votre espace pour continuer</p>
                 </div>
 
-                <div class="row g-4 justify-content-center">
-                    <div class="col-md-6">
-                        <a href="{{ route('login', ['espace' => 'etudiant']) }}" class="text-decoration-none">
-                            <div class="card auth-card h-100 ucao-fade-up ucao-choice-card" style="animation-delay:.05s">
-                                <div class="card-body text-center p-4 p-md-5">
-                                    <i class="bi bi-person-badge fs-1 text-primary mb-3 d-block ucao-choice-icon"></i>
-                                    <h2 class="h4 fw-bold mb-2">Espace Étudiant</h2>
-                                    <p class="text-muted mb-3">
-                                        Consultez vos notes, votre bulletin, votre emploi du temps,
-                                        vos absences et le suivi de vos paiements.
-                                    </p>
-                                    <span class="btn btn-ucao px-4">
-                                        <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                        <p class="text-center text-white small mt-2 mb-0">
-                            Pas encore de compte ?
-                            <span class="text-white-50 small">Contactez l'administration pour créer un compte</span>
-                        </p>
+                @php $delai = 0; @endphp
+                @foreach ($familles as $famille => $espaces)
+                    <div class="d-flex align-items-center gap-2 text-white-50 text-uppercase small fw-semibold mt-4 mb-2">
+                        <span>{{ $famille }}</span>
+                        <span class="flex-grow-1 border-top border-light opacity-25"></span>
                     </div>
+                    <div class="row g-3">
+                        @foreach ($espaces as $espace)
+                            @php $delai += 0.05; @endphp
+                            <div class="col-sm-6 col-lg-4">
+                                <a href="{{ route('login', ['espace' => $espace['cle']]) }}"
+                                   class="text-decoration-none"
+                                   aria-label="Accéder à l'espace {{ $espace['label'] }}">
+                                    <div class="card auth-card h-100 ucao-fade-up ucao-choice-card" style="animation-delay:{{ $delai }}s">
+                                        <div class="card-body text-center p-4">
+                                            <i class="bi {{ $espace['icone'] }} fs-1 text-{{ $espace['couleur'] }} mb-3 d-block ucao-choice-icon"></i>
+                                            <h2 class="h5 fw-bold mb-2">{{ $espace['label'] }}</h2>
+                                            <p class="text-muted small mb-3">{{ $espace['baseline'] }}</p>
+                                            <span class="btn btn-ucao btn-sm px-4">
+                                                <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @endforeach
 
-                    <div class="col-md-6">
-                        <a href="{{ route('login', ['espace' => 'personnel']) }}" class="text-decoration-none">
-                            <div class="card auth-card h-100 ucao-fade-up ucao-choice-card" style="animation-delay:.15s">
-                                <div class="card-body text-center p-4 p-md-5">
-                                    <i class="bi bi-briefcase fs-1 text-primary mb-3 d-block ucao-choice-icon"></i>
-                                    <h2 class="h4 fw-bold mb-2">Espace Administration / Personnel</h2>
-                                    <p class="text-muted mb-3">
-                                        Administrateur, agent comptable, agent de recouvrement,
-                                        responsable financier ou professeur.
-                                    </p>
-                                    <span class="btn btn-ucao px-4">
-                                        <i class="bi bi-box-arrow-in-right me-2"></i>Accéder
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                <p class="text-center text-white-50 small mt-4 mb-0">
+                    Pas encore de compte ? Contactez l'administration pour en créer un.
+                </p>
             </div>
         </div>
     </div>
@@ -70,16 +61,14 @@
         transition: transform .25s ease, box-shadow .25s ease;
     }
     .ucao-choice-card:hover {
-        transform: translateY(-8px) scale(1.015);
+        transform: translateY(-6px) scale(1.015);
         box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, .2);
     }
     .ucao-choice-card:hover .ucao-choice-icon {
         transform: translateY(-4px) scale(1.1);
-        color: var(--ucao-gold) !important;
     }
     .ucao-choice-icon {
         transition: transform .25s ease, color .25s ease;
-        animation: ucao-float 4s ease-in-out infinite;
     }
 </style>
 @endsection

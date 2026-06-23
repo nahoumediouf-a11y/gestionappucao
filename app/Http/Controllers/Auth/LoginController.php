@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\Captcha;
+use App\Support\Espaces;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class LoginController extends Controller
 {
     public function showWelcome(): View
     {
-        return view('auth.welcome');
+        return view('auth.welcome', ['familles' => Espaces::parFamille()]);
     }
 
     public function showLoginForm(Request $request): View|RedirectResponse
@@ -25,7 +26,7 @@ class LoginController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $espace = $request->query('espace') === 'etudiant' ? 'etudiant' : 'personnel';
+        $espace = Espaces::get($request->query('espace'));
 
         return view('auth.login', ['espace' => $espace, 'captcha' => Captcha::generate()]);
     }

@@ -223,6 +223,21 @@ arithmétique (« combien font X + Y »).
    - **Tests** : `tests/Feature/DashboardEtudiantTest.php` (2 verts) ; `AuthTest`
      reste vert (connexion + captcha intacts).
 
+8. **Connexion différenciée par partie prenante — implémenté**.
+   Prompt d'origine : `PROMPT_CONNEXION_PARTIES_PRENANTES.md`.
+   - **Définition centralisée** `App\Support\Espaces` (méthodes `all()`, `get()`,
+     `parFamille()`, `generique()`) : 6 espaces (Étudiant, Professeur,
+     Administration, Comptabilité, Recouvrement, Finances), chacun avec libellé,
+     icône, couleur, baseline, fonctionnalités, rôles et famille (Pédagogie/Gestion).
+   - **Accueil** (`auth/welcome.blade.php`) : cartes générées par boucle, groupées
+     par famille (plus de HTML dupliqué). **Login** (`auth/login.blade.php`) :
+     panneau de marque piloté par la définition de l'espace.
+   - `LoginController::showWelcome` passe `Espaces::parFamille()` ;
+     `showLoginForm` lit `?espace=` via `Espaces::get()` avec **repli** sur un
+     espace générique si la clé est invalide. Auth/captcha inchangés.
+   - **Tests** : `tests/Feature/ConnexionEspacesTest.php` (4 verts), `AuthTest`
+     toujours vert. Vérifié en live (accueil + 6 espaces + fallback).
+
 ---
 
 ## 6. Conventions

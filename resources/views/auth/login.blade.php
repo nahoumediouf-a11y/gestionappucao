@@ -18,36 +18,16 @@
                         <div class="col-md-5 auth-brand d-flex flex-column justify-content-center">
                             <div class="px-2">
                                 <div class="d-flex align-items-center gap-2 mb-3">
-                                    @if ($espace === 'etudiant')
-                                        <i class="bi bi-person-badge fs-2"></i>
-                                    @else
-                                        <i class="bi bi-shield-lock-fill fs-2"></i>
-                                    @endif
+                                    <i class="bi {{ $espace['icone'] }} fs-2"></i>
                                     <span class="fs-5 fw-semibold">UCAO Saint Michel</span>
                                 </div>
-                                @if ($espace === 'etudiant')
-                                    <h1 class="h3 fw-bold mb-3">Espace Étudiant</h1>
-                                    <p class="mb-4 opacity-75">
-                                        Connectez-vous pour consulter vos notes, votre bulletin, votre emploi du temps,
-                                        vos absences et le suivi de vos paiements.
-                                    </p>
+                                <h1 class="h3 fw-bold mb-3">{{ $espace['label'] }}</h1>
+                                <p class="mb-4 opacity-75">{{ $espace['baseline'] }}</p>
+                                @if (! empty($espace['fonctionnalites']))
                                     <ul class="list-unstyled small opacity-90 mb-0">
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Notes et bulletin</li>
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Emploi du temps</li>
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Absences</li>
-                                        <li><i class="bi bi-check-circle me-2"></i>Paiements et reçus</li>
-                                    </ul>
-                                @else
-                                    <h1 class="h3 fw-bold mb-3">Système de contrôle de recouvrement</h1>
-                                    <p class="mb-4 opacity-75">
-                                        Accès réservé au personnel autorisé. Connectez-vous avec vos identifiants.
-                                    </p>
-                                    <ul class="list-unstyled small opacity-90 mb-0">
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Administrateur</li>
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Agent comptable</li>
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Agent de recouvrement</li>
-                                        <li class="mb-2"><i class="bi bi-check-circle me-2"></i>Responsable financier</li>
-                                        <li><i class="bi bi-check-circle me-2"></i>Professeur</li>
+                                        @foreach ($espace['fonctionnalites'] as $fonctionnalite)
+                                            <li class="mb-2"><i class="bi bi-check-circle me-2"></i>{{ $fonctionnalite }}</li>
+                                        @endforeach
                                     </ul>
                                 @endif
                             </div>
@@ -132,7 +112,7 @@
                                 </button>
                             </form>
 
-                            @if ($espace === 'etudiant')
+                            @if ($espace['cle'] === 'etudiant')
                             <hr class="my-4">
                             <p class="small text-muted mb-0">
                                 Pas encore de compte ? Contactez l'administration.

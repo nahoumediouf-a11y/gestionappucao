@@ -83,12 +83,14 @@ Route::middleware('auth')->group(function () {
 
     // Recherche globale (personnel)
     Route::get('/recherche', [RechercheGlobaleController::class, 'index'])->name('recherche.globale');
+    Route::get('/recherche/suggestions', [RechercheGlobaleController::class, 'suggestions'])->name('recherche.suggestions');
 
     // Messagerie interne (tous rôles)
     Route::get('/messagerie', [MessagerieController::class, 'index'])->name('messagerie.index');
     Route::get('/messagerie/envoyes', [MessagerieController::class, 'envoyes'])->name('messagerie.envoyes');
     Route::get('/messagerie/nouveau', [MessagerieController::class, 'create'])->name('messagerie.create');
     Route::post('/messagerie', [MessagerieController::class, 'store'])->name('messagerie.store');
+    Route::get('/messagerie/piece-jointe/{piece}', [MessagerieController::class, 'pieceJointe'])->name('messagerie.piece-jointe');
     Route::get('/messagerie/{message}', [MessagerieController::class, 'show'])->name('messagerie.show');
     Route::delete('/messagerie/{message}', [MessagerieController::class, 'destroy'])->name('messagerie.destroy');
 

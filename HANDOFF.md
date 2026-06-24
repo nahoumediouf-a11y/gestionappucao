@@ -450,3 +450,162 @@ plus loin :
 - Ne pas utiliser `perl -0pi` pour des remplacements multi-lignes sur les
   seeders : un motif trop large a corrompu plusieurs `updateOrCreate` (corrigé
   depuis). Préférer des éditions ciblées.
+
+---
+
+## 9. EN COURS — Recherche par suggestions / autocomplétion (typeahead)
+
+> Prompt dédié : `PROMPT_RECHERCHE_SUGGESTIONS.md`. Objectif : transformer la
+> recherche globale (rechargement de page, `LIKE %q%`) en autocomplétion temps
+> réel qui suggère les étudiants dès 2 lettres (prénom, nom ou matricule
+> commençant pareil) et trouve un étudiant « en quelques mots » (multi-mots).
+
+### État de départ (avant ce chantier)
+- `RechercheGlobaleController@index` : serveur, full reload, `LIKE %q%` sur
+  matricule/filière/niveau + nom/prénom (relation user), limit 50. RBAC : étudiant
+  403, prof restreint via `limiterAuxClasses()`, admin → `type=personnel`.
+- Barre : `resources/views/layouts/dashboard.blade.php` (~l.57-60), `<form GET>`
+  `name="q"`, **aucun JS/suggestion**. Page résultats : `recherche/index.blade.php`.
+- Manques : pas d'endpoint JSON, pas d'index DB dédié, pas d'insensibilité accents,
+  recherche mono-mot.
+
+### Plan (résumé)
+- **A.** Endpoint `GET /recherche/suggestions` (`recherche.suggestions`), même gate
+  RBAC, `q` min 2 car., ≤ 8 items JSON `{label, sous_titre, matricule, type, url}`
+  (url via `destinationEtudiant()`). Factoriser la requête entre `index()` et
+  `suggestions()`.
+- **B.** Multi-mots (tokens, AND entre tokens / OR entre champs) + **priorité au
+  préfixe** (`LIKE 'q%'` avant `%q%`, via `orderByRaw CASE WHEN`).
+- **C.** Insensibilité accents/casse : colonnes normalisées indexées
+  `users.nom_norm` / `prenom_norm` (Str::ascii + minuscules) remplies à
+  l'enregistrement + migration **avec backfill**.
+- **D.** Perf : index `etudiants.matricule/filiere/niveau`, `users.nom_norm/prenom_norm` ;
+  `select()` ciblé ; `with('user:id,...')` ; limit 8.
+- **E.** Front (dashboard.blade.php) : combobox a11y + dropdown, Bootstrap 5 + JS
+  vanilla (Vite), débounce ~200 ms, `AbortController`, clavier ↑/↓/Entrée/Échap,
+  surlignage préfixe, fallback Entrée → page `/recherche`.
+- **F.** Tests `tests/Feature/RechercheSuggestionsTest.php` : 403 étudiant ; prof
+  limité à ses classes ; préfixe matricule en 1er ; multi-mots ; accent manquant ;
+  `q` < 2 → vide.
+
+### Contraintes à préserver
+- Étudiant 403 ; prof limité (`limiterAuxClasses`) ; `personnel` = admin ;
+  requêtes paramétrées + échappement wildcards `%`/`_` ; ne rien casser.
+
+### Fichiers visés
+- `app/Http/Controllers/RechercheGlobaleController.php`, `routes/web.php`,
+  `database/migrations/*_normalisation_recherche.php`, `app/Models/User.php`,
+  `resources/views/layouts/dashboard.blade.php`,
+  `resources/js/recherche-suggestions.js` (+ `app.js`),
+  `tests/Feature/RechercheSuggestionsTest.php`.
+
+### Vérification de fin
+- `php artisan migrate` (backfill) OK ; `php artisan test` (nouveaux verts, seul
+  `RegistrationTest` échoue volontairement) ; démo barre topbar sur
+  http://127.0.0.1:8000.
+
+### Réalisé (exécuté)
+- `app/Support/Recherche.php` : `normaliser()`, `echapperLike()`, `tokens()`,
+  constantes `LONGUEUR_MIN=2`, `LIMITE_SUGGESTIONS=8`.
+- Migration `2026_06_23_000007_normalisation_recherche` : colonnes `users.nom_norm`
+  / `prenom_norm` (indexées) + index `etudiants.filiere/niveau` + **backfill** (OK).
+- `User::booted()` : hook `saving` qui met à jour `nom_norm`/`prenom_norm`.
+- `RechercheGlobaleController` : refonte factorisée (`requeteEtudiants`,
+  `requetePersonnel`, `appliquerTokens`, `ordonnerParPrefixe`) + endpoint
+  `suggestions()` (JSON, ≤ 8). Route `recherche.suggestions`.
+- `layouts/dashboard.blade.php` : barre transformée en combobox a11y + dropdown,
+  CSS via `@push('styles')`, JS typeahead vanilla via `@push('scripts')`
+  (débounce 200 ms, `AbortController`, clavier ↑/↓/Entrée/Échap, surlignage
+  préfixe, fallback Entrée → `/recherche`). *(Pas de Vite actif → JS inline poussé
+  dans le layout plutôt qu'un fichier `resources/js/` compilé.)*
+- Tests `tests/Feature/RechercheSuggestionsTest.php` : **6 verts**. Suite complète :
+  90 passent, seul `RegistrationTest` échoue (volontaire). Pint OK.
+
+*Statut : FAIT et vérifié (migration + backfill + tests verts + endpoint protégé en live).*
+
+---
+
+## 10. À FAIRE — Messagerie de groupe (diffusion classes / rôles / multi-destinataires)
+
+> Prompt dédié : `PROMPT_MESSAGERIE_GROUPE.md`. Objectif : passer de la messagerie
+> 1→1 actuelle à une messagerie de GROUPE (plusieurs étudiants, classes entières,
+> rôles entiers), interface « rangée » et performante.
+
+### État de départ
+- `Message` : relation 1→1 (`expediteur_id` → `destinataire_id`), `lu_a` par message,
+  `scopeNonLusPour`. Aucune notion de groupe.
+- `MessagerieController@store` : un seul destinataire ; `create()` liste tous les
+  comptes actifs dans un `<select>` mono-cible.
+- Vues `messagerie/{create,index,show}.blade.php` ; routes `messagerie.*`
+  (web.php ~l.89-94) ; `MessagerieTest` (5 verts).
+
+### Choix d'architecture imposé (non destructif)
+- **Fan-out** : 1 message par destinataire (préserve non-lus, lecture/suppression
+  par destinataire) + colonne **`diffusion_id`** (uuid nullable indexée) partagée
+  par un même envoi groupé. Migration additive, pas de backfill destructeur.
+- Envoi groupé = `Message::insert()` en masse (chunk), pas N `save()`.
+
+### Points clés
+- Sélecteur multi-cibles en sections : par classe (filière+niveau), par rôle, par
+  étudiant (réutiliser `recherche.suggestions` / `App\Support\Recherche`), par
+  personnel ; chips supprimables + compteur live + dédup.
+- **Sécurité** : la liste finale est TOUJOURS résolue et filtrée côté serveur selon
+  le rôle (prof = ses classes via logique `limiterAuxClasses` ; étudiant pas de
+  diffusion à d'autres étudiants ; admin = tout).
+- « Envoyés » regroupés par `diffusion_id` (1 ligne/diffusion, dépliable).
+
+### Fichiers visés
+- migration `*_diffusion_messages` (diffusion_id + index), `app/Models/Message.php`,
+  `app/Http/Controllers/MessagerieController.php`,
+  `resources/views/messagerie/{create,index}.blade.php`, `routes/web.php` (si besoin),
+  `tests/Feature/MessagerieGroupeTest.php`.
+
+### Vérification de fin
+- `php artisan migrate` OK ; `php artisan test` (nouveaux verts + MessagerieTest
+  intact, seul `RegistrationTest` échoue volontairement) ; Pint OK.
+
+### Réalisé (exécuté)
+- Migration `2026_06_24_000001_add_diffusion_id_to_messages` : colonne `diffusion_id`
+  (uuid nullable indexée). NULL = message individuel.
+- `Message` : `diffusion_id` ajouté au fillable.
+- `RechercheGlobaleController@suggestions` : ajout du champ `id` (user_id) au JSON
+  (réutilisé par le sélecteur d'étudiants de la messagerie ; rétrocompatible).
+- `MessagerieController` : `store()` accepte `classes[]`, `roles[]`, `etudiants[]`,
+  `users[]` (+ `destinataire_id` legacy) ; `resoudreDestinataires()` résout et
+  **filtre côté serveur** via `requeteDestinatairesAutorises()` (admin/finances =
+  tous ; prof = personnel + ses classes ; étudiant = personnel only) ;
+  insertion en masse (`Message::insert`, chunk 500) avec `diffusion_id` partagé ;
+  `envoyes()` regroupe par `COALESCE(diffusion_id, id)` → 1 ligne/diffusion.
+- Vues : `messagerie/create.blade.php` refondue (accordéon : par classe / par rôle /
+  recherche étudiant via `recherche.suggestions` → chips / personnel filtrable ;
+  compteur live ; confirmation si > 20) ; `messagerie/index.blade.php` affiche
+  « N destinataires » pour les diffusions.
+- Tests `tests/Feature/MessagerieGroupeTest.php` : **7 verts** (classe, rôle, dédup,
+  RBAC prof, étudiant bloqué, regroupement envoyés, lu indépendant).
+  `MessagerieTest` (5) intact. Suite complète : 97 passent, seul `RegistrationTest`
+  échoue (volontaire). Pint OK.
+- Vérifié EN LIVE (admin) : page « Nouveau message » rend toutes les sections ;
+  envoi groupé à une classe → redirection « Envoyés » → ligne « 2 destinataires ».
+
+*Statut : FAIT et vérifié (migration + tests verts + envoi groupé live OK).*
+
+### Extension — Pièces jointes (images, PDF, docs) — FAIT
+- Migration `2026_06_24_000002_create_message_pieces_jointes` : table
+  `message_pieces_jointes` (diffusion_id indexé, expediteur_id, chemin, nom, mime,
+  taille). Rattachée à la DIFFUSION → fichier stocké **une seule fois** pour tout
+  l'envoi groupé.
+- `store()` met désormais TOUJOURS un `diffusion_id` (groupé ou individuel), qui
+  sert de clé aux pièces jointes. Grouping « envoyés » (COALESCE) inchangé.
+- Modèle `App\Models\MessagePieceJointe` (`estImage()`, `tailleLisible()`, hook
+  `deleting` qui supprime le fichier) ; `Message::piecesJointes()` (hasMany via
+  `diffusion_id`).
+- Upload : `pieces[]` (max 5, 8 Mo/fichier, mimes images/pdf/doc/xls/ppt/txt/csv/zip),
+  stockées sur le disque privé `local` (`storage/app/private/messagerie`).
+- Téléchargement sécurisé : route `messagerie.piece-jointe` + `pieceJointe()`
+  (réservé à l'expéditeur ET aux destinataires de la diffusion ; 403 sinon).
+- Vues : `create` (input file multiple + aperçu JS), `show` (galerie : aperçu
+  image + bouton télécharger).
+- Tests `tests/Feature/MessageriePiecesJointesTest.php` : **4 verts** (stockage,
+  RBAC téléchargement, fichier unique partagé par la diffusion, type refusé).
+  Suite complète : 101 passent, seul `RegistrationTest` échoue (volontaire). Pint OK.
+- Vérifié EN LIVE : envoi avec image → stockée → téléchargement HTTP 200 (PNG réel).

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Role;
 use App\Support\PhotoUtilisateur;
+use App\Support\Recherche;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,6 +45,13 @@ class User extends Authenticatable
 
     protected static function booted(): void
     {
+        // Tient à jour les colonnes normalisées (sans accents, minuscules) utilisées
+        // par la recherche/autocomplétion, à chaque création ou modification.
+        static::saving(function (User $user) {
+            $user->nom_norm = Recherche::normaliser($user->nom);
+            $user->prenom_norm = Recherche::normaliser($user->prenom);
+        });
+
         // Supprime le fichier photo quand le compte est supprimé (évite les orphelins).
         static::deleting(function (User $user) {
             PhotoUtilisateur::supprimerFichier($user->photo);

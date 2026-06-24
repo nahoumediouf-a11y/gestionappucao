@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Message extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'diffusion_id',
         'expediteur_id',
         'destinataire_id',
         'sujet',
@@ -34,6 +36,15 @@ class Message extends Model
     public function destinataire(): BelongsTo
     {
         return $this->belongsTo(User::class, 'destinataire_id');
+    }
+
+    /**
+     * Pièces jointes de la diffusion à laquelle appartient ce message (stockées une
+     * seule fois pour tout l'envoi, reliées par diffusion_id).
+     */
+    public function piecesJointes(): HasMany
+    {
+        return $this->hasMany(MessagePieceJointe::class, 'diffusion_id', 'diffusion_id');
     }
 
     public function estLu(): bool

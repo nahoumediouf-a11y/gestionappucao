@@ -32,11 +32,13 @@
                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3 {{ $nonLu ? 'fw-semibold' : '' }}">
                 <div class="text-truncate">
                     @if ($nonLu)<span class="badge bg-primary me-1">Nouveau</span>@endif
-                    <i class="bi {{ $onglet === 'recus' ? 'bi-person' : 'bi-person-fill-up' }} text-muted me-1"></i>
                     @if ($onglet === 'recus')
-                        {{ $message->expediteur->nom_complet }}
+                        <i class="bi bi-person text-muted me-1"></i>{{ $message->expediteur->nom_complet }}
+                    @elseif (($message->nb_destinataires ?? 1) > 1)
+                        <i class="bi bi-people-fill text-muted me-1"></i>
+                        <span class="badge bg-info-subtle text-info-emphasis">{{ $message->nb_destinataires }} destinataires</span>
                     @else
-                        À {{ $message->destinataire->nom_complet }}
+                        <i class="bi bi-person-fill-up text-muted me-1"></i>À {{ $message->destinataire->nom_complet }}
                     @endif
                     <span class="mx-2 text-muted">—</span>{{ $message->sujet }}
                 </div>

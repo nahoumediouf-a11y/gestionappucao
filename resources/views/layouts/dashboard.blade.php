@@ -54,12 +54,19 @@
             </button>
 
             @if ($rechercheRoute)
-                <form class="ucao-topbar__search d-none d-sm-block" method="GET" action="{{ $rechercheRoute }}">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="search" name="q" value="{{ request('q') }}" class="form-control" placeholder="Rechercher un étudiant..." aria-label="Recherche">
-                    </div>
-                </form>
+                <div class="ucao-topbar__search d-none d-sm-block" id="recherche-globale"
+                     data-suggestions-url="{{ route('recherche.suggestions') }}">
+                    <form method="GET" action="{{ $rechercheRoute }}" role="search" autocomplete="off">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="search" name="q" value="{{ request('q') }}" class="form-control"
+                                   placeholder="Rechercher un étudiant..." aria-label="Recherche"
+                                   role="combobox" aria-expanded="false" aria-autocomplete="list"
+                                   aria-controls="recherche-suggestions" autocomplete="off">
+                        </div>
+                        <ul class="recherche-suggestions" id="recherche-suggestions" role="listbox" hidden></ul>
+                    </form>
+                </div>
             @endif
 
             <div class="ms-auto d-flex align-items-center gap-2">
@@ -149,3 +156,137 @@
     @endforeach
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .ucao-topbar__search { position: relative; }
+    .recherche-suggestions {
+        position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 1050;
+        margin: 0; padding: 4px; list-style: none; max-height: 22rem; overflow-y: auto;
+        background: var(--surface, #fff); border: 1px solid rgba(0,0,0,.1);
+        border-radius: .5rem; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+    .recherche-suggestions__item {
+        display: flex; flex-direction: column; gap: 2px; padding: .5rem .65rem;
+        border-radius: .375rem; cursor: pointer; color: inherit; text-decoration: none;
+    }
+    .recherche-suggestions__item:hover,
+    .recherche-suggestions__item.is-active {
+        background: rgba(37, 99, 235, .1);
+    }
+    .recherche-suggestions__label { font-weight: 600; font-size: .9rem; }
+    .recherche-suggestions__label mark { background: transparent; color: var(--bs-primary, #2563EB); padding: 0; font-weight: 700; }
+    .recherche-suggestions__meta { font-size: .78rem; opacity: .7; }
+    .recherche-suggestions__vide { padding: .6rem .65rem; font-size: .85rem; opacity: .7; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+(function () {
+    var racine = document.getElementById('recherche-globale');
+    if (!racine) return;
+
+    var input = racine.querySelector('input[name="q"]');
+    var liste = racine.querySelector('#recherche-suggestions');
+    var form  = racine.querySelector('form');
+    var url   = racine.dataset.suggestionsUrl;
+
+    var MIN = 2, DELAI = 200;
+    var minuteur = null, controleur = null, items = [], actif = -1;
+
+    function echapperHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    // Surligne (sans accent/casse) la première occurrence du terme dans le libellé.
+    function surligner(texte, terme) {
+        var sansAccent = function (v) { return v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); };
+        var base = sansAccent(texte), cible = sansAccent(terme.trim().split(/\s+/)[0] || '');
+        var i = cible ? base.indexOf(cible) : -1;
+        if (i < 0) return echapperHtml(texte);
+        return echapperHtml(texte.slice(0, i)) + '<mark>' + echapperHtml(texte.slice(i, i + cible.length)) + '</mark>' + echapperHtml(texte.slice(i + cible.length));
+    }
+
+    function fermer() {
+        liste.hidden = true; liste.innerHTML = ''; items = []; actif = -1;
+        input.setAttribute('aria-expanded', 'false');
+    }
+
+    function afficher(resultats, terme) {
+        items = resultats;
+        liste.innerHTML = '';
+        if (resultats.length === 0) {
+            var vide = document.createElement('li');
+            vide.className = 'recherche-suggestions__vide';
+            vide.textContent = 'Aucun résultat';
+            liste.appendChild(vide);
+        } else {
+            resultats.forEach(function (r, idx) {
+                var li = document.createElement('li');
+                li.setAttribute('role', 'option');
+                var a = document.createElement('a');
+                a.className = 'recherche-suggestions__item';
+                a.href = r.url;
+                a.dataset.index = idx;
+                a.innerHTML = '<span class="recherche-suggestions__label">' + surligner(r.label, terme) + '</span>' +
+                              '<span class="recherche-suggestions__meta">' + echapperHtml(r.sous_titre || '') + '</span>';
+                li.appendChild(a);
+                liste.appendChild(li);
+            });
+        }
+        liste.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        actif = -1;
+    }
+
+    function surlignerActif() {
+        liste.querySelectorAll('.recherche-suggestions__item').forEach(function (el, idx) {
+            el.classList.toggle('is-active', idx === actif);
+            if (idx === actif) el.scrollIntoView({ block: 'nearest' });
+        });
+    }
+
+    function rechercher(terme) {
+        if (controleur) controleur.abort();
+        controleur = new AbortController();
+        fetch(url + '?q=' + encodeURIComponent(terme), {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            signal: controleur.signal,
+        })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (data) { afficher(Array.isArray(data) ? data : [], terme); })
+            .catch(function () { /* requête annulée ou erreur réseau : on ignore */ });
+    }
+
+    input.addEventListener('input', function () {
+        var terme = input.value.trim();
+        clearTimeout(minuteur);
+        if (terme.length < MIN) { fermer(); return; }
+        minuteur = setTimeout(function () { rechercher(terme); }, DELAI);
+    });
+
+    input.addEventListener('keydown', function (e) {
+        var liens = liste.querySelectorAll('.recherche-suggestions__item');
+        if (e.key === 'ArrowDown' && liens.length) {
+            e.preventDefault(); actif = (actif + 1) % liens.length; surlignerActif();
+        } else if (e.key === 'ArrowUp' && liens.length) {
+            e.preventDefault(); actif = (actif - 1 + liens.length) % liens.length; surlignerActif();
+        } else if (e.key === 'Enter') {
+            // Une suggestion sélectionnée : on y va. Sinon : recherche complète (fallback).
+            if (actif >= 0 && liens[actif]) { e.preventDefault(); window.location.href = liens[actif].href; }
+        } else if (e.key === 'Escape') {
+            fermer();
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!racine.contains(e.target)) fermer();
+    });
+
+    form.addEventListener('submit', function () { fermer(); });
+})();
+</script>
+@endpush
